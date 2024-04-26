@@ -1,7 +1,6 @@
 import {error} from '@sveltejs/kit'
 import {getAPI} from '$lib/utils/api'
 import {getBySid} from '$lib/utils/server'
-import {mapMedusajsCategory} from "../medusa/medusa-utils";
 
 const isServer = import.meta.env.SSR
 
@@ -67,42 +66,34 @@ export const fetchAllCategories = async ({
 	try {
 		let res = {}
 
-		let catQ = `categories?store=${storeId}&page=0&limit=${limit || '1000'}`
-
-		if (featured) {
-			catQ += '&featured=true'
-		}
-
+		// let catQ = `categories?store=${storeId}&page=0&limit=${limit || '1000'}`
+		// if (featured) {
+		// 	catQ += '&featured=true'
+		// }
 		// if (isServer || isCors) {
 		// 	res = await getBySid(catQ, sid)
 		// } else {
 		// 	res = await getAPI(catQ, origin)
 		// }
 
-    res = {
-      "data": [
-        {
-          "_id": "5cbebc88d4d5ae5021a0b587",
-          "name": "Bags",
-          "children": [],
-          "link": "bags",
-          "slug": "bags"
-        },
-        {
-          "_id": "63b8f1fee497e2c0976880f5",
-          "children": [],
-          "name": "Books",
-          "link": "/books-en-en",
-          "slug": "books-en-en",
-          "img": null
-        }
-      ]
+    if (isServer || isCors) {
+      res = await getBySid(
+        `/classifications/search/findAllByParams`,
+        sid
+      )
+    } else {
+      res = await getAPI(
+        `/classifications/search/findAllByParams`,
+        origin
+      )
     }
+    const cl_mapped_data = res.content.map((category: any) => {
+      return mapProdexaClassification(category)
+    })
 
-
-		const currentPage = res.currentPage
-		const data = res.data
-		const pageSize = res.pageSize
+		const currentPage = res.pageable.pageNumber
+		const data = cl_mapped_data
+		const pageSize = res.size
 
 		return { data, pageSize, currentPage }
 	} catch (e) {
@@ -157,8 +148,6 @@ export const fetchMegamenuData = async ({
 }) => {
 	try {
 
-    let groups_data: []
-
     let data: []
 		// if (isServer || isCors) {
 		// 	data = await getBySid(
@@ -173,68 +162,28 @@ export const fetchMegamenuData = async ({
 		// }
 
     if (isServer || isCors) {
-      groups_data = await getBySid(
-    		`/groups/search/findAllByParams`,
-    		sid
-    	)
+      data = await getBySid(
+        `/classifications/search/findAllByParams`,
+        sid
+      )
     } else {
-      groups_data = await getAPI(
-    		`/groups/search/findAllByParams`,
-    		origin
-    	)
+      data = await getAPI(
+        `/classifications/search/findAllByParams`,
+        origin
+      )
     }
-    console.log(groups_data)
-
-    const groups_mapped_data = groups_data.content.map((category: any) => {
-      return mapProdexajsCategory(category)
+    const cl_mapped_data = data.content.map((category: any) => {
+      return mapProdexaClassification(category)
     })
-    console.log(groups_mapped_data)
+
+    console.log(cl_mapped_data)
 
     const r: Groups = [{
       id: 'Groups',
       name: 'Groups',
       slug: 'groups',
-      children: groups_mapped_data
+      children: cl_mapped_data
     }]
-
-    console.log(r)
-
-    // data = [
-    //   {
-    //     "_id": "6471f5fbf281dbfd0104c325",
-    //     "new": false,
-    //     "children":
-    //       [
-    //         {
-    //           "_id": "6471f617f281dbfd0104c36e",
-    //           "new": false,
-    //           "children":
-    //             [
-    //               {
-    //                 "_id": "6471f675f281dbfd0104c403",
-    //                 "new": false,
-    //                 "children":
-    //                   [],
-    //                 "name": "Fully Automatic Front Load",
-    //                 "slug": "washing-machine-fully-automatic-front-load",
-    //                 "link": "/fully-automatic-front-load",
-    //                 "slugPath": null
-    //               }
-    //             ],
-    //           "name": "Washing Machine",
-    //           "slug": "tvs-appliances-washing-machine",
-    //           "link": "/washing-machine",
-    //           "slugPath": null
-    //         }
-    //       ],
-    //     "name": "TVs & Appliances",
-    //     "slug": "tvs-appliances-en",
-    //     "link": "/tvs-appliances",
-    //     "slugPath": null,
-    //     "img": null
-    //   }
-    // ]
-    //return data || []
 
     return r || []
 
@@ -244,12 +193,12 @@ export const fetchMegamenuData = async ({
 }
 
 
-export const mapProdexajsCategory = (c: any) => {
+export const mapProdexaClassification = (c: any) => {
   if (c) {
     const r: Category = {
-      id: c.classificationGroupId,
-      name: c.classificationGroupId,
-      slug: c.classificationGroupId,
+      id: c.classificationId,
+      name: c.fallbackDescription,
+      slug: c.classificationId,
       children: c.category_children
         ? c.category_children.map((i: any) => {
           if (i) return mapProdexajsCategory(i)
@@ -261,3 +210,4 @@ export const mapProdexajsCategory = (c: any) => {
     return {}
   }
 }
+
