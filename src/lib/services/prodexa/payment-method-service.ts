@@ -1,19 +1,16 @@
-import { getAPI } from '$lib/utils/api'
-import { getBySid } from '$lib/utils/server'
+import { getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import { error } from '@sveltejs/kit'
-const isServer = import.meta.env.SSR
 
-export const fetchPaymentMethods = async ({ origin = null, storeId, sid = null }) => {
+export const fetchPaymentMethods = async ({ origin, storeId, cartId, sid = null }: any) => {
 	try {
-		let res = {}
-
-		if (isServer) {
-			res = await getBySid(`payment-methods?store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`payment-methods?store=${storeId}`, origin)
-		}
-		return res?.data || []
+		let res: any = {}
+		try {
+			await postMedusajsApi(`carts/${cartId}/payment-sessions`, {}, sid)
+		} catch (e) {}
+		const cres = await getMedusajsApi(`regions`, {}, sid)
+		res = cres.regions[0].payment_providers
+		return res || []
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }

@@ -1,6 +1,6 @@
+import { getMedusajsApi } from '$lib/utils/server'
 import { error } from '@sveltejs/kit'
 import type { Error } from '$lib/types'
-import { post } from '$lib/utils/api'
 
 export const submitContactUsForm = async ({
 	storeId,
@@ -10,23 +10,13 @@ export const submitContactUsForm = async ({
 	subject,
 	message,
 	origin,
+	server = false,
 	sid = null
 }: any) => {
 	try {
 		let res: any = {}
 
-		res = await post(
-			`contact-us`,
-			{
-				fullName,
-				email,
-				phone,
-				subject,
-				message,
-				store: storeId
-			},
-			origin
-		)
+		res = await getMedusajsApi(`contact`, {}, sid)
 
 		return res
 	} catch (err) {
@@ -45,28 +35,16 @@ export const bulkOrderEnquiry = async ({
 	minQty,
 	message,
 	origin,
+	server = false,
 	sid = null
 }: any) => {
 	try {
 		let res: any = {}
 
-		res = await post(
-			`bulk-order-enquiry`,
-			{
-				name,
-				companayName,
-				email,
-				phone,
-				interestedProducts,
-				minQty,
-				message,
-				store: storeId
-			},
-			origin
-		)
+		res = await getMedusajsApi(`contact`, {}, sid)
 
 		return res
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }

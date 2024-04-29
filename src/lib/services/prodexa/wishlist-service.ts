@@ -1,98 +1,61 @@
+import { getMedusajsApi } from '$lib/utils/server'
+import { serializeNonPOJOs } from '$lib/utils/validations'
 import { error } from '@sveltejs/kit'
-import { getAPI, post } from '$lib/utils/api'
-import { getBySid, postBySid } from '$lib/utils/server'
-const isServer = import.meta.env.SSR
-
-export const moveUnavailableItemsToWishlist = async ({ origin, storeId, sid = null }) => {
-	try {
-		let res: any = {}
-
-		if (isServer) {
-			res = await postBySid(
-				`wishlists/move-unavailable-items-to-wishlist?store=${storeId}`,
-				{ store: storeId },
-				sid
-			)
-		} else {
-			res = await post(
-				`wishlists/move-unavailable-items-to-wishlist?store=${storeId}`,
-				{ store: storeId },
-				origin
-			)
-		}
-
-		return res || {}
-	} catch (e) {
-		error(e.status, e.data?.message || e.message)
-	}
-}
 
 export const fetchWishlist = async ({
 	origin,
 	storeId,
-	search = null,
-	sort = '-createdAt',
-	currentPage = 1,
+	search,
+	sort,
+	currentPage,
+	server = false,
 	sid = null
-}) => {
+}: any) => {
 	try {
 		let res: any = {}
 
-		if (isServer && sid != null) {
-			res = await getBySid(
-				`wishlists/my?search=${search || ''}&sort=${sort}&page=${currentPage}&store=${storeId}`,
-				sid
-			)
-		} else {
-			res = await getAPI(
-				`wishlists/my?search=${search || ''}&sort=${sort}&page=${currentPage}&store=${storeId}`,
-				origin
-			)
-		}
+		res = {} // await getMedusajsApi(`wishlists/me`, {}, sid)
 
-		return res || []
+		return res?.data || []
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }
 
-export const checkWishlist = async ({ origin, storeId, pid, vid, isCors = false, sid = null }) => {
-	// if (!sid) return false
-
+export const checkWishlist = async ({
+	origin,
+	storeId,
+	pid,
+	vid,
+	server = false,
+	sid = null
+}: any) => {
 	try {
 		let res: any = {}
 
-		if (isServer) {
-			res = await getBySid(`wishlists/check?product=${pid}&variant=${vid}&store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`wishlists/check?product=${pid}&variant=${vid}&store=${storeId}`, origin)
-		}
+		res = false // await getMedusajsApi(`wishlists/me`, {}, sid)
 
 		return res
 	} catch (e) {
-		return false
+		error(e.status, e.message)
 	}
 }
 
 export const toggleWishlistService = async ({
+	storeId,
 	pid,
 	vid,
-	isCors = false,
 	origin,
-	sid = null,
-	storeId
-}) => {
+	server = false,
+	sid = null
+}: any) => {
 	try {
 		let res: any = {}
 
-		if (isServer || isCors) {
-			res = await postBySid(`wishlists/toggle`, { product: pid, variant: vid, store: storeId }, sid)
-		} else {
-			res = await post(`wishlists/toggle`, { product: pid, variant: vid, store: storeId }, origin)
-		}
+		res = null // await getMedusajsApi(`wishlists/me`, {}, sid)
 
 		return res
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }

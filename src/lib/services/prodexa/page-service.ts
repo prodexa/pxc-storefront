@@ -1,52 +1,40 @@
-import { getAPI } from '$lib/utils/api'
-import { getBySid } from '$lib/utils/server'
+import { getMedusajsApi } from '$lib/utils/server'
 import { error } from '@sveltejs/kit'
-const isServer = import.meta.env.SSR
 
-export const fetchPages = async ({ isCors = false, origin, storeId, sid = null }: any) => {
+// TODO: MedusaJS dont support pages in this current version
+
+export const fetchPages = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
 		let res: any = {}
 
-		if (isServer || isCors) {
-			res = await getBySid(`pages?store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`pages?store=${storeId}`, origin)
-		}
+		res = {} //await getMedusajsApi(`pages?store=${storeId}`)
 
 		return res.data || []
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }
 
-export const fetchLatestPages = async ({ origin, storeId, sid = null }: any) => {
+export const fetchLatestPages = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
 		let res: any = {}
 
-		if (isServer) {
-			res = await getBySid(`pages?sort=-updatedAt&limit=10&store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`pages?sort=-updatedAt&limit=10&store=${storeId}`, origin)
-		}
+		res = {} //await getMedusajsApi(`pages?sort=-updatedAt&limit=10&store=${storeId}`)
 
 		return res.data || []
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }
 
-export const fetchPage = async ({ isCors = false, origin, id, slug, storeId, sid = null }: any) => {
+export const fetchPage = async ({ origin, id, storeId, server = false, sid = null }: any) => {
 	try {
 		let res: any = {}
 
-		if (isServer || isCors) {
-			res = await getBySid(`pages/${id || slug}?store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`pages/${id || slug}?store=${storeId}`, origin)
-		}
+		res = {} //await getMedusajsApi(`pages/${id}`)
 
-		return res || {}
+		return res.data || []
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }

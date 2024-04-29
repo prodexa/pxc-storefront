@@ -1,23 +1,17 @@
-import { getAPI } from '$lib/utils/api'
-import { getBySid } from '$lib/utils/server'
-const isServer = import.meta.env.SSR
+import { getMedusajsApi } from '$lib/utils/server'
 
 export const fetchCollections = async ({
 	origin,
 	query,
 	storeId,
-	isCors = false,
+	server = false,
 	sid = null
 }: any) => {
 	try {
 		let res: any = {}
 
-		if (isServer || isCors) {
-			res = await getBySid(`collections?store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`collections?store=${storeId}`, origin)
-		}
-
+		res = await getMedusajsApi(`collections`)
+		res.data = res.collections
 		return res || {}
 	} catch (e) {
 		return {}

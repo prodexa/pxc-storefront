@@ -1,4 +1,5 @@
-import { getAPI } from '$lib/utils/api'
+import { getMedusajsApi } from '$lib/utils/server'
+import { serializeNonPOJOs } from '$lib/utils/validations'
 import { error } from '@sveltejs/kit'
 
 export const fetchAutocompleteData = async ({ origin, storeId, q }: any) => {
@@ -6,19 +7,12 @@ export const fetchAutocompleteData = async ({ origin, storeId, q }: any) => {
 		let res: any = {}
 		let data = []
 
-		let filterText = `es/autocomplete?store=${storeId}&q=`
+		res = await getMedusajsApi(`autocomplete`, {})
 
-		if (!!q && q !== 'undefined' && q !== 'null' && q !== '') {
-			filterText = `es/autocomplete?store=${storeId}&q=${q}`
-		}
-
-		res = await getAPI(filterText, origin)
-
-		data = res?.data
-
+		// must return name:string, slug:string type:string
 		return data || []
 	} catch (e) {
-		// throw error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }
 

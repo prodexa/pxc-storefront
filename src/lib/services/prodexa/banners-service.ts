@@ -1,36 +1,39 @@
-import { getAPI } from '$lib/utils/api'
-import { getBySid } from '$lib/utils/server'
+import { getMedusajsApi } from '$lib/utils/server'
+import { serializeNonPOJOs } from '$lib/utils/validations'
 import { error } from '@sveltejs/kit'
-const isServer = import.meta.env.SSR
 
-export const fetchBanners = async ({ origin, pageId, storeId, sid = null }: any) => {
+export const fetchBanners = async ({
+	origin,
+	pageId,
+	storeId,
+	server = false,
+	sid = null
+}: any) => {
 	try {
 		let res: any = {}
 
-		if (isServer) {
-			res = await getBySid(`banners?pageId=${pageId}&store=${storeId}&active=true`, sid)
-		} else {
-			res = await getAPI(`banners?pageId=${pageId}&store=${storeId}&active=true`, origin)
-		}
+		res = await getMedusajsApi(`banners`, {}, sid)
 
 		return res.data || []
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }
 
-export const fetchBannersGroup = async ({ origin, storeId, pageId, sid = null }: any) => {
+export const fetchBannersGroup = async ({
+	origin,
+	storeId,
+	pageId,
+	server = false,
+	sid = null
+}: any) => {
 	try {
 		let res: any = {}
 
-		if (isServer) {
-			res = await getBySid(`banners?pageId=${pageId}&store=${storeId}&active=true`, sid)
-		} else {
-			res = await getAPI(`banners?pageId=${pageId}&store=${storeId}&active=true`, origin)
-		}
+		res = await getMedusajsApi(`banners`, {}, sid)
 
 		return res.data || []
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }

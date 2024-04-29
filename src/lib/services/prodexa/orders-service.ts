@@ -1,340 +1,250 @@
 import { error } from '@sveltejs/kit'
-import { getAPI, post } from '$lib/utils/api'
-import { getBySid, postBySid } from '$lib/utils/server'
+import { getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
+import type { AllOrders, Error } from '$lib/types'
+import { mapMedusajsAllOrders } from './prodexa-utils'
 
-const isServer = import.meta.env.SSR
+// export const fetchOrders = async ({ origin, storeId, server = false, sid = null }: any) => {
+// 	try {
+// 		let res: AllOrders | {} = {}
 
-export const fetchOrders = async ({ isCors = false, origin = null, sid = null, storeId }) => {
+// 		const res = await getMedusajsApi(`customers/me/orders`, {}, sid)
+// 		console.log('res', res);
+// 		res = mapMedusajsAllOrders(res)
+// 		return res || {}
+// 	} catch (e) {
+// 		throw error(e.status, e.message)
+// 	}
+// }
+
+export const fetchOrders = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
-		let res = {}
+		let res: AllOrders | {} = {}
 
-		if (isServer || isCors) {
-			res = await getBySid(`orders/my?store=${storeId}&active=true`, sid)
-		} else {
-			res = await getAPI(`orders/my?store=${storeId}&active=true`, origin)
-		}
+		res = await getMedusajsApi(`customers/me/orders`, {}, sid)
 
 		return {
-			count: res.count,
-			data: res.data || [],
-			noOfPage: res.noOfPage,
-			page: res.page,
-			pageSize: res.pageSize
+			count: res?.count,
+			pageSize: res?.limit,
+			noOfPage: res?.noOfPage || 1,
+			page: res?.page || 1,
+			data:
+				res.orders.map((order) => {
+					return {
+						_id: order.id,
+						orderNo: order.id,
+						createdAt: order.created_at,
+						orderItems: order.items.map((item) => {
+							return {
+								img: item.thumbnail,
+								name: item.title,
+								qty: item.quantity,
+								price: item.unit_price,
+								shippingCharge: item.shipping_total,
+								total: item.total,
+								status: order.status
+							}
+						})
+					}
+				}) || {}
 		}
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }
 
-export const fetchOrder = async ({ origin = null, sid = null, storeId, id }) => {
+export const fetchOrder = async ({ origin, storeId, id, server = false, sid = null }: any) => {
 	try {
-		let res = {}
+		let res: any = {}
 
-		if (isServer) {
-			res = await getBySid(`orders/${id}?store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`orders/${id}?store=${storeId}`, origin)
+		res = (await getMedusajsApi(`orders/${id}`, {}, sid)).order
+		// console.log('res', res);
+
+		return {
+			id: res?.id,
+			orderId: res?.id,
+			orderNo: res?.id,
+			createdAt: res?.created_at,
+			items: res?.items?.map((item) => {
+				return {
+					slug: item.handle,
+					img: item.thumbnail,
+					name: item.title,
+					qty: item.quantity,
+					price: item.unit_price,
+					mrp: item.total,
+					brandName: '',
+					size: '',
+					color: '',
+					variant: item.variant,
+					total: item.total
+				}
+			}),
+			address: {
+				firstName: res?.shipping_address.first_name,
+				lastName: res?.shipping_address.last_name,
+				address: res?.shipping_address.address_1,
+				locality: res?.shipping_address.address_2,
+				city: res?.shipping_address.city,
+				country: res?.shipping_address.country_code,
+				state: res?.shipping_address.province,
+				zip: res?.shipping_address.postal_code,
+				phone: res?.shipping_address.phone
+			},
+			billingAddress: {
+				firstName: res?.shipping_address.first_name,
+				lastName: res?.shipping_address.last_name,
+				address: res?.shipping_address.address_1,
+				locality: res?.shipping_address.address_2,
+				city: res?.shipping_address.city,
+				country: res?.shipping_address.country_code,
+				state: res?.shipping_address.province,
+				zip: res?.shipping_address.postal_code,
+				phone: res?.shipping_address.phone
+			},
+			invoiceLink: '',
+			replaceValidTill: '',
+			status: res?.status || {}
 		}
-
-		return res || {}
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }
 
-export const fetchTrackOrder = async ({ id, origin, sid = null, storeId }) => {
+export const fetchTrackOrder = async ({ origin, storeId, id, server = false, sid = null }: any) => {
 	try {
-		let res = {}
-
-		if (isServer) {
-			res = await getBySid(`order-tracking/${id}?store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`order-tracking/${id}?store=${storeId}`, origin)
-		}
-
-		return res || []
+		return []
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
-	}
-}
-
-export const getOrder = async ({ orderNo, cartId, origin, sid = null, storeId }) => {
-	try {
-		let res = {}
-
-		if (isServer) {
-			res = await getBySid(
-				`orders-public?order_no=${orderNo}&store=${storeId}&cart_id=${cartId}`,
-				sid
-			)
-		} else {
-			res = await getAPI(
-				`orders-public?order_no=${orderNo}&store=${storeId}&cart_id=${cartId}`,
-				origin
-			)
-		}
-		return res || {}
-	} catch (e) {
-		error(e?.status, e.data?.message || e?.message)
+		error(e.status, e.message)
 	}
 }
 
 export const paySuccessPageHit = async ({
 	orderId,
-	paymentMode,
-	paymentReferenceId,
-	status,
+	cartId,
 	origin,
-	sid = null,
-	storeId
-}) => {
+	storeId,
+	server = false,
+	sid = null
+}: any) => {
 	try {
-		let res = {}
-
-		if (isServer) {
-			res = await postBySid(
-				`orders/pay-success-page-hit`,
-				{
-					orderId,
-					paymentMode,
-					paymentReferenceId,
-					status,
-					store: storeId
-				},
-				sid
-			)
+		let res: any = {}
+		if (orderId && orderId != 'undefined') {
+			res = await getMedusajsApi(`orders/${orderId}`, {}, sid)
+			return res.order || {}
+			// return { paymentReferenceId: 'complete', message: 'Order success' }
 		} else {
-			res = await post(
-				`orders/pay-success-page-hit`,
-				{
-					orderId,
-					paymentMode,
-					status,
-					store: storeId
-				},
-				origin
-			)
+			res = await postMedusajsApi(`carts/${cartId}/complete`, {}, sid)
+			return res.data || {}
 		}
-
-		return res || {}
 	} catch (e) {
-		error(e?.status, e.data?.message || e?.message)
+		// console.log('error at medusa cart complete', e)
+		// return {}
+		error(e.status, e.message)
 	}
 }
 
 export const codCheckout = async ({
 	address,
 	cartId,
-	comment = '',
-	paymentMethod,
-	prescription,
 	origin,
+	paymentMethod,
+	paymentProviderId,
+	prescription,
+	server = false,
 	sid = null,
 	storeId
-}) => {
+}: any) => {
 	try {
-		let res = {}
+		let res: any = {}
 
-		res = await post(
-			`orders/checkout/cod?cart_id=${cartId}`,
-			{
-				address,
-				cart_id: cartId,
-				comment,
-				paymentMethod,
-				prescription,
-				store: storeId
-			},
-			origin
-		)
-
-		return res || {}
-	} catch (e) {
-		error(e.status, e.data?.message || e.message)
-	}
-}
-
-export const phonepeCheckout = async ({
-	address,
-	origin,
-	orderNo,
-	prescription = '',
-	storeId,
-	cartId
-}) => {
-	try {
-		let res = {}
-
-		res = await post(
-			`checkout/phonepe`,
-			{
-				address,
-				cart_id: cartId,
-				domain: origin,
-				order_no: orderNo,
-				prescription,
-				return_url: `${origin}/payment/success`,
-				store: storeId
-			},
-			origin
-		)
-
-		return res || {}
-	} catch (e) {
-		error(e.status, e.message?.message || e.message)
-	}
-}
-export const cashfreeCheckout = async ({
-	address,
-	orderNo,
-	prescription = '',
-	origin,
-	cartId,
-	storeId
-}) => {
-	try {
-		let res = {}
-
-		res = await post(
-			`checkout/cashfree`,
-			{
-				address,
-				cart_id: cartId,
-				domain: origin,
-				order_no: orderNo,
-				prescription,
-				return_url: `${origin}/payment/process-cf`,
-				store: storeId
-			},
-			origin
-		)
-		return res || {}
-	} catch (e) {
-		error(e.status, e.message?.message || e.message)
-	}
-}
-
-export const cashfreeCapture = async ({ order_no, origin, sid, storeId }) => {
-	try {
-		let res = {}
-
-		res = await postBySid(
-			`checkout/cashfree-capture`,
-			{
-				domain: origin,
-				order_no,
-				store: storeId
-			},
+		res = await postMedusajsApi(
+			`carts/${cartId}/payment-session`,
+			{ provider_id: paymentProviderId },
 			sid
 		)
 
+		// const paymentCartId = res?.cart?.id
+		res.id = '' //paymentCartId
+
+		return res
+	} catch (e) {
+		error(e.status, e.message)
+	}
+}
+
+export const cashfreeCheckout = async ({
+	address,
+	paymentMethod,
+	prescription,
+	storeId,
+	origin,
+	server = false,
+	sid = null
+}: any) => {
+	try {
+		let res: any = {}
+
+		res = await getMedusajsApi(`orders/me`, {}, sid)
+
 		return res || {}
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }
 
 export const razorpayCheckout = async ({
 	address,
-	orderNo,
-	cartId,
-	prescription = '',
+	paymentMethod,
+	prescription,
+	storeId,
 	origin,
-	storeId
+	server = false,
+	sid = null
+}: any) => {
+	try {
+		let res: any = {}
+
+		res = await getMedusajsApi(`orders/me`, {}, sid)
+
+		return res.data || []
+	} catch (e) {
+		error(e.status, e.message)
+	}
+}
+
+export const razorpayCapture = async ({
+	rpPaymentId,
+	rpOrderId,
+	storeId,
+	origin,
+	server = false
 }) => {
 	try {
 		let res = {}
 
-		res = await post(
-			`checkout/razorpay`,
-			{
-				address,
-				cart_id: cartId,
-				domain: origin,
-				order_no: orderNo,
-				prescription,
-				return_url: `${origin}/payment/process`,
-				store: storeId,
-				paymentMethod: 'Razorpay'
-			},
-			origin
-		)
+		res = await getMedusajsApi(`orders/me`, {}, sid)
 
-		return res || {}
+		return res.data || []
 	} catch (e) {
-		error(e.status, e.data?.message || e.message)
-	}
-}
-
-export const razorpayCapture = async ({ rpOrderId, rpPaymentId, origin, storeId }) => {
-	try {
-		let res = {}
-
-		res = await post(
-			`checkout/razorpay-capture`,
-			{
-				domain: origin,
-				return_url: `${origin}/payment/process`,
-				rpOrderId,
-				rpPaymentId,
-				store: storeId
-			},
-			origin
-		)
-
-		return res || {}
-	} catch (e) {
-		error(e.status, e.data?.message || e.message)
+		error(e.status, e.message)
 	}
 }
 
 export const stripeCheckoutService = async ({
-	address,
 	paymentMethodId,
+	address,
+	storeId,
 	origin,
-	cartId,
-	sid = null,
-	storeId
-}) => {
+	server = false,
+	sid = null
+}: any) => {
 	try {
-		let res = {}
+		let res: any = {}
 
-		res = await post(
-			`checkout/stripe`,
-			{
-				address,
-				paymentMethodId,
-				cart_id: cartId,
-				store: storeId
-			},
-			origin
-		)
-		return res || {}
+		res = await getMedusajsApi(`orders/me`, {}, sid)
+
+		return res.data || []
 	} catch (e) {
-		error(e.status, e)
-	}
-}
-
-export const paypalCheckout = async ({ address, orderNo, cartId, origin, storeId }) => {
-	try {
-		let res = {}
-
-		res = await post(
-			`checkout/paypal`,
-			{
-				address,
-				cart_id: cartId,
-				domain: origin,
-				order_no: orderNo,
-				return_url: `${origin}/payment/process`,
-				store: storeId,
-				paymentMethod: 'Paypal'
-			},
-			origin
-		)
-
-		return res || {}
-	} catch (e) {
-		error(e.status, e)
+		error(e.status, e.message)
 	}
 }

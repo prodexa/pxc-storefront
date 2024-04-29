@@ -1,53 +1,34 @@
-import type { Error } from '$lib/types'
+import type { Error, Product } from '$lib/types'
 import { error } from '@sveltejs/kit'
 import { getBySid } from '$lib/utils/server'
-import { getAPI } from '$lib/utils/api'
-// const isServer = import.meta.env.SSR
+import { serializeNonPOJOs } from '$lib/utils/validations'
 
-export const findZip = async ({ zip, origin }) => {
+export const findByCity = async (locals: App.Locals, q: string): Promise<Product> => {
 	try {
-		let data = {}
-
-		// if (isServer) data = getBySid(`pincodes/${zip}`)
-
-		data = getAPI(`pincodes/${zip}`, origin, sid)
-
+		const data = serializeNonPOJOs<Product>((await getBySid(`pincodes?${q}`)).data)
 		return data
 	} catch (err) {
 		const e = err as Error
-		error(e.status, e.data.message)
+		error(e.status, e.data.message);
 	}
 }
 
-export const findByCity = async (locals: App.Locals, q: string) => {
+export const groupByCity = async (locals: App.Locals, id: string): Promise<Product> => {
 	try {
-		const data = await getBySid(`pincodes?${q}`)
-
+		const data = serializeNonPOJOs<Product>((await getBySid(`pincodes/group-by-city`)).data)
 		return data
 	} catch (err) {
 		const e = err as Error
-		error(e.status, e.data.message)
+		error(e.status, e.data.message);
 	}
 }
 
-export const groupByCity = async (locals: App.Locals, id: string) => {
+export const groupByState = async (locals: App.Locals, id: string): Promise<Product> => {
 	try {
-		const data = await getBySid(`pincodes/group-by-city`)
-
+		const data = serializeNonPOJOs<Product>((await getBySid(`pincodes/group-by-state`)).data)
 		return data
 	} catch (err) {
 		const e = err as Error
-		error(e.status, e.data.message)
-	}
-}
-
-export const groupByState = async (locals: App.Locals, id: string) => {
-	try {
-		const data = await getBySid(`pincodes/group-by-state`)
-
-		return data
-	} catch (err) {
-		const e = err as Error
-		error(e.status, e.data.message)
+		error(e.status, e.data.message);
 	}
 }

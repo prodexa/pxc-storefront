@@ -1,19 +1,15 @@
-import { getAPI } from '$lib/utils/api'
-import { getBySid } from '$lib/utils/server'
-const isServer = import.meta.env.SSR
+import { getMedusajsApi } from '$lib/utils/server'
+import { serializeNonPOJOs } from '$lib/utils/validations'
+import { error } from '@sveltejs/kit'
 
-export const fetchDeals = async ({ isCors = false, origin, query, storeId, sid = null }: any) => {
+export const fetchDeals = async ({ origin, query, storeId, server = false, sid = null }: any) => {
 	try {
 		let res: any = {}
 
-		// if (isServer || isCors) {
-		// 	res = await getBySid(`deals?store=${storeId}`, sid)
-		// } else {
-		// 	res = await getAPI(`deals?store=${storeId}`, origin)
-		// }
+		res = await getMedusajsApi(`products`, {}, sid)
 
 		return res || {}
 	} catch (e) {
-		return {}
+		error(e.status, e.message)
 	}
 }
