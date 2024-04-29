@@ -1,7 +1,9 @@
-import { error } from '@sveltejs/kit'
-import { getAPI } from '$lib/utils/api'
-import { getBySid } from '$lib/utils/server'
-import type { AllProducts, Product } from '$lib/types'
+import {error} from '@sveltejs/kit'
+import {getAPI, post} from '$lib/utils/api'
+import {getBySid} from '$lib/utils/server'
+import type {AllProducts, Product} from '$lib/types'
+import {mapProdexajsProduct2} from "./prodexa-utils";
+
 const isServer = import.meta.env.SSR
 
 // Search product
@@ -139,6 +141,7 @@ export const fetchProductsOfCategory = async ({
 		let category = {}
 		let err = ''
 
+
 		// if (isServer) {
 		// 	res = await getBySid(
 		// 		`es/products?categories=${categorySlug}&zip=${zip || ''}&store=${storeId}&${query}`,
@@ -150,353 +153,33 @@ export const fetchProductsOfCategory = async ({
 		// 		origin
 		// 	)
 		// }
-    res =
+
+    //{searchParams: {}, facetParams: {hierarchyPaths: ["/basic"], labels: {/basic: "Basic"}}}
+    const label = "/" + categorySlug
+    const p = await post(
+      `/products/search`,
       {
-        "took": 14,
-        "pageSize": 40,
-        "noOfPage": 1,
-        "maxPage": 50,
-        "count": 1,
-        "page": 1,
-        "data": [
-          {
-            "_id": "64ad6e94630d27555597318a",
-            "category": {
-              "_id": "63b8f1fee497e2c0976880f5",
-              "img": null,
-              "link": "/books-en-en",
-              "name": "Books",
-              "namePath": null,
-              "namePathA": [],
-              "slug": "books-en-en"
-            },
-            "hasStock": true,
-            "images": [
-              "https://s3.ap-south-1.amazonaws.com/litekart.in/images/product/women/eb084f3c3f5f26e874333055ba570a99-28124561640.JPEG",
-              "https://s3.ap-south-1.amazonaws.com/litekart.in/images/product/women/d0feacc52e9be7ed092dc2b0914a203b-73004598826.JPEG",
-              "https://s3.ap-south-1.amazonaws.com/litekart.in/images/product/women/631fb57e2fc35ddbaca70e95e3acab82-895798442815.JPEG",
-              "https://s3.ap-south-1.amazonaws.com/litekart.in/images/product/women/7317aa55aa28e0b41f9210f02cd74661-1061559341481.JPEG",
-              "https://s3.ap-south-1.amazonaws.com/litekart.in/images/product/women/c4501430473f809b1e4c0d853349ca40-41293668895.JPEG"
-            ],
-            "img": "https://s3.ap-south-1.amazonaws.com/litekart.in/images/product/women/eb084f3c3f5f26e874333055ba570a99-28124561640.JPEG",
-            "isCustomized": false,
-            "mrp": 5317,
-            "name": "Black Women V-Neck Strappy Cut Out Long Sleeve Solid Casual T-Shirt Top",
-            "price": 2903,
-            "sku": "BlackWomenV-NeckStrappyCutOutLongSleeveSolidCasualT-ShirtTop-undefined",
-            "slug": "black-women-v-neck-strappy-cut-out-long-sleeve-solid-casual-t-shirt-top-en",
-            "tags": [],
-            "vendor": {
-              "_id": "642d353923905bbb8f087dbc",
-              "businessName": "Litekart",
-              "email": "admin@litekart.in",
-              "name": "Swadesh Behera",
-              "phone": "4545454545",
-              "slug": "a1"
-            }
+        "searchParams": {},
+        "facetParams": {
+          "hierarchyPaths": ["/" + categorySlug],
+          "labels": {
+            label: categorySlug
           }
-        ],
-        "facets": {
-          "style_count": {
-            "value": 1
-          },
-          "all_aggs": {
-            "doc_count": 874,
-            "discount": {
-              "doc_count": 1,
-              "all": {
-                "buckets": [
-                  {
-                    "key": "Any",
-                    "from": 0,
-                    "to": 100,
-                    "doc_count": 1
-                  },
-                  {
-                    "key": "10% and above",
-                    "from": 10,
-                    "to": 100,
-                    "doc_count": 1
-                  },
-                  {
-                    "key": "20% and above",
-                    "from": 20,
-                    "to": 100,
-                    "doc_count": 1
-                  },
-                  {
-                    "key": "30% and above",
-                    "from": 30,
-                    "to": 100,
-                    "doc_count": 1
-                  },
-                  {
-                    "key": "40% and above",
-                    "from": 40,
-                    "to": 100,
-                    "doc_count": 1
-                  },
-                  {
-                    "key": "50% and above",
-                    "from": 50,
-                    "to": 100,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "60% and above",
-                    "from": 60,
-                    "to": 100,
-                    "doc_count": 0
-                  }
-                ]
-              }
-            },
-            "vendor_name": {
-              "doc_count": 1,
-              "all": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": []
-              }
-            },
-            "active": {
-              "doc_count": 1,
-              "all": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": [
-                  {
-                    "key": 1,
-                    "key_as_string": "true",
-                    "doc_count": 1
-                  }
-                ]
-              }
-            },
-            "genders": {
-              "doc_count": 1,
-              "all": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": []
-              }
-            },
-            "core_values": {
-              "doc_count": 1,
-              "all": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": []
-              }
-            },
-            "colors": {
-              "doc_count": 1,
-              "all": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": [
-                  {
-                    "key": "#000000",
-                    "doc_count": 1
-                  }
-                ]
-              }
-            },
-            "tags": {
-              "doc_count": 1,
-              "all": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": []
-              }
-            },
-            "vendor_country": {
-              "doc_count": 1,
-              "all": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": []
-              }
-            },
-            "materials": {
-              "doc_count": 1,
-              "all": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": []
-              }
-            },
-            "price": {
-              "doc_count": 1,
-              "all": {
-                "buckets": [
-                  {
-                    "key": "Under $250",
-                    "to": 250,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "₹250 - ₹500",
-                    "from": 250,
-                    "to": 500,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "₹500 - ₹1,000",
-                    "from": 500,
-                    "to": 1000,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "₹1,000 - ₹2,000",
-                    "from": 1000,
-                    "to": 2000,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "₹2,000 - ₹3,000",
-                    "from": 2000,
-                    "to": 3000,
-                    "doc_count": 1
-                  },
-                  {
-                    "key": "₹3,000 - ₹5,000",
-                    "from": 3000,
-                    "to": 5000,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "Over ₹5,000",
-                    "from": 5000,
-                    "doc_count": 0
-                  }
-                ]
-              }
-            },
-            "lead_time": {
-              "doc_count": 1,
-              "all": {
-                "buckets": [
-                  {
-                    "key": "3 days or less",
-                    "from": 0,
-                    "to": 4,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "6 days or less",
-                    "from": 0,
-                    "to": 7,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "9 days or less",
-                    "from": 0,
-                    "to": 10,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "14 days or less",
-                    "from": 0,
-                    "to": 15,
-                    "doc_count": 0
-                  }
-                ]
-              }
-            },
-            "attributes": {
-              "doc_count": 1,
-              "all": {
-                "doc_count": 0,
-                "key": {
-                  "doc_count_error_upper_bound": 0,
-                  "sum_other_doc_count": 0,
-                  "buckets": []
-                }
-              }
-            },
-            "vendor_minimum": {
-              "doc_count": 1,
-              "all": {
-                "buckets": [
-                  {
-                    "key": "No minimum",
-                    "from": 0,
-                    "to": 1,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "₹100 or less",
-                    "from": 0,
-                    "to": 100,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "₹200 or less",
-                    "from": 0,
-                    "to": 200,
-                    "doc_count": 0
-                  },
-                  {
-                    "key": "₹300 or less",
-                    "from": 0,
-                    "to": 300,
-                    "doc_count": 0
-                  }
-                ]
-              }
-            },
-            "categories": {
-              "doc_count": 4,
-              "all": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": [
-                  {
-                    "key": "books-en-en",
-                    "doc_count": 1
-                  },
-                  {
-                    "key": "fashion-women",
-                    "doc_count": 1
-                  },
-                  {
-                    "key": "women-cosmetic",
-                    "doc_count": 1
-                  },
-                  {
-                    "key": "women-jewellery",
-                    "doc_count": 1
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "category": {
-          "_id": "63b8f1fee497e2c0976880f5",
-          "children": [],
-          "name": "Books",
-          "slug": "books-en-en",
-          "img": null,
-          "keywords": "books",
-          "metaDescription": "",
-          "description": "<p>test description<br></p>",
-          "topDescription": "<p>test top description<br></p>",
-          "cache": "HIT"
         }
-      }
+      },
+      origin
+    )
 
+    res = {
+      count: p?.numberOfElements,
+      pageSize: p?.size,
+      noOfPage: p?.number,
+      maxPage: p?.totalPages,
+      estimatedTotalHits: p?.totalElements
+    }
 
-		products = res?.data?.map((p) => {
-			if (p._source) {
-				const p1 = { ...p._source }
-				p1.id = p._id
-				return p1
-			} else {
-				return p
-			}
-		})
+    products = p?.content?.map((p) => mapProdexajsProduct2(p))
+
 		count = res?.count
 		facets = res?.facets
 		pageSize = res?.pageSize

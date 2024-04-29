@@ -19,8 +19,8 @@ export const mapProdexajsAllProducts = (p: any) => {
 export const mapProdexajsProduct = (p: any) => {
   if (p) {
     const prod: Product = {
-      _id: p.id,
-      id: p.id,
+      _id: p.productId,
+      id: p.productId,
       // createdAt: p.variants[0].created_at,
       // updatedAt: p.variants[0].updated_at,
       // deleted_at: p.variants[0].deleted_at,
@@ -89,6 +89,22 @@ export const mapProdexajsProduct = (p: any) => {
           }
       })
       // sales_channels: p.sales_channels,
+    }
+    return prod
+  } else {
+    return {}
+  }
+}
+
+export const mapProdexajsProduct2 = (p: any) => {
+  if (p) {
+    const prod: Product = {
+      _id: p.productId,
+      id: p.productId,
+
+      status: p.statusId,
+      slug: p.catalogId,
+      name: p["attrValue_string_ShortDescription_en-GB"][0]
     }
     return prod
   } else {
