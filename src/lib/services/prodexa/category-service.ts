@@ -1,6 +1,7 @@
 import {error} from '@sveltejs/kit'
 import {getAPI} from '$lib/utils/api'
 import {getBySid} from '$lib/utils/server'
+import { mapProdexajsCategoryClassification } from './prodexa-utils'
 
 const isServer = import.meta.env.SSR
 
@@ -88,7 +89,7 @@ export const fetchAllCategories = async ({
       )
     }
     const cl_mapped_data = res.content.map((category: any) => {
-      return mapProdexaClassification(category)
+      return mapProdexajsCategoryClassification(category)
     })
 
 		const currentPage = res.pageable.pageNumber
@@ -173,7 +174,7 @@ export const fetchMegamenuData = async ({
       )
     }
     const cl_mapped_data = data.content.map((category: any) => {
-      return mapProdexaClassification(category)
+      return mapProdexajsCategoryClassification(category)
     })
 
     console.log(cl_mapped_data)
@@ -193,21 +194,5 @@ export const fetchMegamenuData = async ({
 }
 
 
-export const mapProdexaClassification = (c: any) => {
-  if (c) {
-    const r: Category = {
-      id: c.classificationId,
-      name: c.fallbackDescription,
-      slug: c.classificationId,
-      children: c.category_children
-        ? c.category_children.map((i: any) => {
-          if (i) return mapProdexajsCategory(i)
-        })
-        : []
-    }
-    return r
-  } else {
-    return {}
-  }
-}
+
 
