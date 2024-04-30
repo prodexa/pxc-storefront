@@ -2,7 +2,7 @@ import {error} from '@sveltejs/kit'
 import {getAPI, post} from '$lib/utils/api'
 import {getBySid} from '$lib/utils/server'
 import type {AllProducts, Product} from '$lib/types'
-import {mapProdexajsProduct2} from "./prodexa-utils";
+import {mapProdexajsProduct} from "./prodexa-utils";
 
 const isServer = import.meta.env.SSR
 
@@ -177,8 +177,7 @@ export const fetchProductsOfCategory = async ({
       maxPage: p?.totalPages,
       estimatedTotalHits: p?.totalElements
     }
-
-    products = p?.content?.map((p) => mapProdexajsProduct2(p))
+    products = p?.content?.map((p) => mapProdexajsProduct(p))
 
 		count = res?.count
 		facets = res?.facets

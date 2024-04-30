@@ -177,8 +177,6 @@ export const fetchMegamenuData = async ({
       return mapProdexajsCategoryClassification(category)
     })
 
-    console.log(cl_mapped_data)
-
     const r: Groups = [{
       id: 'Groups',
       name: 'Groups',
