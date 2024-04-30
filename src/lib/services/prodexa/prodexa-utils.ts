@@ -3,13 +3,14 @@ import type { AllOrders, AllProducts, Category, Order, Product, Cart } from '$li
 export const mapProdexajsAllProducts = (p: any) => {
   if (p) {
     const allProd: AllProducts = {
-      count: p.count,
+      count: p?.totalElements,
       // currentPage: p.currentPage,
       // pageSize: p.pageSize,
-      limit: p.limit,
-      products: p.products.forEach(mapProdexajsProduct),
-      facets: p.facets
+      limit: p?.size,
+      products: p?.content?.map((p) => mapProdexajsProduct(p)),
+      facets: p?.facets
     }
+    // console.log('allProd', allProd)
     return allProd
   } else {
     return {}

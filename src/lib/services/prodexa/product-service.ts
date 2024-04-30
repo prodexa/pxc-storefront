@@ -2,7 +2,7 @@ import {error} from '@sveltejs/kit'
 import {getAPI, post} from '$lib/utils/api'
 import {getBySid} from '$lib/utils/server'
 import type {AllProducts, Product} from '$lib/types'
-import {mapProdexajsProduct} from "./prodexa-utils";
+import {mapProdexajsProduct, mapProdexajsAllProducts} from "./prodexa-utils";
 
 const isServer = import.meta.env.SSR
 
@@ -93,6 +93,14 @@ export const fetchProducts = async ({
 
     console.log('fetchProducts')
 
+
+    let count = 0
+    let facets = ''
+    let pageSize = 0
+    let category = {}
+    let err = ''
+    let currentPage = 0
+
     let res: AllProducts | {} = {}
     let products = []
 		// if (isServer || isCors) {
@@ -101,31 +109,36 @@ export const fetchProducts = async ({
 		// 	res = await getAPI(`es/products?store=${storeId}&${query}`, origin)
 		// }
 
+    // console.log('q=', query)
+    // pxmPageNumber starts from 0
+    const matchPage = query.match('(page=(\\d*))');
+    let pxmPageNumber = 0
+    if(matchPage){
+      pxmPageNumber = Number(matchPage[2]) - 1;
+    }
+    // console.log('pxmPageNumber=', pxmPageNumber)
+    const matchQ = query.match('(q)=([^&=]+)');
+    let q = ''
+    if(matchQ){
+      q = matchQ[2];
+    }
+    // console.log('q=', q)
     const p = await post(
-      `/products/search?${query}`,
+      `/products/search?searchValue=${q}&page=${pxmPageNumber}`,
       {
         "searchParams": {},
-        "facetParams": {
-          "hierarchyPaths": ["/" ],
-          "labels": {
-
-          }
-        }
       },
       origin
     )
-    products = p?.content?.map((p) => mapProdexajsProduct(p))
 
-    res = {
-      count: p?.totalElements,
-      pageSize: p?.size,
-      noOfPage: p?.number,
-      maxPage: p?.totalPages,
-      estimatedTotalHits: p?.totalElements,
-      data: products
-    }
+    // products = p?.content?.map((p) => mapProdexajsProduct(p))
+    // console.log('products=', products)
 
-		return res?.data || []
+    res = mapProdexajsAllProducts(p)
+    // console.log('res=', res)
+
+     return res || {}
+
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
@@ -218,15 +231,20 @@ export const fetchProductsOfCategory = async ({
 
     // console.log('q=', query)
     // pxmPageNumber starts from 0
-    const match = query.match('(page=(\\d*))');
+    const matchPage = query.match('(page=(\\d*))');
     let pxmPageNumber = 0
-    if(match){
-      pxmPageNumber = Number(match[2]) - 1;
+    if(matchPage){
+      pxmPageNumber = Number(matchPage[2]) - 1;
     }
     // console.log('pxmPageNumber=', pxmPageNumber)
-
+    const matchQ = query.match('(q)=([^&=]+)');
+    let q = ''
+    if(matchQ){
+      q = matchQ[2];
+    }
+    // console.log('q=', q)
     const p = await post(
-      `/products/search?page=${pxmPageNumber}`,
+      `/products/search?searchValue=${q}&page=${pxmPageNumber}`,
       {
         "searchParams": {},
         "facetParams": {
