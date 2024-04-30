@@ -19,11 +19,17 @@ export const mapProdexajsAllProducts = (p: any) => {
 
 export const mapProdexajsProduct = (p: any) => {
   if (p) {
+
+    let img = ''
+    if(p?.docAssociations?.length > 0){
+      img =  "workarea/" + p?.docAssociations[0].docAssociation_path
+    }
+
     const prod: Product = {
       _id: p.productId,
       id: p.productId,
 
-      // img: "/workarea/" + p.docAssociations[0].docAssociation_path,
+      img: img,
 
       status: p.statusId,
       slug: p.catalogId,
