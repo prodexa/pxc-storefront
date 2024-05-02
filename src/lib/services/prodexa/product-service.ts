@@ -12,10 +12,8 @@ const isServer = import.meta.env.SSR
 // Search product
 
 export const searchProducts = async ({ origin, query, storeId, sid = null }) => {
-	try {
-
-    console.log('searchProducts')
-
+  console.log('searchProducts')
+  try {
 		let category = ''
 		let count = 0
 		let err = ''
@@ -92,9 +90,8 @@ export const fetchProducts = async ({
 	slug,
 	storeId
 }: any) => {
-	try {
-    console.log('fetchProducts')
-
+  console.log('fetchProducts')
+  try {
     let count = 0
     let facets = ''
     let pageSize = 0
@@ -144,7 +141,9 @@ export const fetchProducts = async ({
 }
 
 export const fetchReels = async ({ origin, storeId, slug, id, sid = null }: any) => {
-	try {
+  console.log('fetchReels')
+
+  try {
 		let res: AllProducts | {} = {}
 
 		if (isServer) {
@@ -168,27 +167,19 @@ export const fetchProduct = async ({ origin, slug, id, storeId, isCors = false, 
 
   try {
 		let res: Product | object = {}
-
 		// if (isServer || isCors) {
 		// 	res = await getBySid(`es/products/${slug || id}?store=${storeId}`, sid)
 		// } else {
 		// 	res = await getAPI(`es/products/${slug || id}?store=${storeId}`, origin)
 		// }
-
-    // TODO fix id
-    // product-editor/products/CarParts/166190
-    // const p = await getAPI(
-    //     `/product-editor/products/${slug}/${id}`,
-    //      origin
-    // )
+    const slug1 = slug.replace('___', '/')
+    console.log('slug', slug)
     const p = await getAPI(
-      `/product-editor/products/CarParts/166190`,
-      origin
+        `/product-editor/products/${slug1}`,
+         origin
     )
-    // console.log(p)
-    // console.log( slug, id)
     res = mapProdexajsProduct(p)
-    // console.log('res=', res)
+    console.log('fetchProduct res=', res)
 
 		return res || {}
 	} catch (e) {
@@ -200,6 +191,7 @@ export const fetchProduct = async ({ origin, slug, id, storeId, isCors = false, 
 
 export const fetchProduct2 = async ({ origin, slug, storeId, id, sid = null }) => {
   console.log('fetchProduct2')
+
   try {
 		let res: Product | object = {}
 		// if (isServer) {
@@ -208,20 +200,16 @@ export const fetchProduct2 = async ({ origin, slug, storeId, id, sid = null }) =
 		// 	res = await getAPI(`es/products2/${slug || id}?store=${storeId}`, origin)
 		// }
 
-    // TODO fix id
-    // product-editor/products/CarParts/166190
-    // const p = await getAPI(
-    //     `/product-editor/products/${slug}/${id}`,
-    //      origin
-    // )
+    const slug1 = slug.replace('___', '/')
+    // console.log('slug1', slug1)
     const p = await getAPI(
-      `/product-editor/products/CarParts/166190`,
+      `/product-editor/products/${slug1}`,
       origin
     )
     // console.log(p)
     // console.log(slug, id)
     res = mapProdexajsProduct(p)
-    console.log('res=', res)
+    console.log('fetchProduct2 res=', res)
 
     return res || {}
 
@@ -240,6 +228,8 @@ export const fetchProductsOfCategory = async ({
 	storeId,
 	zip = null
 }) => {
+  console.log('fetchProductsOfCategory')
+
 	try {
 		let res = {}
 		let products: Product[] = []
@@ -249,8 +239,6 @@ export const fetchProductsOfCategory = async ({
 		let category = {}
 		let err = ''
     let currentPage = 0
-
-    console.log('fetchProductsOfCategory')
 
 		// if (isServer) {
 		// 	res = await getBySid(
@@ -338,11 +326,11 @@ export const fetchNextPageProducts = async ({
 	searchParams = {},
 	sid = null
 }) => {
+  console.log('fetchNextPageProducts')
+
 	try {
 		let nextPageData = []
 		let res = {}
-
-    console.log('fetchNextPageProducts')
 
 		// if (isServer || isCors) {
 		// 	res = await getBySid(
@@ -408,6 +396,8 @@ export const fetchRelatedProducts = async ({
 	pid,
 	sid = null
 }) => {
+  console.log('fetchRelatedProducts')
+
 	try {
 		let relatedProductsRes = {}
 

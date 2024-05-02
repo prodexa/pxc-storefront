@@ -22,24 +22,35 @@ export const mapProdexajsProduct = (p: any) => {
   if (p) {
 
     let img = ''
-    if(p?.docAssociations?.length > 0){
-      img =  "workarea/" + p?.docAssociations[0].docAssociation_path
+    if (p?.docAssociations?.length > 0) {
+      img = "workarea/" + p?.docAssociations[0].docAssociation_path
     }
 
     // TODO lang
-    let name = p.values?.ShortDescription['en-GB']
+    let name = undefined
+    if (p.values?.ShortDescription !== undefined) {
+      name = p.values?.ShortDescription['en-GB']
+    }
     if (name === undefined) {
-      name = p["attrValue_string_ShortDescription_en-GB"] ?? [0]
+      if (p["attrValue_string_ShortDescription_en-GB"] !== undefined) {
+        name = p["attrValue_string_ShortDescription_en-GB"][0]
+      }
+    }
+
+    let description = undefined
+    if (p.values?.LongDescription !== undefined) {
+      description = p.values?.LongDescription['en-GB']
     }
 
     const prod: Product = {
-      _id: p.productId,
-      id: p.productId,
+      _id: p.catalogId + '___' + p.productId,
+      id:  p.catalogId + '___' + p.productId,
+      slug: p.catalogId + '___' + p.productId,
+
       img,
       status: p.statusId,
-      slug: p.catalogId,
       name,
-      description: p.values?.LongDescription['en-GB']
+      description
     }
     return prod
   } else {
