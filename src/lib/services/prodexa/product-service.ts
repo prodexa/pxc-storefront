@@ -2,7 +2,10 @@ import {error} from '@sveltejs/kit'
 import {getAPI, post} from '$lib/utils/api'
 import {getBySid} from '$lib/utils/server'
 import type {AllProducts, Product} from '$lib/types'
-import {mapProdexajsProduct, mapProdexajsAllProducts} from "./prodexa-utils";
+import {
+  mapProdexajsProduct,
+  mapProdexajsAllProducts
+} from "./prodexa-utils";
 
 const isServer = import.meta.env.SSR
 
@@ -62,7 +65,7 @@ export const searchProducts = async ({ origin, query, storeId, sid = null }) => 
       noOfPage: p?.number,
       maxPage: p?.totalPages,
       estimatedTotalHits: p?.totalElements,
-      category: categorySlug
+      category: category
     }
     products = p?.content?.map((p) => mapProdexajsProduct(p))
 
@@ -161,14 +164,32 @@ export const fetchReels = async ({ origin, storeId, slug, id, sid = null }: any)
 // Fetch single product
 
 export const fetchProduct = async ({ origin, slug, id, storeId, isCors = false, sid }) => {
-	try {
+  console.log('fetchProduct')
+
+  try {
 		let res: Product | object = {}
 
-		if (isServer || isCors) {
-			res = await getBySid(`es/products/${slug || id}?store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`es/products/${slug || id}?store=${storeId}`, origin)
-		}
+		// if (isServer || isCors) {
+		// 	res = await getBySid(`es/products/${slug || id}?store=${storeId}`, sid)
+		// } else {
+		// 	res = await getAPI(`es/products/${slug || id}?store=${storeId}`, origin)
+		// }
+
+    // TODO fix id
+    // product-editor/products/CarParts/166190
+    // const p = await getAPI(
+    //     `/product-editor/products/${slug}/${id}`,
+    //      origin
+    // )
+    const p = await getAPI(
+      `/product-editor/products/CarParts/166190`,
+      origin
+    )
+    // console.log(p)
+    // console.log( slug, id)
+    res = mapProdexajsProduct(p)
+    // console.log('res=', res)
+
 		return res || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
@@ -178,14 +199,32 @@ export const fetchProduct = async ({ origin, slug, id, storeId, isCors = false, 
 // Fetch products more requirements
 
 export const fetchProduct2 = async ({ origin, slug, storeId, id, sid = null }) => {
-	try {
+  console.log('fetchProduct2')
+  try {
 		let res: Product | object = {}
-		if (isServer) {
-			res = await getBySid(`es/products2/${slug || id}?store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`es/products2/${slug || id}?store=${storeId}`, origin)
-		}
-		return res || {}
+		// if (isServer) {
+		// 	res = await getBySid(`es/products2/${slug || id}?store=${storeId}`, sid)
+		// } else {
+		// 	res = await getAPI(`es/products2/${slug || id}?store=${storeId}`, origin)
+		// }
+
+    // TODO fix id
+    // product-editor/products/CarParts/166190
+    // const p = await getAPI(
+    //     `/product-editor/products/${slug}/${id}`,
+    //      origin
+    // )
+    const p = await getAPI(
+      `/product-editor/products/CarParts/166190`,
+      origin
+    )
+    // console.log(p)
+    // console.log(slug, id)
+    res = mapProdexajsProduct(p)
+    console.log('res=', res)
+
+    return res || {}
+
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}

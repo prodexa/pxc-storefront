@@ -1,4 +1,4 @@
-import type { AllOrders, AllProducts, Category, Order, Product, Cart } from '$lib/types'
+import type {AllOrders, AllProducts, Category, Order, Product} from '$lib/types'
 
 export const mapProdexajsAllProducts = (p: any) => {
   if (p) {
@@ -26,15 +26,20 @@ export const mapProdexajsProduct = (p: any) => {
       img =  "workarea/" + p?.docAssociations[0].docAssociation_path
     }
 
+    // TODO lang
+    let name = p.values?.ShortDescription['en-GB']
+    if (name === undefined) {
+      name = p["attrValue_string_ShortDescription_en-GB"] ?? [0]
+    }
+
     const prod: Product = {
       _id: p.productId,
       id: p.productId,
-
-      img: img,
-
+      img,
       status: p.statusId,
       slug: p.catalogId,
-      name: p["attrValue_string_ShortDescription_en-GB"][0]
+      name,
+      description: p.values?.LongDescription['en-GB']
     }
     return prod
   } else {
