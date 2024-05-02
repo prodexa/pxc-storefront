@@ -79,7 +79,7 @@ export const searchProducts = async ({ origin, query, storeId, sid = null }) => 
 }
 
 // Fetch all products
-
+// called from search field
 export const fetchProducts = async ({
 	id,
 	query = '',
@@ -90,9 +90,7 @@ export const fetchProducts = async ({
 	storeId
 }: any) => {
 	try {
-
     console.log('fetchProducts')
-
 
     let count = 0
     let facets = ''
@@ -101,8 +99,8 @@ export const fetchProducts = async ({
     let err = ''
     let currentPage = 0
 
-    let res: AllProducts | {} = {}
-    let products = []
+    //let res: AllProducts | {} = {}
+
 		// if (isServer || isCors) {
 		// 	res = await getBySid(`es/products?store=${storeId}&${query}`, sid)
 		// } else {
@@ -131,13 +129,11 @@ export const fetchProducts = async ({
       origin
     )
 
-    // products = p?.content?.map((p) => mapProdexajsProduct(p))
+    // const products = p?.content?.map((p) => mapProdexajsProduct(p))
     // console.log('products=', products)
-
-    res = mapProdexajsAllProducts(p)
-    // console.log('res=', res)
-
-     return res || {}
+    const result  = mapProdexajsAllProducts(p)
+    // console.log('result=', result)
+    return result || []
 
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
@@ -196,7 +192,7 @@ export const fetchProduct2 = async ({ origin, slug, storeId, id, sid = null }) =
 }
 
 // Fetch products based on category
-
+// called when selecting group
 export const fetchProductsOfCategory = async ({
 	categorySlug,
 	origin,

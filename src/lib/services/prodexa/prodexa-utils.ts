@@ -4,10 +4,10 @@ export const mapProdexajsAllProducts = (p: any) => {
   if (p) {
     const allProd: AllProducts = {
       count: p?.totalElements,
-      // currentPage: p.currentPage,
-      // pageSize: p.pageSize,
+      currentPage: p?.number + 1 ,
+      pageSize: p?.size,
       limit: p?.size,
-      products: p?.content?.map((p) => mapProdexajsProduct(p)),
+      data: p?.content?.map((p) => mapProdexajsProduct(p)),
       facets: p?.facets
     }
     // console.log('allProd', allProd)
