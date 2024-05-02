@@ -1,4 +1,4 @@
-import type {AllOrders, AllProducts, Category, Order, Product} from '$lib/types'
+import type {AllOrders, AllProducts, Category, Order, Product, Brand} from '$lib/types'
 
 export const mapProdexajsAllProducts = (p: any) => {
   if (p) {
@@ -42,6 +42,19 @@ export const mapProdexajsProduct = (p: any) => {
       description = p.values?.LongDescription['en-GB']
     }
 
+    let price = undefined
+    if (p.prices !== undefined) {
+      price = p.prices[0]?.price
+    }
+
+    const brand: Brand = {
+      id: p.manufacturerId,
+      name: p.manufacturerId,
+      slug: p.manufacturerId,
+      
+    }
+
+
     const prod: Product = {
       _id: p.catalogId + '___' + p.productId,
       id:  p.catalogId + '___' + p.productId,
@@ -50,7 +63,9 @@ export const mapProdexajsProduct = (p: any) => {
       img,
       status: p.statusId,
       name,
-      description
+      description,
+      price,
+      brand,
     }
     return prod
   } else {
