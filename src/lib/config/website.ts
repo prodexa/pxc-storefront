@@ -14,8 +14,8 @@ export const keywords = 'ecommerce, headless, pwa'
 export const logo = Logo
 export const phone = '+91-8249028220'
 export const websiteLegalName = 'Prodexa Gmbh'
-export const websiteName = 'Prodexa'
-export const saasName = 'Prodexa'
+export const websiteName = 'prodexa'
+export const saasName = 'prodexa'
 export const saasDomain = 'https://prodexa.com'
 // All above data will be replaced by Footer.svelte after the server/store call and saved to cookie
 
