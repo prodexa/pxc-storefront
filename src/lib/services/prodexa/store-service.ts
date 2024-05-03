@@ -85,7 +85,8 @@ export const getStoreData = async ({
 		websiteLegalName,
 		websiteName,
 		weightUnit,
-		whatsappChatButton: {}
+		whatsappChatButton: {},
+    imageCdn: {},
 	}
 
 	let megamenu = null
@@ -155,7 +156,9 @@ export const getStoreData = async ({
 			websiteLegalName: storeRes?.storeOne?.websiteLegalName,
 			websiteName: storeRes?.storeOne?.websiteName,
 			weightUnit: storeRes?.storeOne?.weightUnit,
-			whatsappChatButton: storeRes?.storeOne?.whatsappChatButton
+			whatsappChatButton: storeRes?.storeOne?.whatsappChatButton,
+
+      imageCdn:  storeRes?.storeOne?.imageCdn,
 		}
 
 		megamenu = storeRes.megamenu

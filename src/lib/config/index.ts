@@ -49,7 +49,7 @@ export const SHOPIFY_BASE_URL = `https://api.shopify.com`
 export const siteShortTitle = 'Litekart' // used as SchemaOrg siteTitleAlt
 export const siteTitle = 'Litekart'
 export const sorts = [
-	{ name: 'Recomended', val: null },
+	{ name: 'Recommended', val: null },
 	{ name: `What's New`, val: '-updatedAt' },
 	{ name: 'Price: High to Low ', val: '-price' },
 	{ name: 'Price: Low to High ', val: 'price' },
