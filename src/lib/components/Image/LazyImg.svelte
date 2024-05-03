@@ -99,7 +99,7 @@ if (extension === 'svg') {
 </script>
 
 <div class="relative" style="min-height:{24}px;">
-	{#if IMAGE_CDN_PROVIDER === 'imagekit'}
+  {#if IMAGE_CDN_PROVIDER === 'imagekit'}
 		{#if getCdnImageUrl( { src, IMAGE_CDN_URL, IMAGE_CDN_PROVIDER, NO_QUERY: true } )?.includes('http')}
 			<Image
 				{alt}
@@ -158,4 +158,14 @@ if (extension === 'svg') {
 				class="aspect-[{aspect_ratio?.split(':')[0]}/{aspect_ratio?.split(':')[1]}] lazy {clazz}" />
 		{/if}
 	{/if}
+
+  {#if IMAGE_CDN_PROVIDER === undefined}
+  <img
+    {alt}
+    src="{src}"
+    loading="lazy"
+    height="{+h}"
+    width="{+w}"
+    class="aspect-[{aspect_ratio?.split(':')[0]}/{aspect_ratio?.split(':')[1]}] lazy {clazz}" />
+  {/if}
 </div>

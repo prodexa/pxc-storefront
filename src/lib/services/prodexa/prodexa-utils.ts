@@ -23,8 +23,14 @@ export const mapProdexajsProduct = (p: any) => {
 
     let img = ''
     if (p?.docAssociations?.length > 0) {
-      img = "workarea/" + p?.docAssociations[0].docAssociation_path
+     img = "http://localhost:8082/pxm/workarea/" + p?.docAssociations[0].docAssociation_path
     }
+
+    let images = []
+    if (p?.docAssociations?.length > 0) {
+      images = p?.docAssociations.map((doc) => 'http://localhost:8082/pxm/workarea/'  + doc.path)
+    }
+
 
     // TODO lang
     let name = undefined
@@ -51,7 +57,7 @@ export const mapProdexajsProduct = (p: any) => {
       id: p.manufacturerId,
       name: p.manufacturerId,
       slug: p.manufacturerId,
-      
+
     }
 
 
@@ -61,6 +67,7 @@ export const mapProdexajsProduct = (p: any) => {
       slug: p.catalogId + '___' + p.productId,
 
       img,
+      images,
       status: p.statusId,
       name,
       description,
