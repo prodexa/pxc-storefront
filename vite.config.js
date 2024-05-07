@@ -38,7 +38,11 @@ export default defineConfig(({ command, mode }) => {
 			proxy: {
 				'/api': HTTP_ENDPOINT,
 				'/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in'
-			}
+			},
+      headers:
+        {
+          'PXM_USER':'admin'
+        }
 		}
 	}
 })
