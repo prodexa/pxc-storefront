@@ -8,6 +8,7 @@ export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, process.cwd(), '')
 	// const HTTP_ENDPOINT = env.PUBLIC_LITEKART_API_URL || 'https://api.litekart.in'
   const HTTP_ENDPOINT = env.PUBLIC_PRODEXA_API_URL || 'http://localhost:8082/pxm'
+  const PXM_LOGIN = env.PXM_LOGIN || 'admin'
 	return {
 		plugins: [
 			sveltekit(),
@@ -36,13 +37,16 @@ export default defineConfig(({ command, mode }) => {
 			host: true,
 			port: 3000,
 			proxy: {
-				'/api': HTTP_ENDPOINT,
-				'/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in'
-			},
-      headers:
-        {
-          'PXM_USER':'admin'
-        }
+				'/api':
+          {
+            target: HTTP_ENDPOINT,
+            headers:
+            {
+                PXM_USER:PXM_LOGIN
+            }
+          },
+				'/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in',
+      }
 		}
 	}
 })
