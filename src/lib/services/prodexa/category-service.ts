@@ -2,6 +2,7 @@ import {error} from '@sveltejs/kit'
 import {getAPI} from '$lib/utils/api'
 import {getBySid} from '$lib/utils/server'
 import { mapProdexajsCategoryClassification } from './prodexa-utils'
+import type { Category} from '$lib/types'
 
 const isServer = import.meta.env.SSR
 
@@ -12,6 +13,7 @@ export const fetchFooterCategories = async ({
 	sid = null,
 	storeId
 }) => {
+  // console.log('fetchFooterCategories')
 	try {
 		let data: []
 
@@ -41,6 +43,7 @@ export const fetchCategory = async ({
 	sid = null,
 	storeId
 }) => {
+  // console.log('fetchCategory')
 	try {
 		let res = {}
 
@@ -49,7 +52,6 @@ export const fetchCategory = async ({
 		} else {
 			res = await getAPI(`es/categories/${id}?store=${storeId}&children=${children}`, origin)
 		}
-
 		return res || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
@@ -64,19 +66,9 @@ export const fetchAllCategories = async ({
 	sid = null,
 	storeId
 }) => {
+  // console.log('fetchAllCategories')
 	try {
 		let res = {}
-
-		// let catQ = `categories?store=${storeId}&page=0&limit=${limit || '1000'}`
-		// if (featured) {
-		// 	catQ += '&featured=true'
-		// }
-		// if (isServer || isCors) {
-		// 	res = await getBySid(catQ, sid)
-		// } else {
-		// 	res = await getAPI(catQ, origin)
-		// }
-
     if (isServer || isCors) {
       res = await getBySid(
         `/classifications/search/findAllByParams`,
@@ -88,12 +80,10 @@ export const fetchAllCategories = async ({
         origin
       )
     }
-    const cl_mapped_data = res.content.map((category: any) => {
+    const data = res.content.map((category: any) => {
       return mapProdexajsCategoryClassification(category)
     })
-
-		const currentPage = res.pageable.pageNumber
-		const data = cl_mapped_data
+		const currentPage = res.number + 1
 		const pageSize = res.size
 
 		return { data, pageSize, currentPage }
@@ -109,6 +99,7 @@ export const fetchAllProductsOfCategories = async ({
 	sid = null,
 	storeId
 }) => {
+  // console.log('fetchAllProductsOfCategories')
 	try {
 		let res = {}
 		let products = []
@@ -147,21 +138,9 @@ export const fetchMegamenuData = async ({
 	sid = null,
 	storeId
 }) => {
+  // console.log('fetchMegamenuData')
 	try {
-
     let data: []
-		// if (isServer || isCors) {
-		// 	data = await getBySid(
-		// 		`categories/megamenu?megamenu=${megamenu}&store=${storeId}&active=true`,
-		// 		sid
-		// 	)
-		// } else {
-		// 	data = await getAPI(
-		// 		`categories/megamenu?megamenu=${megamenu}&store=${storeId}&active=true`,
-		// 		origin
-		// 	)
-		// }
-
     if (isServer || isCors) {
       data = await getBySid(
         `/classifications/search/findAllByParams`,
@@ -173,19 +152,16 @@ export const fetchMegamenuData = async ({
         origin
       )
     }
-    const cl_mapped_data = data.content.map((category: any) => {
+    const categories = data.content.map((category: any) => {
       return mapProdexajsCategoryClassification(category)
     })
-
-    const r: Groups = [{
-      id: 'Groups',
-      name: 'Groups',
-      slug: 'groups',
-      children: cl_mapped_data
+    const r: Category = [{
+      id: 'Categories',
+      name: 'Categories',
+      slug: 'categories',
+      children: categories
     }]
-
     return r || []
-
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
