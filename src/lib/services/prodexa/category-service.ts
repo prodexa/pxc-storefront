@@ -17,17 +17,17 @@ export const fetchFooterCategories = async ({
 	try {
 		let data: []
 
-		if (isServer || isCors) {
-			data = await getBySid(
-				`categories?megamenu=${megamenu}&limit=6&page=0&level=0&store=${storeId}`,
-				sid
-			)
-		} else {
-			data = await getAPI(
-				`categories?megamenu=${megamenu}&limit=6&page=0&level=0&store=${storeId}`,
-				origin
-			)
-		}
+		// if (isServer || isCors) {
+		// 	data = await getBySid(
+		// 		`categories?megamenu=${megamenu}&limit=6&page=0&level=0&store=${storeId}`,
+		// 		sid
+		// 	)
+		// } else {
+		// 	data = await getAPI(
+		// 		`categories?megamenu=${megamenu}&limit=6&page=0&level=0&store=${storeId}`,
+		// 		origin
+		// 	)
+		// }
 
 		return data || []
 	} catch (e) {
@@ -46,18 +46,25 @@ export const fetchCategory = async ({
   // console.log('fetchCategory')
 	try {
 		let res = {}
-
-		if (isServer || isCors) {
-			res = await getBySid(`es/categories/${id}?store=${storeId}&children=${children}`, sid)
-		} else {
-			res = await getAPI(`es/categories/${id}?store=${storeId}&children=${children}`, origin)
-		}
-		return res || {}
+    if (isServer || isCors) {
+      res = await getBySid(
+        `/classifications/${id}`,
+        sid
+      )
+    } else {
+      res = await getAPI(
+        `/classifications/${id}`,
+        origin
+      )
+    }
+    const r = mapProdexajsCategoryClassification(res)
+		return r || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
 }
 
+// fill 'POPULAR SEARCHES' section with categories
 export const fetchAllCategories = async ({
 	featured = false,
 	isCors = false,
@@ -66,25 +73,28 @@ export const fetchAllCategories = async ({
 	sid = null,
 	storeId
 }) => {
-  // console.log('fetchAllCategories')
+  // console.log('fetchAllCategories limit=', limit)
 	try {
 		let res = {}
     if (isServer || isCors) {
       res = await getBySid(
-        `/classifications/search/findAllByParams`,
+        `/classifications/search/findAllByParams?page=0&size=${limit || '1000'}`,
         sid
       )
     } else {
       res = await getAPI(
-        `/classifications/search/findAllByParams`,
+        `/classifications/search/findAllByParams?page=0&size=${limit || '1000'}`,
         origin
       )
     }
+
     const data = res.content.map((category: any) => {
       return mapProdexajsCategoryClassification(category)
     })
-		const currentPage = res.number + 1
+
+		const currentPage = res.number
 		const pageSize = res.size
+    // console.log(res)
 
 		return { data, pageSize, currentPage }
 	} catch (e) {
@@ -143,25 +153,28 @@ export const fetchMegamenuData = async ({
     let data: []
     if (isServer || isCors) {
       data = await getBySid(
-        `/classifications/search/findAllByParams`,
+        `/classifications/search/findAllByParams?sort=orderNo,asc`,
         sid
       )
     } else {
       data = await getAPI(
-        `/classifications/search/findAllByParams`,
+        `/classifications/search/findAllByParams?sort=orderNo,asc`,
         origin
       )
     }
     const categories = data.content.map((category: any) => {
       return mapProdexajsCategoryClassification(category)
     })
-    const r: Category = [{
+
+    // to navigate any megamenu item to the categories page
+    // it has to have the slug: 'categories'
+    const r: Category = {
       id: 'Categories',
       name: 'Categories',
       slug: 'categories',
       children: categories
-    }]
-    return r || []
+    }
+    return [r] || []
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}

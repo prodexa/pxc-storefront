@@ -86,6 +86,7 @@ export const mapProdexajsCategoryClassification = (c: any) => {
       id: c.classificationId,
       name: c.fallbackDescription,
       slug: c.classificationId,
+      link: c.classificationId,
       children: c.category_children
         ? c.category_children.map((i: any) => {
           if (i) return mapProdexajsCategoryClassification(i)
