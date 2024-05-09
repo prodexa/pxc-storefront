@@ -60,11 +60,18 @@ export const mapProdexajsProduct = (p: any) => {
 
     }
 
+    const category = p.classificationGroupAssociations?.[0].classificationId
 
     const prod: Product = {
       _id: p.catalogId + '___' + p.productId,
       id:  p.catalogId + '___' + p.productId,
       slug: p.catalogId + '___' + p.productId,
+
+      categoryPool: [{
+        id: category,
+        name: category,
+        slug: category,
+      }],
 
       img,
       images,
