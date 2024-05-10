@@ -3,9 +3,11 @@ import {getAPI, post} from '$lib/utils/api'
 import {getBySid} from '$lib/utils/server'
 import type {AllProducts, Product} from '$lib/types'
 import {
+  mapProdexajsAllProducts,
+  mapProdexajsManufactureFacets,
   mapProdexajsProduct,
-  mapProdexajsAllProducts
-} from "./prodexa-utils";
+}
+  from "./prodexa-utils";
 
 const isServer = import.meta.env.SSR
 
@@ -22,26 +24,6 @@ export const searchProducts = async ({ origin, query, storeId, sid = null }) => 
 		let products = []
 		let res = {}
 		let style_tags = []
-
-		// if (isServer) {
-		// 	res = await getBySid(`es/products?${query}&store=${storeId}`, sid)
-		// } else {
-		// 	res = await getAPI(`es/products?${query}&store=${storeId}`, origin)
-		// }
-		// res = res || {}
-		// products = res?.data?.map((p) => {
-		// 	if (p._source) {
-		// 		const p1 = { ...p._source }
-		// 		p1.id = p._id
-		// 		return p1
-		// 	} else {
-		// 		return p
-		// 	}
-		// })
-		// count = res?.count
-		// facets = res?.facets
-		// pageSize = res?.pageSize
-		// err = !res?.estimatedTotalHits ? 'No result Not Found' : null
 
     const p = await post(
       `/products/search?${query}`,
@@ -79,8 +61,7 @@ export const searchProducts = async ({ origin, query, storeId, sid = null }) => 
 	}
 }
 
-// Fetch all products
-// called from search field
+// Fetch all products called from the search field
 export const fetchProducts = async ({
 	id,
 	query = '',
@@ -98,14 +79,6 @@ export const fetchProducts = async ({
     let category = {}
     let err = ''
     let currentPage = 0
-
-    //let res: AllProducts | {} = {}
-
-		// if (isServer || isCors) {
-		// 	res = await getBySid(`es/products?store=${storeId}&${query}`, sid)
-		// } else {
-		// 	res = await getAPI(`es/products?store=${storeId}&${query}`, origin)
-		// }
 
     // console.log('q=', query)
     // pxmPageNumber starts from 0
@@ -129,8 +102,6 @@ export const fetchProducts = async ({
       origin
     )
 
-    // const products = p?.content?.map((p) => mapProdexajsProduct(p))
-    // console.log('products=', products)
     const result  = mapProdexajsAllProducts(p)
     // console.log('result=', result)
     return result || []
@@ -146,11 +117,8 @@ export const fetchReels = async ({ origin, storeId, slug, id, sid = null }: any)
   try {
 		let res: AllProducts | {} = {}
 
-		if (isServer) {
-			res = await getBySid(`reels?store=${storeId}`, sid)
-		} else {
-			res = await getAPI(`reels?store=${storeId}`, origin)
-		}
+		// TODO
+
 		res.data = res.data.map((d) => {
 			return { ...d, muted: false }
 		})
@@ -161,25 +129,18 @@ export const fetchReels = async ({ origin, storeId, slug, id, sid = null }: any)
 }
 
 // Fetch single product
-
 export const fetchProduct = async ({ origin, slug, id, storeId, isCors = false, sid }) => {
   console.log('fetchProduct')
-
   try {
 		let res: Product | object = {}
-		// if (isServer || isCors) {
-		// 	res = await getBySid(`es/products/${slug || id}?store=${storeId}`, sid)
-		// } else {
-		// 	res = await getAPI(`es/products/${slug || id}?store=${storeId}`, origin)
-		// }
     const slug1 = slug.replace('___', '/')
-    console.log('slug', slug)
+    // console.log('slug', slug)
     const p = await getAPI(
         `/product-editor/products/${slug1}`,
          origin
     )
     res = mapProdexajsProduct(p)
-    console.log('fetchProduct res=', res)
+    // console.log('fetchProduct res=', res)
 
 		return res || {}
 	} catch (e) {
@@ -188,38 +149,23 @@ export const fetchProduct = async ({ origin, slug, id, storeId, isCors = false, 
 }
 
 // Fetch products more requirements
-
 export const fetchProduct2 = async ({ origin, slug, storeId, id, sid = null }) => {
   console.log('fetchProduct2')
-
   try {
 		let res: Product | object = {}
-		// if (isServer) {
-		// 	res = await getBySid(`es/products2/${slug || id}?store=${storeId}`, sid)
-		// } else {
-		// 	res = await getAPI(`es/products2/${slug || id}?store=${storeId}`, origin)
-		// }
-
     const slug1 = slug.replace('___', '/')
-    // console.log('slug1', slug1)
     const p = await getAPI(
       `/product-editor/products/${slug1}`,
       origin
     )
-    // console.log(p)
-    // console.log(slug, id)
     res = mapProdexajsProduct(p)
-    console.log('fetchProduct2 res=', res)
-
     return res || {}
-
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
 }
 
-// Fetch products based on category
-// called when selecting group
+// Fetch products based on category called when selecting category
 export const fetchProductsOfCategory = async ({
 	categorySlug,
 	origin,
@@ -240,19 +186,8 @@ export const fetchProductsOfCategory = async ({
 		let err = ''
     let currentPage = 0
 
-		// if (isServer) {
-		// 	res = await getBySid(
-		// 		`es/products?categories=${categorySlug}&zip=${zip || ''}&store=${storeId}&${query}`,
-		// 		sid
-		// 	)
-		// } else {
-		// 	res = await getAPI(
-		// 		`es/products?categories=${categorySlug}&zip=${zip || ''}&store=${storeId}&${query}`,
-		// 		origin
-		// 	)
-		// }
+    console.log('query', query)
 
-    // console.log('q=', query)
     // pxmPageNumber starts from 0
     const matchPage = query.match('(page=(\\d*))');
     let pxmPageNumber = 0
@@ -266,21 +201,61 @@ export const fetchProductsOfCategory = async ({
       q = matchQ[2];
     }
     // console.log('q=', q)
+
+    // pxm api search only one manufacturerId facet, more is not allowed
+    // manufacturerId
+    // brands=samsung%2CSpax
+    const matchBrands = query.match('(brands)=([^&=]+)');
+    let matchBrandsQ = ''
+    if(matchBrands){
+      matchBrandsQ = matchBrands[2];
+    }
+    // console.log('matchBrandsQ=', matchBrandsQ)
+
+
     const p = await post(
       `/products/search?searchValue=${q}&page=${pxmPageNumber}`,
       {
-        "searchParams": {},
-        "facetParams": {
-          "hierarchyPaths": ["/" + categorySlug],
-          "labels": {
+        searchParams: {
+        },
+        facetParams: {
+          hierarchyPaths: ["/" + categorySlug],
+          labels: {
             ["/" + categorySlug]: categorySlug
-          }
+          },
+          manufacturerId: matchBrandsQ,
         }
       },
       origin
     )
     products = p?.content?.map((p) => mapProdexajsProduct(p))
     // console.log('products=', products)
+    // console.log('p=', p)
+
+    // facets
+    const manufacturerFacetsPxm = await post(
+      `/products/search/facets/fields/manufacturerId`,
+      {
+        "searchParams": {},
+        "facetParams": {
+        }
+      },
+      origin
+    )
+    // console.log('manufacturerFacetsPxm=', manufacturerFacetsPxm)
+    const manufacturerFacets = mapProdexajsManufactureFacets(manufacturerFacetsPxm)
+    // console.log('manufacturerFacets=', manufacturerFacets)
+
+    const allFacets = {
+      "all_aggs": {
+        doc_count: 1,
+        brands: manufacturerFacets,
+      }
+    }
+
+    // console.log('allFacets=', allFacets)
+    // --- facets
+
 
     res = {
       count: p?.totalElements,
@@ -288,9 +263,9 @@ export const fetchProductsOfCategory = async ({
       noOfPage: p?.number,
       maxPage: p?.totalPages,
       estimatedTotalHits: p?.totalElements,
-      category: categorySlug
+      category: categorySlug,
+      facets: allFacets,
     }
-
 		count = res?.count
 		facets = res?.facets
 		pageSize = res?.pageSize

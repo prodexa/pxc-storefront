@@ -1,4 +1,4 @@
-import type {AllOrders, AllProducts, Category, Order, Product, Brand} from '$lib/types'
+import type {Facet, AllOrders, AllProducts, Category, Order, Product, Brand} from '$lib/types'
 
 export const mapProdexajsAllProducts = (p: any) => {
   if (p) {
@@ -105,6 +105,7 @@ export const mapProdexajsCategoryClassification = (c: any) => {
     return {}
   }
 }
+
 
 export const mapMedusajsAllOrders = (o: any) => {
   if (o) {
@@ -286,4 +287,30 @@ export const mapMedusajsCart = (c: any) => {
   return null
 }
 
+export const mapProdexajsManufactureFacets = (f: any) => {
+  if (f) {
+    const buckets = f.map((p) => mapProdexajsManufactureFacet(p))
+    const allF = {
+      doc_count: 1,
+      all: {
+        buckets
+      }
+    }
+    // console.log('allProd', allProd)
+    return allF
+  } else {
+    return {}
+  }
+}
 
+export const mapProdexajsManufactureFacet = (f: any) => {
+  if (f) {
+    const facet: Facet = {
+      key: f.val,
+      doc_count: f.count,
+    }
+    return facet
+  } else {
+    return {}
+  }
+}

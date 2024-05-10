@@ -13,21 +13,11 @@ export const fetchFooterCategories = async ({
 	sid = null,
 	storeId
 }) => {
-  // console.log('fetchFooterCategories')
+  console.log('fetchFooterCategories')
 	try {
 		let data: []
 
-		// if (isServer || isCors) {
-		// 	data = await getBySid(
-		// 		`categories?megamenu=${megamenu}&limit=6&page=0&level=0&store=${storeId}`,
-		// 		sid
-		// 	)
-		// } else {
-		// 	data = await getAPI(
-		// 		`categories?megamenu=${megamenu}&limit=6&page=0&level=0&store=${storeId}`,
-		// 		origin
-		// 	)
-		// }
+    // TODO
 
 		return data || []
 	} catch (e) {
@@ -64,7 +54,7 @@ export const fetchCategory = async ({
 	}
 }
 
-// fill 'POPULAR SEARCHES' section with categories
+// fill 'POPULAR SEARCHES' section with categories limit = 1000
 export const fetchAllCategories = async ({
 	featured = false,
 	isCors = false,
@@ -153,28 +143,47 @@ export const fetchMegamenuData = async ({
     let data: []
     if (isServer || isCors) {
       data = await getBySid(
-        `/classifications/search/findAllByParams?sort=orderNo,asc`,
+        `/classifications/search/findAllByParams?sort=orderNo,asc&page=0&size=1000`,
         sid
       )
     } else {
       data = await getAPI(
-        `/classifications/search/findAllByParams?sort=orderNo,asc`,
+        `/classifications/search/findAllByParams?sort=orderNo,asc&page=0&size=1000`,
         origin
       )
     }
-    const categories = data.content.map((category: any) => {
+    const allCategories = data.content.map((category: any) => {
       return mapProdexajsCategoryClassification(category)
     })
 
     // to navigate any megamenu item to the categories page
     // it has to have the slug: 'categories'
-    const r: Category = {
-      id: 'Categories',
-      name: 'Categories',
-      slug: 'categories',
-      children: categories
+
+    let menuItems = []
+
+    for (let i = 0; i < 2; i++) {
+      if(allCategories.length > i){
+        const c: Category = {
+          id: allCategories[i].id,
+          name: allCategories[i].name,
+          slug: allCategories[i].slug,
+          children: allCategories[i]
+        }
+        menuItems.push(c)
+      }
     }
-    return [r] || []
+
+    if(allCategories.length > 2){
+      const c: Category = {
+          id: 'otherCategories',
+          name: 'Other categories',
+          slug: 'categories',
+          children: allCategories.slice(2, allCategories.length)
+      }
+      menuItems.push(c)
+    }
+
+    return menuItems || []
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
