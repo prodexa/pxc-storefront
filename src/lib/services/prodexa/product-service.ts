@@ -238,6 +238,9 @@ export const fetchProductsOfCategory = async ({
       {
         "searchParams": {},
         "facetParams": {
+          hierarchyPaths: ["/" + categorySlug],
+          // TODO either fix bug in app or extend search by many manufacturerId
+          // manufacturerId: matchBrandsQ,
         }
       },
       origin
@@ -255,7 +258,6 @@ export const fetchProductsOfCategory = async ({
 
     // console.log('allFacets=', allFacets)
     // --- facets
-
 
     res = {
       count: p?.totalElements,
