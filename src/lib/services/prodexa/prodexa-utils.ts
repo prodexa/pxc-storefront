@@ -287,9 +287,9 @@ export const mapMedusajsCart = (c: any) => {
   return null
 }
 
-export const mapProdexajsManufactureFacets = (f: any) => {
+export const mapProdexajsFacets = (f: any) => {
   if (f) {
-    const buckets = f.map((p) => mapProdexajsManufactureFacet(p))
+    const buckets = f.map((p) => mapProdexajsFacet(p))
     const allF = {
       doc_count: 1,
       all: {
@@ -303,7 +303,7 @@ export const mapProdexajsManufactureFacets = (f: any) => {
   }
 }
 
-export const mapProdexajsManufactureFacet = (f: any) => {
+export const mapProdexajsFacet = (f: any) => {
   if (f) {
     const facet: Facet = {
       key: f.val,

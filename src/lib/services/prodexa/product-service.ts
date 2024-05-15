@@ -4,7 +4,7 @@ import {getBySid} from '$lib/utils/server'
 import type {AllProducts, Product} from '$lib/types'
 import {
   mapProdexajsAllProducts,
-  mapProdexajsManufactureFacets,
+  mapProdexajsFacets,
   mapProdexajsProduct,
 }
   from "./prodexa-utils";
@@ -186,7 +186,7 @@ export const fetchProductsOfCategory = async ({
 		let err = ''
     let currentPage = 0
 
-    console.log('query', query)
+    // console.log('query', query)
 
     // pxmPageNumber starts from 0
     const matchPage = query.match('(page=(\\d*))');
@@ -202,16 +202,19 @@ export const fetchProductsOfCategory = async ({
     }
     // console.log('q=', q)
 
-    // pxm api search only one manufacturerId facet, more is not allowed
-    // manufacturerId
-    // brands=samsung%2CSpax
-    const matchBrands = query.match('(brands)=([^&=]+)');
+    const matchBrands = query.match('(brands)=([^&=]+)')
     let matchBrandsQ = ''
     if(matchBrands){
-      matchBrandsQ = matchBrands[2];
+      matchBrandsQ = matchBrands[2]
     }
     // console.log('matchBrandsQ=', matchBrandsQ)
 
+    const matchSuppliers = query.match('(vendors)=([^&=]+)')
+    let matchSuppliersQ = ''
+    if(matchSuppliers){
+      matchSuppliersQ = matchSuppliers[2]
+    }
+    // console.log('matchSuppliersQ', matchSuppliersQ)
 
     const p = await post(
       `/products/search?searchValue=${q}&page=${pxmPageNumber}`,
@@ -224,6 +227,7 @@ export const fetchProductsOfCategory = async ({
             ["/" + categorySlug]: categorySlug
           },
           manufacturerId: matchBrandsQ,
+          supplierId: matchSuppliersQ,
         }
       },
       origin
@@ -239,23 +243,31 @@ export const fetchProductsOfCategory = async ({
         "searchParams": {},
         "facetParams": {
           hierarchyPaths: ["/" + categorySlug],
-          // TODO either fix bug in app or extend search by many manufacturerId
-          // manufacturerId: matchBrandsQ,
         }
       },
       origin
     )
-    // console.log('manufacturerFacetsPxm=', manufacturerFacetsPxm)
-    const manufacturerFacets = mapProdexajsManufactureFacets(manufacturerFacetsPxm)
-    // console.log('manufacturerFacets=', manufacturerFacets)
+    const manufacturerFacets = mapProdexajsFacets(manufacturerFacetsPxm)
+
+    const supplierFacetsPxm = await post(
+      `/products/search/facets/fields/supplierId`,
+      {
+        "searchParams": {},
+        "facetParams": {
+          hierarchyPaths: ["/" + categorySlug],
+        }
+      },
+      origin
+    )
+    const supplierFacets = mapProdexajsFacets(supplierFacetsPxm)
 
     const allFacets = {
       "all_aggs": {
         doc_count: 1,
         brands: manufacturerFacets,
+        vendors: supplierFacets,
       }
     }
-
     // console.log('allFacets=', allFacets)
     // --- facets
 
