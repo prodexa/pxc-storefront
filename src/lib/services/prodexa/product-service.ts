@@ -4,8 +4,10 @@ import {getBySid} from '$lib/utils/server'
 import type {AllProducts, Product} from '$lib/types'
 import {
   mapProdexajsAllProducts,
-  mapProdexajsFacets,
   mapProdexajsProduct,
+  mapProdexajsFacets,
+  mapProdexajsFacet,
+  mapProdexajsAttrFacets,
 }
   from "./prodexa-utils";
 
@@ -186,19 +188,21 @@ export const fetchProductsOfCategory = async ({
 		let err = ''
     let currentPage = 0
 
-    // console.log('query', query)
+    console.log('query', query)
 
     // pxmPageNumber starts from 0
     const matchPage = query.match('(page=(\\d*))');
     let pxmPageNumber = 0
     if(matchPage){
-      pxmPageNumber = Number(matchPage[2]) - 1;
+      pxmPageNumber = Number(matchPage[2]) - 1
+      query = query.replace(matchPage[0], '')
     }
     // console.log('pxmPageNumber=', pxmPageNumber)
     const matchQ = query.match('(q)=([^&=]+)');
     let q = ''
     if(matchQ){
-      q = matchQ[2];
+      q = matchQ[2]
+      query = query.replace(matchQ[0], '')
     }
     // console.log('q=', q)
 
@@ -206,6 +210,7 @@ export const fetchProductsOfCategory = async ({
     let matchBrandsQ = ''
     if(matchBrands){
       matchBrandsQ = matchBrands[2]
+      query = query.replace(matchBrands[0], '')
     }
     // console.log('matchBrandsQ=', matchBrandsQ)
 
@@ -213,8 +218,24 @@ export const fetchProductsOfCategory = async ({
     let matchSuppliersQ = ''
     if(matchSuppliers){
       matchSuppliersQ = matchSuppliers[2]
+      query = query.replace(matchSuppliers[0], '')
     }
     // console.log('matchSuppliersQ', matchSuppliersQ)
+
+    // parse attributes
+    query = query.replace(/\+/g, ' ')
+    const values = query.split('&')
+    //&&MC_Material=Stainless Steel %2CAluschienenprofile&MC_CableLength=25&
+    let attributeValuesQ = { }
+    values
+      .filter((v) =>  v != "")
+      .map((v) => {
+      const attrId = v.substring(0, v.indexOf("="))
+      const attrValues = v.substring(v.indexOf("=") + 1)
+      const attrValuesArray = attrValues.split('%2C')
+      attributeValuesQ[attrId] = attrValuesArray
+    })
+
 
     const p = await post(
       `/products/search?searchValue=${q}&page=${pxmPageNumber}`,
@@ -228,13 +249,12 @@ export const fetchProductsOfCategory = async ({
           },
           manufacturerId: matchBrandsQ,
           supplierId: matchSuppliersQ,
+          attributeValues: attributeValuesQ,
         }
       },
       origin
     )
     products = p?.content?.map((p) => mapProdexajsProduct(p))
-    // console.log('products=', products)
-    // console.log('p=', p)
 
     // facets
     const manufacturerFacetsPxm = await post(
@@ -261,11 +281,40 @@ export const fetchProductsOfCategory = async ({
     )
     const supplierFacets = mapProdexajsFacets(supplierFacetsPxm)
 
+    // !!!!!!!
+    // TODO need to have only one call that will fetch attr with values
+    const attributesFacetsPxm = await post(
+      `/products/search/facets/attributes`,
+      {
+        "searchParams": {},
+        "facetParams": {
+          hierarchyPaths: ["/" + categorySlug],
+        }
+      },
+      origin
+    )
+    const attributesFacets = mapProdexajsAttrFacets(attributesFacetsPxm)
+    for (const bucket of  attributesFacets?.all?.key.buckets) {
+      const attributeValuesPxm = await post(
+        `/products/search/facets/attribute-values/${bucket.id}`,
+        {
+          "searchParams": {},
+          "facetParams": {
+            hierarchyPaths: ["/" + categorySlug],
+          }
+        },
+        origin
+      )
+     const values = attributeValuesPxm.map((av) => mapProdexajsFacet(av))
+     bucket.value.buckets = values
+    }
+
     const allFacets = {
       "all_aggs": {
         doc_count: 1,
         brands: manufacturerFacets,
         vendors: supplierFacets,
+        attributes: attributesFacets,
       }
     }
     // console.log('allFacets=', allFacets)

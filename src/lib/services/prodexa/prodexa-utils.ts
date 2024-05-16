@@ -314,3 +314,40 @@ export const mapProdexajsFacet = (f: any) => {
     return {}
   }
 }
+
+
+export const mapProdexajsAttrFacets = (f: any) => {
+  if (f) {
+    const buckets = f.map((p) => mapProdexajsAttrFacet(p))
+    const allF = {
+      doc_count: 1,
+      all: {
+        key: {
+          buckets
+        }
+      }
+    }
+    // console.log('allProd', allProd)
+    return allF
+  } else {
+    return {}
+  }
+}
+
+export const mapProdexajsAttrFacet = (f: any) => {
+  if (f) {
+    const buckets = []
+    const facet: Facet = {
+      //key: f.label ? f.label : f.val,
+      key: f.val,
+      doc_count: f.count,
+      id: f.val,
+      value: {
+        buckets
+      }
+    }
+    return facet
+  } else {
+    return {}
+  }
+}
