@@ -4,12 +4,11 @@ import {getBySid} from '$lib/utils/server'
 import type {AllProducts, Product} from '$lib/types'
 import {
   mapProdexajsAllProducts,
-  mapProdexajsProduct,
-  mapProdexajsFacets,
-  mapProdexajsFacet,
   mapProdexajsAttrFacets,
-}
-  from "./prodexa-utils";
+  mapProdexajsFacet,
+  mapProdexajsFacets,
+  mapProdexajsProduct,
+} from "./prodexa-utils";
 
 const isServer = import.meta.env.SSR
 
@@ -190,6 +189,39 @@ export const fetchProductsOfCategory = async ({
 
     console.log('query', query)
 
+    const matchSort = query.match('(sort)=([^&=]+)')
+    let sort = ''
+    if (matchSort) {
+      sort = matchSort[2]
+      query = query.replace(matchSort[0], '')
+    }
+    let sortField = ''
+    let sortFieldPxm = ''
+    let dir = ''
+    if(sort){
+      if (sort.startsWith('-')) {
+        sortField = sort.substring(1)
+        dir = 'desc'
+      } else {
+        sortField = sort
+        dir = 'asc'
+      }
+      switch (sortField){
+        case 'name' :  {
+          sortFieldPxm = 'productId'
+        }
+        case 'updatedAt' :  {
+          sortFieldPxm = 'changedOn'
+        }
+      }
+
+      if(sortFieldPxm){
+        sort = sortFieldPxm + ',' + dir
+      } else{
+        sort = ''
+      }
+    }
+
     // pxmPageNumber starts from 0
     const matchPage = query.match('(page=(\\d*))');
     let pxmPageNumber = 0
@@ -238,7 +270,7 @@ export const fetchProductsOfCategory = async ({
 
 
     const p = await post(
-      `/products/search?searchValue=${q}&page=${pxmPageNumber}`,
+      `/products/search?searchValue=${q}&page=${pxmPageNumber}&sort=${sort}`,
       {
         searchParams: {
         },
