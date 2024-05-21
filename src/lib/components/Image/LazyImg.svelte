@@ -157,5 +157,5 @@ if (extension === 'svg') {
 				width="{+w}"
 				class="aspect-[{aspect_ratio?.split(':')[0]}/{aspect_ratio?.split(':')[1]}] lazy {clazz}" />
 		{/if}
-  {/if}
+	{/if}
 </div>
