@@ -46,14 +46,19 @@ export default defineConfig(({ command, mode }) => {
 					changeOrigin: true,
 					cookiePathRewrite: ''
 				},
-				'/workarea/': {
+				'/workarea-cdn/': {
 					target: HTTP_ENDPOINT,
 					headers: {
 						PXM_USER: PXM_LOGIN
 					},
 					secure: false,
 					changeOrigin: true,
-					cookiePathRewrite: ''
+					cookiePathRewrite: '',
+					rewrite: (path) => {
+						// remove `/workarea-cdn/fit-in/${w}x${h}/`
+						const targetPath = path.split('/').slice(4).join('/')
+						return `/workarea/${targetPath}`;
+					},
 				}
 				// '/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in',
       }

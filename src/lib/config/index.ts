@@ -20,7 +20,7 @@ export const dimentionUnit = 'cm'
 export const DOMAIN = env.PUBLIC_LITEKART_DOMAIN // Never add any default value here, it will break SaaS working
 export const entity = 'Misiki'
 export const HTTP_ENDPOINT = env.PUBLIC_LITEKART_API_URL || 'https://api.litekart.in'
-export const IMAGE_CDN_URL = 'https://ik.imagekit.io/3wzatecz51w3i'
+export const IMAGE_CDN_URL =  env.PUBLIC_IMAGE_CDN_URL || 'https://ik.imagekit.io/3wzatecz51w3i'
 export const IS_DEV = env.PUBLIC_IS_DEV == 'true'
 export const listOfPagesWithoutBackButton = [
 	'/',

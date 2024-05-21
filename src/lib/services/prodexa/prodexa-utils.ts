@@ -1,4 +1,4 @@
-import type {AllOrders, AllProducts, Brand, Category, Facet, Order, Product} from '$lib/types'
+import type { AllOrders, AllProducts, Brand, Category, Facet, Order, Product } from '$lib/types'
 
 export const mapProdexajsAllProducts = (p: any) => {
   if (p) {
@@ -10,13 +10,11 @@ export const mapProdexajsAllProducts = (p: any) => {
       data: p?.content?.map((p) => mapProdexajsProduct(p)),
       facets: p?.facets
     }
-    // console.log('allProd', allProd)
     return allProd
   } else {
     return {}
   }
 }
-
 
 export const mapProdexajsProduct = (p: any) => {
   if (p) {
@@ -32,7 +30,8 @@ export const mapProdexajsProduct = (p: any) => {
 		// TODO (gor) (doc.documentViewTypeId || doc.docAssociation_documentViewTypeId) AND (doc.path || doc.docAssociation_path)
 		const images = p?.docAssociations
       ?.filter((doc) => documentViewTypes.includes(doc.documentViewTypeId || doc.docAssociation_documentViewTypeId))
-			?.map((doc) => '/workarea/' + (doc.path || doc.docAssociation_path))
+			//?.map((doc) => '/workarea/' + (doc.path || doc.docAssociation_path))
+      ?.map((doc) => '/' + (doc.path || doc.docAssociation_path))
 			?.filter((path, index, pathes) => pathes.indexOf(path) === index)
 		const img = images[0] || ''
 
@@ -58,10 +57,10 @@ export const mapProdexajsProduct = (p: any) => {
     }
 
     const brand: Brand = {
-      id: p.manufacturerId,
+      _id: p.manufacturerId,
       name: p.manufacturerId,
       slug: p.manufacturerId,
-
+      active: false,
     }
 
     const category = p.classificationGroupAssociations?.[0].classificationId
@@ -358,13 +357,12 @@ export const mapProdexajsAttrFacet = (f: any) => {
 
 export const mapProdexajsAutocomplete = (a: any) => {
   if (a) {
-    const r = {
-      "count": 1,
-      "type": "product",
-      "slug": a.catalogId + '___' + a.productId,
-      "key": a["attrValue_string_ShortDescription_en-GB"]
-    }
-    return r
+		return {
+			"count": 1,
+			"type": "product",
+			"slug": a.catalogId + '___' + a.productId,
+			"key": a["attrValue_string_ShortDescription_en-GB"]
+		}
   } else {
     return {}
   }
