@@ -1,19 +1,35 @@
-import { getMedusajsApi } from '$lib/utils/server'
-import { serializeNonPOJOs } from '$lib/utils/validations'
-import { error } from '@sveltejs/kit'
+import {error} from '@sveltejs/kit'
+import {post} from '$lib/utils/api'
+import {mapProdexajsAutocomplete} from "./prodexa-utils";
 
-export const fetchAutocompleteData = async ({ origin, storeId, q }: any) => {
-	try {
-		let res: any = {}
-		let data = []
+export const fetchAutocompleteData = async ({origin, storeId, q}: any) => {
+  try {
+    let res: any = {}
+    let data = []
 
-		res = await getMedusajsApi(`autocomplete`, {})
+    // search by classifications
+    // res = await getAPI(
+    //   `/classifications/search/findAllByParams?page=0&size=10&classificationId=${q}`,
+    //   origin
+    // )
+    // data = res?.content?.map((c) => mapProdexajsAutocomplete(c))
 
-		// must return name:string, slug:string type:string
-		return data || []
-	} catch (e) {
-		error(e.status, e.message)
-	}
+    // search by product
+    res = await post(
+      `/products/search?searchValue=${q}&page=0&size=10`,
+      {
+        "searchParams": {},
+        "facetParams": {
+        }
+      },
+      origin
+    )
+    data = res?.content?.map((c) => mapProdexajsAutocomplete(c))
+
+    return data || []
+  } catch (e) {
+    error(e.status, e.message)
+  }
 }
 
 // export const createComment = async (

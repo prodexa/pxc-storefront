@@ -1,4 +1,4 @@
-import type {Facet, AllOrders, AllProducts, Category, Order, Product, Brand} from '$lib/types'
+import type {AllOrders, AllProducts, Brand, Category, Facet, Order, Product} from '$lib/types'
 
 export const mapProdexajsAllProducts = (p: any) => {
   if (p) {
@@ -347,6 +347,20 @@ export const mapProdexajsAttrFacet = (f: any) => {
       }
     }
     return facet
+  } else {
+    return {}
+  }
+}
+
+export const mapProdexajsAutocomplete = (a: any) => {
+  if (a) {
+    const r = {
+      "count": 1,
+      "type": "product",
+      "slug": a.catalogId + '___' + a.productId,
+      "key": a["attrValue_string_ShortDescription_en-GB"]
+    }
+    return r
   } else {
     return {}
   }
