@@ -7,7 +7,7 @@ import { SvelteKitPWA } from '@vite-pwa/sveltekit'
 export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, process.cwd(), '')
 	// const HTTP_ENDPOINT = env.PUBLIC_LITEKART_API_URL || 'https://api.litekart.in'
-  const HTTP_ENDPOINT = env.PUBLIC_PRODEXA_API_URL || 'http://localhost:8082/pxm'
+  const HTTP_ENDPOINT = env.PUBLIC_PRODEXA_API_URL || 'http://localhost:8080/pxm'
   const PXM_LOGIN = env.PXM_LOGIN || 'admin'
 	return {
 		plugins: [
@@ -37,15 +37,25 @@ export default defineConfig(({ command, mode }) => {
 			host: true,
 			port: 3000,
 			proxy: {
-				'/api':
-          {
-            target: HTTP_ENDPOINT,
-            headers:
-            {
-                PXM_USER:PXM_LOGIN
-            }
-          },
-				'/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in',
+				'/api/': {
+					target: HTTP_ENDPOINT,
+					headers: {
+						PXM_USER: PXM_LOGIN
+					},
+					secure: false,
+					changeOrigin: true,
+					cookiePathRewrite: ''
+				},
+				'/workarea/': {
+					target: HTTP_ENDPOINT,
+					headers: {
+						PXM_USER: PXM_LOGIN
+					},
+					secure: false,
+					changeOrigin: true,
+					cookiePathRewrite: ''
+				}
+				// '/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in',
       }
 		}
 	}

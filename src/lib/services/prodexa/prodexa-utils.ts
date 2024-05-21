@@ -21,18 +21,22 @@ export const mapProdexajsAllProducts = (p: any) => {
 export const mapProdexajsProduct = (p: any) => {
   if (p) {
 
-    let img = ''
-    if (p?.docAssociations?.length > 0) {
-     img = "http://localhost:8082/pxm/workarea/" + p?.docAssociations[0].docAssociation_path
-    }
+    const documentViewTypes = [
+      'preview',
+      'product_image',
+      'detail_view',
+      // 'data_sheet', // exclude non images
+      'others'
+    ]
 
-    let images = []
-    if (p?.docAssociations?.length > 0) {
-      images = p?.docAssociations.map((doc) => 'http://localhost:8082/pxm/workarea/'  + doc.path)
-    }
+		// TODO (gor) (doc.documentViewTypeId || doc.docAssociation_documentViewTypeId) AND (doc.path || doc.docAssociation_path)
+		const images = p?.docAssociations
+      ?.filter((doc) => documentViewTypes.includes(doc.documentViewTypeId || doc.docAssociation_documentViewTypeId))
+			?.map((doc) => '/workarea/' + (doc.path || doc.docAssociation_path))
+			?.filter((path, index, pathes) => pathes.indexOf(path) === index)
+		const img = images[0] || ''
 
-
-    // TODO lang
+		// TODO lang
     let name = undefined
     if (p.values?.ShortDescription !== undefined) {
       name = p.values?.ShortDescription['en-GB']

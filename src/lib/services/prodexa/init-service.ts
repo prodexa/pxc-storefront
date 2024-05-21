@@ -13,10 +13,10 @@ export const fetchInit = async (host) => {
       websiteName: 'prodexa',
       saasName: 'prodexa',
       saasDomain: 'https://prodexa.com',
-      IMAGE_CDN_URL: 'http://localhost:8082/pxm/workarea/',
+      IMAGE_CDN_URL: 'http://localhost:8080/pxm/workarea/',  // TODO (gor) env conf
       imageCdn: {
         url: {
-          val : 'http://localhost:8082/pxm/workarea/'
+          val : 'http://localhost:8080/pxm/workarea/' // TODO (gor) env conf
         },
         provider:{
           val: 'prodexa'
