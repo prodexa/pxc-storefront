@@ -208,10 +208,15 @@ export const fetchProductsOfCategory = async ({
       }
       switch (sortField){
         case 'name' :  {
-          sortFieldPxm = 'productId'
+          sortFieldPxm = 'attrValue_string_ShortDescription_en-GB'
+          break
         }
         case 'updatedAt' :  {
           sortFieldPxm = 'changedOn'
+          break
+        }
+        default: {
+          sortFieldPxm = ''
         }
       }
 
