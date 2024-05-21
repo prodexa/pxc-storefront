@@ -30,8 +30,7 @@ export const mapProdexajsProduct = (p: any) => {
 		// TODO (gor) (doc.documentViewTypeId || doc.docAssociation_documentViewTypeId) AND (doc.path || doc.docAssociation_path)
 		const images = p?.docAssociations
       ?.filter((doc) => documentViewTypes.includes(doc.documentViewTypeId || doc.docAssociation_documentViewTypeId))
-			//?.map((doc) => '/workarea/' + (doc.path || doc.docAssociation_path))
-      ?.map((doc) => '/' + (doc.path || doc.docAssociation_path))
+      ?.map((doc) => '/prodexa-img/' + (doc.path || doc.docAssociation_path))
 			?.filter((path, index, pathes) => pathes.indexOf(path) === index)
 		const img = images[0] || ''
 

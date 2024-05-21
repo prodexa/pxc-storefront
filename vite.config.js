@@ -46,6 +46,20 @@ export default defineConfig(({ command, mode }) => {
 					changeOrigin: true,
 					cookiePathRewrite: ''
 				},
+				'/prodexa-img/': {
+					target: HTTP_ENDPOINT,
+					headers: {
+						PXM_USER: PXM_LOGIN
+					},
+					secure: false,
+					changeOrigin: true,
+					cookiePathRewrite: '',
+					rewrite: (path) => {
+						// replace `/prodexa-img/` with `/workarea/`
+						const targetPath = path.split('/').slice(2).join('/')
+						return `/workarea/${targetPath}`;
+					},
+				},
 				'/workarea-cdn/': {
 					target: HTTP_ENDPOINT,
 					headers: {
@@ -55,8 +69,8 @@ export default defineConfig(({ command, mode }) => {
 					changeOrigin: true,
 					cookiePathRewrite: '',
 					rewrite: (path) => {
-						// remove `/workarea-cdn/fit-in/${w}x${h}/`
-						const targetPath = path.split('/').slice(4).join('/')
+						// replace `/workarea-cdn/fit-in/${w}x${h}/prodexa-img/` with `/workarea/`
+						const targetPath = path.split('/').slice(5).join('/')
 						return `/workarea/${targetPath}`;
 					},
 				}
