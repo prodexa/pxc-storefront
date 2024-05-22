@@ -235,13 +235,13 @@ export const fetchProductsOfCategory = async ({
       query = query.replace(matchPage[0], '')
     }
     // console.log('pxmPageNumber=', pxmPageNumber)
-    const matchQ = query.match('(q)=([^&=]+)');
+    const matchQ = query.match('(q)=([^&=]*)');
     let q = ''
     if(matchQ){
       q = matchQ[2]
       query = query.replace(matchQ[0], '')
     }
-    // console.log('q=', q)
+    console.log('q=', q)
 
     const matchBrands = query.match('(brands)=([^&=]+)')
     let matchBrandsQ = ''
@@ -326,24 +326,29 @@ export const fetchProductsOfCategory = async ({
         "searchParams": {},
         "facetParams": {
           hierarchyPaths: ["/" + categorySlug],
+          attributeValues: attributeValuesQ,
         }
       },
       origin
     )
     const attributesFacets = mapProdexajsAttrFacets(attributesFacetsPxm)
     for (const bucket of  attributesFacets?.all?.key.buckets) {
-      const attributeValuesPxm = await post(
-        `/products/search/facets/attribute-values/${bucket.id}`,
-        {
-          "searchParams": {},
-          "facetParams": {
-            hierarchyPaths: ["/" + categorySlug],
-          }
-        },
-        origin
-      )
-     const values = attributeValuesPxm.map((av) => mapProdexajsFacet(av))
-     bucket.value.buckets = values
+      try {
+        const attributeValuesPxm = await post(
+          `/products/search/facets/attribute-values/${bucket.id}`,
+          {
+            "searchParams": {},
+            "facetParams": {
+              hierarchyPaths: ["/" + categorySlug],
+            }
+          },
+          origin
+        )
+        const values = attributeValuesPxm.map((av) => mapProdexajsFacet(av))
+        bucket.value.buckets = values
+      }catch (e){
+        console.log('e=', e)
+      }
     }
 
     const allFacets = {
