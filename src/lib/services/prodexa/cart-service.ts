@@ -1,37 +1,54 @@
-import type { Error } from '$lib/types'
-import { getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import { error } from '@sveltejs/kit'
-import { mapMedusajsCart } from './prodexa-utils'
-import { REGION_ID } from '.'
+import { getAPI, post } from 'lib/utils'
+import { HTTP_ENDPOINT, HTTP_HEADERS } from 'lib/config'
+
+const isServer = import.meta.env.SSR
 
 export const fetchCartData = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
 		let res: any = {}
 
-		res = await getMedusajsApi(`cart`, {}, sid)
+		// res = await getAPI(
+		// 	'/api/business-documents/cart',
+		// 	origin
+		// 	//			{ ...HTTP_HEADERS, Cookie: 'connect.sid=' + sid }
+		// )
 
 		return res || {}
-	} catch (err) {
-		const e = err as Error
+	} catch (e) {
 		error(e.status, e.data.message)
 	}
 }
 
 export const fetchRefreshCart = async ({
-	origin,
-	storeId,
-	cookies,
-	cartId,
-	server = false,
-	sid = null
-}: any) => {
+																				 origin,
+																				 storeId,
+																				 cookies,
+																				 cartId,
+																				 server = false,
+																				 sid = null
+																			 }: any) => {
+
+	console.log('isServer', isServer)
+
 	try {
 		let res: any = {}
 		const cart_id = cartId
 		if (!cart_id || cart_id == 'undefined') return []
 
-		const cartRes = await getMedusajsApi(`carts/${cart_id}`)
-		res = mapMedusajsCart(cartRes?.cart)
+		// if (isServer) {
+		// 	res = await getAPI(
+		// 		`${HTTP_ENDPOINT}/api/business-documents/cart`,
+		// 		origin,
+		// 		{ ...HTTP_HEADERS, Cookie: 'connect.sid=' + sid }
+		// 	)
+		// } else {
+		// 	res = await getAPI(
+		// 		'/api/business-documents/cart',
+		// 		origin
+		// 		//			{ ...HTTP_HEADERS, Cookie: 'connect.sid=' + sid }
+		// 	)
+		// }
 
 		return res || {}
 	} catch (e) {
@@ -43,71 +60,68 @@ export const fetchMyCart = async ({ origin, storeId, server = false, sid = null 
 	try {
 		let res: any = {}
 
-		res = {} // await getMedusajsApi(`cart/me`, {}, sid)
+		res = {} // TODO ...
 
 		return res || {}
-	} catch (err) {
+	} catch (e) {
 		error(e.status, e.message)
 	}
 }
 
 export const addToCartService = async ({
-	pid,
-	vid,
-	qty,
-	customizedImg,
-	origin,
-	storeId,
-	server = false,
-	cookies,
-	sid = null
-}: any) => {
+																				 cartId,
+																				 customizedData = null,
+																				 customizedImg = null,
+																				 options = null,
+																				 pid,
+																				 qty,
+																				 vid,
+																				 origin = null,
+																				 sid = null,
+																				 storeId
+																			 }) => {
+
 	try {
-		let cart_id = cookies.get('cartId')
+		let res = {}
 
-		if (cart_id === undefined || cart_id === 'undefined') {
-			cart_id = null
+		if (isServer) {
+			res = await post(
+				`${HTTP_ENDPOINT}/api/business-documents/cart/add`,
+				{
+					pid,
+					vid,
+					qty,
+					customizedImg,
+					store: storeId,
+					cart_id: cartId,
+					customizedData,
+					options
+				},
+				origin,
+				{ ...HTTP_HEADERS, Cookie: 'connect.sid=' + sid }
+			)
+		} else {
+			// TODO ...
 		}
 
-		const body = {
-			variant_id: vid || pid,
-			quantity: qty
-		}
-
-		let res: any = {}
-
-		if (!cart_id) {
-			const cartRes = await postMedusajsApi(`carts`, { region_id: REGION_ID }, sid)
-
-			cart_id = cartRes.cart?.id
-		}
-
-		const res_data = await postMedusajsApi(`carts/${cart_id}/line-items`, body, sid)
-
-		if (cart_id) {
-			const res_cartRes = await postMedusajsApi(`carts/${cart_id}`, { customer_id: res?.id }, sid)
-		}
-
-		res = mapMedusajsCart(res_data?.cart)
 
 		return res || {}
 	} catch (e) {
-		// console.error(e)
-		error(e.status, e.message)
+		error(e.status, e.data?.message || e.message)
 	}
 }
 
 export const applyCouponService = async ({
-	code,
-	origin,
-	storeId,
-	server = false,
-	sid = null
-}: any) => {
+																					 code,
+																					 origin,
+																					 storeId,
+																					 server = false,
+																					 sid = null
+																				 }: any) => {
 	try {
 		let res: any = {}
 
-		res = await getMedusajsApi(`cart/me`, {}, sid)
+		res = {} // TODO
 
 		return res || {}
 	} catch (e) {
@@ -116,16 +130,16 @@ export const applyCouponService = async ({
 }
 
 export const removeCouponService = async ({
-	code,
-	origin,
-	storeId,
-	server = false,
-	sid = null
-}: any) => {
+																						code,
+																						origin,
+																						storeId,
+																						server = false,
+																						sid = null
+																					}: any) => {
 	try {
 		let res: any = {}
 
-		res = await getMedusajsApi(`cart/me`, {}, sid)
+		res = {} // TODOn ...
 
 		return res || {}
 	} catch (e) {
@@ -134,14 +148,14 @@ export const removeCouponService = async ({
 }
 
 export const updateCart = async ({
-	cartId,
-	billingAddress,
-	email,
-	customer_id,
-	shippingAddress,
-	cookies,
-	sid = null
-}: any) => {
+																	 cartId,
+																	 billingAddress,
+																	 email,
+																	 customer_id,
+																	 shippingAddress,
+																	 cookies,
+																	 sid = null
+																 }: any) => {
 	try {
 		const body = {
 			billing_address: {
@@ -179,14 +193,13 @@ export const updateCart = async ({
 		let res: any = {}
 
 		if (cartId) {
-			const res_data = await postMedusajsApi(`carts/${cartId}`, body, sid)
-
-			res = mapMedusajsCart(res_data?.cart)
+			// const res_data = await postMedusajsApi(`carts/${cartId}`, body, sid)
+			// res = mapMedusajsCart(res_data?.cart)
+			res = {} // TODO ...
 
 			return res || {}
 		}
 	} catch (e) {
-		// console.error(e)
 		error(e.status, e.message)
 	}
 }

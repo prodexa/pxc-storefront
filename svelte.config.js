@@ -1,4 +1,5 @@
 // import adapter from '@sveltejs/adapter-vercel'
+// import adapter from '@sveltejs/adapter-static';
 import adapter from '@sveltejs/adapter-auto'
 import preprocess from 'svelte-preprocess'
 
@@ -14,6 +15,9 @@ const config = {
 		alias: {
 			'lib/*': 'src/lib/*'
 		},
+		// adapter: adapter({
+		// 	fallback: '200.html'
+		// }),
 		adapter: adapter(),
 		csrf: {
 			checkOrigin: false

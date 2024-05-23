@@ -3,12 +3,24 @@ import { defineConfig, loadEnv } from 'vite'
 // import { join } from 'path'
 // import { partytownVite } from '@builder.io/partytown/utils'
 import { SvelteKitPWA } from '@vite-pwa/sveltekit'
+
 /** @type {import('vite').UserConfig} */
 export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, process.cwd(), '')
 	// const HTTP_ENDPOINT = env.PUBLIC_LITEKART_API_URL || 'https://api.litekart.in'
-  const HTTP_ENDPOINT = env.PUBLIC_PRODEXA_API_URL || 'http://localhost:8080/pxm'
-  const PXM_LOGIN = env.PXM_LOGIN || 'admin'
+	const HTTP_ENDPOINT = env.PUBLIC_PRODEXA_API_URL || 'http://localhost:8080/pxm'
+	const PXM_USER = env.PUBLIC_PRODEXA_API_USER || 'admin'
+
+	const proxyCongfig = {
+		target: HTTP_ENDPOINT,
+		headers: {
+			PXM_USER
+		},
+		secure: false,
+		changeOrigin: true,
+		cookiePathRewrite: ''
+	}
+
 	return {
 		plugins: [
 			sveltekit(),
@@ -37,45 +49,21 @@ export default defineConfig(({ command, mode }) => {
 			host: true,
 			port: 3000,
 			proxy: {
-				'/api/': {
-					target: HTTP_ENDPOINT,
-					headers: {
-						PXM_USER: PXM_LOGIN
-					},
-					secure: false,
-					changeOrigin: true,
-					cookiePathRewrite: ''
-				},
+				'/api/': proxyCongfig,
 				'/prodexa-img/': {
-					target: HTTP_ENDPOINT,
-					headers: {
-						PXM_USER: PXM_LOGIN
-					},
-					secure: false,
-					changeOrigin: true,
-					cookiePathRewrite: '',
-					rewrite: (path) => {
-						// replace `/prodexa-img/` with `/workarea/`
-						const targetPath = path.split('/').slice(2).join('/')
-						return `/workarea/${targetPath}`;
-					},
+					...proxyCongfig,
+					// replace `/prodexa-img/` with `/workarea/`
+					rewrite: (path) =>
+						`${path.replace(/^\/prodexa-img\//, '/workarea/')}`
 				},
 				'/workarea-cdn/': {
-					target: HTTP_ENDPOINT,
-					headers: {
-						PXM_USER: PXM_LOGIN
-					},
-					secure: false,
-					changeOrigin: true,
-					cookiePathRewrite: '',
-					rewrite: (path) => {
-						// replace `/workarea-cdn/fit-in/${w}x${h}/prodexa-img/` with `/workarea/`
-						const targetPath = path.split('/').slice(5).join('/')
-						return `/workarea/${targetPath}`;
-					},
+					...proxyCongfig,
+					// replace `/workarea-cdn/fit-in/${w}x${h}/prodexa-img/` with `/workarea/`
+					rewrite: (path) =>
+						`${path.replace(/^\/workarea-cdn\/fit-in\/(\d*)x(\d*)\/prodexa-img\//, '/workarea/')}`
 				}
 				// '/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in',
-      }
+			}
 		}
 	}
 })

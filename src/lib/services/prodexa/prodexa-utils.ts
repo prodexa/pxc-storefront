@@ -53,10 +53,7 @@ export const mapProdexajsProduct = (p: any) => {
       description = p.values?.LongDescription['en-GB']
     }
 
-    let price = undefined
-    if (p.prices !== undefined) {
-      price = p.prices[0]?.price
-    }
+    const price = p.prices?.[0]?.price
 
     const brand: Brand = {
       _id: p.manufacturerId,
@@ -87,6 +84,8 @@ export const mapProdexajsProduct = (p: any) => {
       description,
       price,
       brand,
+      active: true,
+      hasStock: true
     }
     return prod
   } else {
