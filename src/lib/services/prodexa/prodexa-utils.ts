@@ -1,4 +1,4 @@
-import type { AllOrders, AllProducts, Brand, Category, Facet, Order, Product } from '$lib/types'
+import type {AllOrders, AllProducts, Brand, Category, Facet, Order, Product} from '$lib/types'
 
 export const mapProdexajsAllProducts = (p: any) => {
   if (p) {
@@ -32,7 +32,10 @@ export const mapProdexajsProduct = (p: any) => {
       ?.filter((doc) => documentViewTypes.includes(doc.documentViewTypeId || doc.docAssociation_documentViewTypeId))
       ?.map((doc) => '/prodexa-img/' + (doc.path || doc.docAssociation_path))
 			?.filter((path, index, pathes) => pathes.indexOf(path) === index)
-		const img = images[0] || ''
+		let img = ''
+    if(images){
+      img = images[0]
+    }
 
 		// TODO lang
     let name = undefined
@@ -62,19 +65,21 @@ export const mapProdexajsProduct = (p: any) => {
       active: false,
     }
 
-    const category = p.classificationGroupAssociations?.[0].classificationId
+    const categoryPool = p.classificationGroupAssociations?.map((g) => g.classificationId)?.
+    filter((id, index, ids) => ids.indexOf(id) === index)
+      .map((uniqueId) => {
+        return {
+          id: uniqueId,
+          name: uniqueId,
+          slug: uniqueId,
+        }
+      })
 
     const prod: Product = {
       _id: p.catalogId + '___' + p.productId,
       id:  p.catalogId + '___' + p.productId,
       slug: p.catalogId + '___' + p.productId,
-
-      categoryPool: [{
-        id: category,
-        name: category,
-        slug: category,
-      }],
-
+      categoryPool,
       img,
       images,
       status: p.statusId,

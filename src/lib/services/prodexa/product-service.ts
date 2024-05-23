@@ -74,14 +74,44 @@ export const fetchProducts = async ({
 }: any) => {
   console.log('fetchProducts')
   try {
-    let count = 0
-    let facets = ''
-    let pageSize = 0
-    let category = {}
-    let err = ''
-    let currentPage = 0
 
-    // console.log('q=', query)
+    const matchSort = query.match('(sort)=([^&=]*)')
+    let sort = ''
+    if (matchSort) {
+      sort = matchSort[2]
+      query = query.replace(matchSort[0], '')
+    }
+    let sortField = ''
+    let sortFieldPxm = ''
+    let dir = ''
+    if(sort){
+      if (sort.startsWith('-')) {
+        sortField = sort.substring(1)
+        dir = 'desc'
+      } else {
+        sortField = sort
+        dir = 'asc'
+      }
+      switch (sortField){
+        case 'name' :  {
+          sortFieldPxm = 'attrValue_string_ShortDescription_en-GB'
+          break
+        }
+        case 'updatedAt' :  {
+          sortFieldPxm = 'changedOn'
+          break
+        }
+        default: {
+          sortFieldPxm = ''
+        }
+      }
+      if(sortFieldPxm){
+        sort = sortFieldPxm + ',' + dir
+      } else{
+        sort = ''
+      }
+    }
+    //console.log('sort', sort)
     // pxmPageNumber starts from 0
     const matchPage = query.match('(page=(\\d*))');
     let pxmPageNumber = 0
@@ -94,20 +124,18 @@ export const fetchProducts = async ({
     if(matchQ){
       q = matchQ[2];
     }
-    // console.log('q=', q)
     const p = await post(
-      `/products/search?searchValue=${q}&page=${pxmPageNumber}`,
+      `/products/search?searchValue=${q}&page=${pxmPageNumber}&sort=${sort}`,
       {
         "searchParams": {},
       },
       origin
     )
-
     const result  = mapProdexajsAllProducts(p)
-    // console.log('result=', result)
+    // console.log('result', result)
     return result || []
-
 	} catch (e) {
+    console.log(e)
 		error(e.status, e.data?.message || e.message)
 	}
 }
@@ -192,9 +220,9 @@ export const fetchProductsOfCategory = async ({
 		let err = ''
     let currentPage = 0
 
-    console.log('query', query)
+    //console.log('query', query)
 
-    const matchSort = query.match('(sort)=([^&=]+)')
+    const matchSort = query.match('(sort)=([^&=]*)')
     let sort = ''
     if (matchSort) {
       sort = matchSort[2]
@@ -224,13 +252,13 @@ export const fetchProductsOfCategory = async ({
           sortFieldPxm = ''
         }
       }
-
       if(sortFieldPxm){
         sort = sortFieldPxm + ',' + dir
       } else{
         sort = ''
       }
     }
+    // console.log('sort=', sort)
 
     // pxmPageNumber starts from 0
     const matchPage = query.match('(page=(\\d*))');
@@ -248,7 +276,7 @@ export const fetchProductsOfCategory = async ({
     }
     console.log('q=', q)
 
-    const matchBrands = query.match('(brands)=([^&=]+)')
+    const matchBrands = query.match('(brands)=([^&=]*)')
     let matchBrandsQ = ''
     if(matchBrands){
       matchBrandsQ = matchBrands[2]
@@ -256,7 +284,7 @@ export const fetchProductsOfCategory = async ({
     }
     // console.log('matchBrandsQ=', matchBrandsQ)
 
-    const matchSuppliers = query.match('(vendors)=([^&=]+)')
+    const matchSuppliers = query.match('(vendors)=([^&=]*)')
     let matchSuppliersQ = ''
     if(matchSuppliers){
       matchSuppliersQ = matchSuppliers[2]
