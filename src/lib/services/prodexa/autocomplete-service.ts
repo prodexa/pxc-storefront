@@ -9,14 +9,14 @@ export const fetchAutocompleteData = async ({origin, storeId, q}: any) => {
 
     // search by classifications
     // res = await getAPI(
-    //   `/classifications/search/findAllByParams?page=0&size=10&classificationId=${q}`,
+    //   `classifications/search/findAllByParams?page=0&size=10&classificationId=${q}`,
     //   origin
     // )
     // data = res?.content?.map((c) => mapProdexajsAutocomplete(c))
 
     // search by product
     res = await post(
-      `/products/search?searchValue=${q}&page=0&size=10`,
+      `products/search?searchValue=${q}&page=0&size=10`,
       {
         "searchParams": {},
         "facetParams": {

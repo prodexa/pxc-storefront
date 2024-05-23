@@ -38,12 +38,12 @@ export const fetchCategory = async ({
 		let res = {}
     if (isServer || isCors) {
       res = await getBySid(
-        `/classifications/${id}`,
+        `classifications/${id}`,
         sid
       )
     } else {
       res = await getAPI(
-        `/classifications/${id}`,
+        `classifications/${id}`,
         origin
       )
     }
@@ -68,12 +68,12 @@ export const fetchAllCategories = async ({
 		let res = {}
     if (isServer || isCors) {
       res = await getBySid(
-        `/classifications/search/findAllByParams?page=0&size=${limit || '1000'}`,
+        `classifications/search/findAllByParams?page=0&size=${limit || '1000'}`,
         sid
       )
     } else {
       res = await getAPI(
-        `/classifications/search/findAllByParams?page=0&size=${limit || '1000'}`,
+        `classifications/search/findAllByParams?page=0&size=${limit || '1000'}`,
         origin
       )
     }
@@ -143,12 +143,12 @@ export const fetchMegamenuData = async ({
     let data: []
     if (isServer || isCors) {
       data = await getBySid(
-        `/classifications/search/findAllByParams?sort=orderNo,asc&page=0&size=1000`,
+        `classifications/search/findAllByParams?sort=orderNo,asc&page=0&size=1000`,
         sid
       )
     } else {
       data = await getAPI(
-        `/classifications/search/findAllByParams?sort=orderNo,asc&page=0&size=1000`,
+        `classifications/search/findAllByParams?sort=orderNo,asc&page=0&size=1000`,
         origin
       )
     }

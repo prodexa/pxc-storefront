@@ -27,7 +27,7 @@ export const searchProducts = async ({ origin, query, storeId, sid = null }) => 
 		let style_tags = []
 
     const p = await post(
-      `/products/search?${query}`,
+      `products/search?${query}`,
       {
         "searchParams": {},
         "facetParams": {
@@ -125,7 +125,7 @@ export const fetchProducts = async ({
       q = matchQ[2];
     }
     const p = await post(
-      `/products/search?searchValue=${q}&page=${pxmPageNumber}&sort=${sort}`,
+      `products/search?searchValue=${q}&page=${pxmPageNumber}&sort=${sort}`,
       {
         "searchParams": {},
       },
@@ -165,7 +165,7 @@ export const fetchProduct = async ({ origin, slug, id, storeId, isCors = false, 
     const slug1 = slug.replace('___', '/')
     // console.log('slug', slug)
     const p = await getAPI(
-        `/product-editor/products/${slug1}`,
+        `product-editor/products/${slug1}`,
          origin
     )
     res = mapProdexajsProduct(p)
@@ -189,7 +189,7 @@ export const fetchProduct2 = async ({ origin, slug, storeId, id, sid = null }) =
 		let res: Product | object = {}
     const slug1 = slug.replace('___', '/')
     const p = await getAPI(
-      `/product-editor/products/${slug1}`,
+      `product-editor/products/${slug1}`,
       origin
     )
     res = mapProdexajsProduct(p)
@@ -308,7 +308,7 @@ export const fetchProductsOfCategory = async ({
 
 
     const p = await post(
-      `/products/search?searchValue=${q}&page=${pxmPageNumber}&sort=${sort}`,
+      `products/search?searchValue=${q}&page=${pxmPageNumber}&sort=${sort}`,
       {
         searchParams: {
         },
@@ -328,7 +328,7 @@ export const fetchProductsOfCategory = async ({
 
     // facets
     const manufacturerFacetsPxm = await post(
-      `/products/search/facets/fields/manufacturerId`,
+      `products/search/facets/fields/manufacturerId`,
       {
         "searchParams": {},
         "facetParams": {
@@ -340,7 +340,7 @@ export const fetchProductsOfCategory = async ({
     const manufacturerFacets = mapProdexajsFacets(manufacturerFacetsPxm)
 
     const supplierFacetsPxm = await post(
-      `/products/search/facets/fields/supplierId`,
+      `products/search/facets/fields/supplierId`,
       {
         "searchParams": {},
         "facetParams": {
@@ -354,7 +354,7 @@ export const fetchProductsOfCategory = async ({
     // !!!!!!!
     // TODO need to have only one call that will fetch attr with values
     const attributesFacetsPxm = await post(
-      `/products/search/facets/attributes`,
+      `products/search/facets/attributes`,
       {
         "searchParams": {},
         "facetParams": {
@@ -368,7 +368,7 @@ export const fetchProductsOfCategory = async ({
     for (const bucket of  attributesFacets?.all?.key.buckets) {
       try {
         const attributeValuesPxm = await post(
-          `/products/search/facets/attribute-values/${bucket.id}`,
+          `products/search/facets/attribute-values/${bucket.id}`,
           {
             "searchParams": {},
             "facetParams": {
@@ -458,7 +458,7 @@ export const fetchNextPageProducts = async ({
 		// }
 
     const p = await post(
-      `/products/search?page=${nextPage}`,
+      `products/search?page=${nextPage}`,
       {
         "searchParams": {},
         "facetParams": {
