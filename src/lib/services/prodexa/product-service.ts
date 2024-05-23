@@ -89,7 +89,7 @@ export const fetchProducts = async ({
       pxmPageNumber = Number(matchPage[2]) - 1;
     }
     // console.log('pxmPageNumber=', pxmPageNumber)
-    const matchQ = query.match('(q)=([^&=]+)');
+    const matchQ = query.match('(q)=([^&=]*)');
     let q = ''
     if(matchQ){
       q = matchQ[2];
@@ -150,6 +150,11 @@ export const fetchProduct = async ({ origin, slug, id, storeId, isCors = false, 
 }
 
 // Fetch products more requirements
+// the same as fetchProduct
+// used by routes/(product)/product/[slug]/+page.svelte
+// while fetchProduct used by routes/(product)/product/[slug]/+page.ts
+// this is weird and as a result we have 2 product api calls
+// on the product details page
 export const fetchProduct2 = async ({ origin, slug, storeId, id, sid = null }) => {
   console.log('fetchProduct2')
   try {
