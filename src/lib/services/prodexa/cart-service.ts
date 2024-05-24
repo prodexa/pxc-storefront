@@ -3,9 +3,16 @@ import { del, getAPI, post, put } from 'lib/utils'
 
 const CART_ENDPOINT = 'carts'
 
+const mapCart = (cart) => {
+	return {
+		...cart,
+		items: cart.items.map(it => ({ ...it, slug: it.pid, img: '/prodexa-img' + it.img }))
+	}
+}
+
 const loadCart = async ({ cartId = null, origin = null }) => {
 	try {
-		return cartId ? await getAPI(`${CART_ENDPOINT}/${cartId}`, origin) : {}
+		return mapCart(cartId ? await getAPI(`${CART_ENDPOINT}/${cartId}`, origin) : {})
 	} catch (e) {
 		error(e.status, e.data.message || e.message)
 	}
@@ -47,6 +54,7 @@ export const addToCartService = async (
 		)
 
 		res = { ...res, sid: res.cart_id }
+		res = mapCart(res)
 
 		return res || {}
 	} catch (e) {
