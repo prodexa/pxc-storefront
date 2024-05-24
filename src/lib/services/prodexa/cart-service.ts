@@ -1,109 +1,52 @@
 import { error } from '@sveltejs/kit'
-import { getAPI, post } from 'lib/utils'
-import { HTTP_ENDPOINT, HTTP_HEADERS } from 'lib/config'
+import { del, getAPI, post, put } from 'lib/utils'
 
-const isServer = import.meta.env.SSR
+const CART_ENDPOINT = 'carts'
 
-export const fetchCartData = async ({ origin, storeId, server = false, sid = null }: any) => {
+const loadCart = async ({ cartId = null, origin = null }) => {
 	try {
-		let res: any = {}
-
-		// res = await getAPI(
-		// 	'/api/business-documents/cart',
-		// 	origin
-		// 	//			{ ...HTTP_HEADERS, Cookie: 'connect.sid=' + sid }
-		// )
-
-		return res || {}
+		return cartId ? await getAPI(`${CART_ENDPOINT}/${cartId}`, origin) : {}
 	} catch (e) {
-		error(e.status, e.data.message)
+		error(e.status, e.data.message || e.message)
 	}
 }
 
-export const fetchRefreshCart = async ({
-																				 origin,
-																				 storeId,
-																				 cookies,
-																				 cartId,
-																				 server = false,
-																				 sid = null
-																			 }: any) => {
+export const fetchCartData = loadCart
+export const fetchRefreshCart = loadCart
+export const fetchMyCart = loadCart
 
-	console.log('isServer', isServer)
-
-	try {
-		let res: any = {}
-		const cart_id = cartId
-		if (!cart_id || cart_id == 'undefined') return []
-
-		// if (isServer) {
-		// 	res = await getAPI(
-		// 		`${HTTP_ENDPOINT}/api/business-documents/cart`,
-		// 		origin,
-		// 		{ ...HTTP_HEADERS, Cookie: 'connect.sid=' + sid }
-		// 	)
-		// } else {
-		// 	res = await getAPI(
-		// 		'/api/business-documents/cart',
-		// 		origin
-		// 		//			{ ...HTTP_HEADERS, Cookie: 'connect.sid=' + sid }
-		// 	)
-		// }
-
-		return res || {}
-	} catch (e) {
-		error(e.status, e.message)
+export const addToCartService = async (
+	{
+		cartId,
+		customizedData = null,
+		customizedImg = null,
+		options = null,
+		pid,
+		qty,
+		vid,
+		origin = null,
+		storeId
 	}
-}
-
-export const fetchMyCart = async ({ origin, storeId, server = false, sid = null }: any) => {
-	try {
-		let res: any = {}
-
-		res = {} // TODO ...
-
-		return res || {}
-	} catch (e) {
-		error(e.status, e.message)
-	}
-}
-
-export const addToCartService = async ({
-																				 cartId,
-																				 customizedData = null,
-																				 customizedImg = null,
-																				 options = null,
-																				 pid,
-																				 qty,
-																				 vid,
-																				 origin = null,
-																				 sid = null,
-																				 storeId
-																			 }) => {
-
+) => {
 	try {
 		let res = {}
 
-		if (isServer) {
-			res = await post(
-				`${HTTP_ENDPOINT}/api/business-documents/cart/add`,
-				{
-					pid,
-					vid,
-					qty,
-					customizedImg,
-					store: storeId,
-					cart_id: cartId,
-					customizedData,
-					options
-				},
-				origin,
-				{ ...HTTP_HEADERS, Cookie: 'connect.sid=' + sid }
-			)
-		} else {
-			// TODO ...
-		}
+		res = await post(
+			cartId ? `${CART_ENDPOINT}/${cartId}/add` : CART_ENDPOINT,
+			{
+				pid,
+				vid,
+				qty,
+				customizedImg,
+				store: storeId,
+				cart_id: cartId,
+				customizedData,
+				options
+			},
+			origin
+		)
 
+		res = { ...res, sid: res.cart_id }
 
 		return res || {}
 	} catch (e) {
@@ -111,95 +54,157 @@ export const addToCartService = async ({
 	}
 }
 
-export const applyCouponService = async ({
-																					 code,
-																					 origin,
-																					 storeId,
-																					 server = false,
-																					 sid = null
-																				 }: any) => {
+export const createBackOrder = async (
+	{
+		pid,
+		qty,
+		origin = null,
+		storeId
+	}
+) => {
 	try {
-		let res: any = {}
-
-		res = {} // TODO
-
+		let res = {}
+		res = await post(
+			`backorder`,
+			{
+				id: 'new',
+				pid,
+				qty,
+				store: storeId
+			},
+			origin
+		)
 		return res || {}
 	} catch (e) {
-		error(e.status, e.message)
+		error(e.status, e.data?.message || e.message)
 	}
 }
 
-export const removeCouponService = async ({
-																						code,
-																						origin,
-																						storeId,
-																						server = false,
-																						sid = null
-																					}: any) => {
+export const applyCouponService = async (
+	{
+		cartId,
+		code,
+		origin,
+		storeId
+	}
+) => {
 	try {
-		let res: any = {}
-
-		res = {} // TODOn ...
-
+		let res = {}
+		res = await post(
+			`coupons/apply?cart_id=${cartId}`,
+			{
+				cart_id: cartId,
+				code,
+				store: storeId
+			},
+			origin
+		)
 		return res || {}
 	} catch (e) {
-		error(e.status, e.message)
+		error(e.status, e.data?.message || e.message)
 	}
 }
 
-export const updateCart = async ({
-																	 cartId,
-																	 billingAddress,
-																	 email,
-																	 customer_id,
-																	 shippingAddress,
-																	 cookies,
-																	 sid = null
-																 }: any) => {
+export const removeCouponService = async (
+	{
+		cartId,
+		code,
+		origin,
+		storeId
+	}
+) => {
 	try {
-		const body = {
-			billing_address: {
-				address_1: billingAddress.address_1,
-				address_2: billingAddress.address_2,
-				city: billingAddress.city,
-				// country_code: billingAddress.country_code,
-				country_code: billingAddress.country || 'in',
-				first_name: billingAddress.first_name,
-				landmark: billingAddress.landmark,
-				last_name: billingAddress.last_name,
-				phone: billingAddress.phone,
-				postal_code: billingAddress.postal_code,
-				province: billingAddress.province
-			},
-			shipping_address: {
-				address_1: shippingAddress.address_1,
-				address_2: shippingAddress.address_2,
-				city: shippingAddress.city,
-				// country_code: shippingAddress.country_code,
-				country_code: shippingAddress.country || 'in',
-				first_name: shippingAddress.first_name,
-				landmark: shippingAddress.landmark,
-				last_name: shippingAddress.last_name,
-				phone: shippingAddress.phone,
-				postal_code: shippingAddress.postal_code,
-				province: shippingAddress.province
-			},
-			email: billingAddress.email,
-			customer_id
-		}
-		// console.log('body', body);
-		// console.log('cartId', cartId);
-
-		let res: any = {}
-
-		if (cartId) {
-			// const res_data = await postMedusajsApi(`carts/${cartId}`, body, sid)
-			// res = mapMedusajsCart(res_data?.cart)
-			res = {} // TODO ...
-
-			return res || {}
-		}
+		let res = {}
+		res = await del(`coupons/remove?code=${code}&store=${storeId}&cart_id=${cartId}`, origin)
+		return res || {}
 	} catch (e) {
-		error(e.status, e.message)
+		error(e.status, e.data?.message || e.message)
+	}
+}
+
+export const updateCart = async (
+	{
+		billing_address_id,
+		billingAddress,
+		cartId = '',
+		selfTakeout,
+		shipping_address_id,
+		origin = null,
+		shippingAddress,
+		storeId
+	}
+) => {
+	try {
+		let res = {}
+		res = await put(
+			`${CART_ENDPOINT}/${cartId}`,
+			{
+				billing_address_id,
+				billing_address: billingAddress,
+				cart_id: cartId,
+				selfTakeout,
+				shipping_address_id,
+				shipping_address: shippingAddress,
+				store: storeId
+			},
+			origin
+		)
+		return res || {}
+	} catch (e) {
+		error(e.status, e.data?.message || e.message)
+	}
+}
+
+export const updateCart2 = async (
+	{
+		cartId,
+		selected_products_for_checkout,
+		origin = null,
+		storeId
+	}
+) => {
+	try {
+		let res = {}
+		res = await put(
+			`${CART_ENDPOINT}/${cartId}`,
+			{
+				cart_id: cartId,
+				selected_products_for_checkout,
+				store: storeId
+			},
+			origin
+		)
+		return res || {}
+	} catch (e) {
+		error(e.status, e.data?.message || e.message)
+	}
+}
+
+export const updateCart3 = async (
+	{
+		shipping_address,
+		billing_address,
+		cartId,
+		selfTakeout,
+		origin = null,
+		storeId
+	}
+) => {
+	try {
+		let res = {}
+		res = await post(
+			`${CART_ENDPOINT}/${cartId}`,
+			{
+				cart_id: cartId,
+				selfTakeout,
+				shipping_address,
+				billing_address,
+				store: storeId
+			},
+			origin
+		)
+		return res || {}
+	} catch (e) {
+		error(e.status, e.data?.message || e.message)
 	}
 }

@@ -3,6 +3,7 @@ import { defineConfig, loadEnv } from 'vite'
 // import { join } from 'path'
 // import { partytownVite } from '@builder.io/partytown/utils'
 import { SvelteKitPWA } from '@vite-pwa/sveltekit'
+import type { ProxyOptions } from 'vite'
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig(({ command, mode }) => {
@@ -11,14 +12,17 @@ export default defineConfig(({ command, mode }) => {
 	const HTTP_ENDPOINT = env.PUBLIC_PRODEXA_API_URL || 'http://localhost:8080/pxm'
 	const PXM_USER = env.PUBLIC_PRODEXA_API_USER || 'admin'
 
-	const proxyCongfig = {
+	const proxyConfig: ProxyOptions = {
 		target: HTTP_ENDPOINT,
-		headers: {
-			PXM_USER
-		},
+		headers: { PXM_USER },
 		secure: false,
 		changeOrigin: true,
-		cookiePathRewrite: ''
+		cookiePathRewrite: '/pxc',
+		configure: (proxy, _options) => {
+			proxy.on('proxyRes', (proxyRes, req, res) => {
+				delete proxyRes.headers['set-cookie']
+			})
+		}
 	}
 
 	return {
@@ -49,18 +53,16 @@ export default defineConfig(({ command, mode }) => {
 			host: true,
 			port: 3000,
 			proxy: {
-				'/api/': proxyCongfig,
+				'/api/': proxyConfig,
 				'/prodexa-img/': {
-					...proxyCongfig,
+					...proxyConfig,
 					// replace `/prodexa-img/` with `/workarea/`
-					rewrite: (path) =>
-						`${path.replace(/^\/prodexa-img\//, '/workarea/')}`
+					rewrite: (path) => `${path.replace(/^\/prodexa-img\//, '/workarea/')}`
 				},
 				'/workarea-cdn/': {
-					...proxyCongfig,
+					...proxyConfig,
 					// replace `/workarea-cdn/fit-in/${w}x${h}/prodexa-img/` with `/workarea/`
-					rewrite: (path) =>
-						`${path.replace(/^\/workarea-cdn\/fit-in\/(\d*)x(\d*)\/prodexa-img\//, '/workarea/')}`
+					rewrite: (path) => `${path.replace(/^\/workarea-cdn\/fit-in\/(\d*)x(\d*)\/prodexa-img\//, '/workarea/')}`
 				}
 				// '/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in',
 			}

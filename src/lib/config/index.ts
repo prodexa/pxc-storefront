@@ -23,12 +23,6 @@ export const entity = 'Misiki'
 
 //export const HTTP_ENDPOINT = env.PUBLIC_LITEKART_API_URL || 'https://api.litekart.in'
 export const HTTP_ENDPOINT = env.PUBLIC_PRODEXA_API_URL || 'http://localhost:8080/pxm'
-export const HTTP_HEADERS = {
-	PXM_USER: env.PUBLIC_PRODEXA_API_USER,
-	'Content-Type': 'application/json',
-	Accept: 'application/json'
-}
-
 export const IMAGE_CDN_URL= env.PUBLIC_IMAGE_CDN_URL || 'https://ik.imagekit.io/3wzatecz51w3i'
 export const IS_DEV = env.PUBLIC_IS_DEV == 'true'
 
