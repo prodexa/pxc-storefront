@@ -9,6 +9,7 @@ import {
   mapProdexajsFacets,
   mapProdexajsProduct,
 } from "./prodexa-utils";
+import queryString from 'query-string'
 
 const isServer = import.meta.env.SSR
 
@@ -62,6 +63,64 @@ export const searchProducts = async ({ origin, query, storeId, sid = null }) => 
 	}
 }
 
+function parseQueryString(query) {
+  const params =  queryString.parse(query, {arrayFormat: 'comma'})
+  // console.log('params=', params)
+  // sort
+  let sort = params.sort || ''
+  let sortPxm = ''
+  let dir = ''
+  if (sort) {
+    if (sort.startsWith('-')) {
+      sort = sort.substring(1)
+      dir = 'desc'
+    } else {
+      dir = 'asc'
+    }
+    switch (sort) {
+      case 'name' : {
+        sortPxm = 'attrValue_string_ShortDescription_en-GB'
+        break
+      }
+      case 'updatedAt' : {
+        sortPxm = 'changedOn'
+        break
+      }
+      default: {
+        sortPxm = ''
+      }
+    }
+    if (sortPxm) {
+      sort = sortPxm + ',' + dir
+    } else {
+      sort = ''
+    }
+  }
+
+  // pxmPage starts from 0, svelte page starts from 1
+  let pxmPage = 0
+  if (params.page) {
+    pxmPage = params.page - 1;
+  }
+
+  // q - query string from search field
+  const q = params.q || ''
+
+  const manufacturerId = params.brands || ''
+  const supplierId = params.vendors || ''
+
+  let attributeValuesQ = {}
+  const fixedParamNames = ['sort', 'page', 'q', 'brands', 'vendors']
+  const attrValues = Object.keys(params).filter((k) => fixedParamNames.indexOf(k) === -1)
+    .map((k) => {
+      attributeValuesQ[k] = params[k] instanceof Array ? params[k] : [params[k]]
+    })
+
+  return {
+    sort, pxmPage, q, manufacturerId, supplierId, attributeValuesQ,
+  }
+}
+
 // Fetch all products called from the search field
 export const fetchProducts = async ({
 	id,
@@ -74,58 +133,10 @@ export const fetchProducts = async ({
 }: any) => {
   console.log('fetchProducts')
   try {
-
-    const matchSort = query.match('(sort)=([^&=]*)')
-    let sort = ''
-    if (matchSort) {
-      sort = matchSort[2]
-      query = query.replace(matchSort[0], '')
-    }
-    let sortField = ''
-    let sortFieldPxm = ''
-    let dir = ''
-    if(sort){
-      if (sort.startsWith('-')) {
-        sortField = sort.substring(1)
-        dir = 'desc'
-      } else {
-        sortField = sort
-        dir = 'asc'
-      }
-      switch (sortField){
-        case 'name' :  {
-          sortFieldPxm = 'attrValue_string_ShortDescription_en-GB'
-          break
-        }
-        case 'updatedAt' :  {
-          sortFieldPxm = 'changedOn'
-          break
-        }
-        default: {
-          sortFieldPxm = ''
-        }
-      }
-      if(sortFieldPxm){
-        sort = sortFieldPxm + ',' + dir
-      } else{
-        sort = ''
-      }
-    }
-    //console.log('sort', sort)
-    // pxmPageNumber starts from 0
-    const matchPage = query.match('(page=(\\d*))');
-    let pxmPageNumber = 0
-    if(matchPage){
-      pxmPageNumber = Number(matchPage[2]) - 1;
-    }
-    // console.log('pxmPageNumber=', pxmPageNumber)
-    const matchQ = query.match('(q)=([^&=]*)');
-    let q = ''
-    if(matchQ){
-      q = matchQ[2];
-    }
+    const parsedQueryString = parseQueryString(query)
+    // console.log(parsedQueryString)
     const p = await post(
-      `products/search?searchValue=${q}&page=${pxmPageNumber}&sort=${sort}`,
+      `products/search?searchValue=${parsedQueryString.q}&page=${parsedQueryString.pxmPage}&sort=${parsedQueryString.sort}`,
       {
         "searchParams": {},
       },
@@ -220,95 +231,10 @@ export const fetchProductsOfCategory = async ({
 		let err = ''
     let currentPage = 0
 
-    //console.log('query', query)
-
-    const matchSort = query.match('(sort)=([^&=]*)')
-    let sort = ''
-    if (matchSort) {
-      sort = matchSort[2]
-      query = query.replace(matchSort[0], '')
-    }
-    let sortField = ''
-    let sortFieldPxm = ''
-    let dir = ''
-    if(sort){
-      if (sort.startsWith('-')) {
-        sortField = sort.substring(1)
-        dir = 'desc'
-      } else {
-        sortField = sort
-        dir = 'asc'
-      }
-      switch (sortField){
-        case 'name' :  {
-          sortFieldPxm = 'attrValue_string_ShortDescription_en-GB'
-          break
-        }
-        case 'updatedAt' :  {
-          sortFieldPxm = 'changedOn'
-          break
-        }
-        default: {
-          sortFieldPxm = ''
-        }
-      }
-      if(sortFieldPxm){
-        sort = sortFieldPxm + ',' + dir
-      } else{
-        sort = ''
-      }
-    }
-    // console.log('sort=', sort)
-
-    // pxmPageNumber starts from 0
-    const matchPage = query.match('(page=(\\d*))');
-    let pxmPageNumber = 0
-    if(matchPage){
-      pxmPageNumber = Number(matchPage[2]) - 1
-      query = query.replace(matchPage[0], '')
-    }
-    // console.log('pxmPageNumber=', pxmPageNumber)
-    const matchQ = query.match('(q)=([^&=]*)');
-    let q = ''
-    if(matchQ){
-      q = matchQ[2]
-      query = query.replace(matchQ[0], '')
-    }
-    console.log('q=', q)
-
-    const matchBrands = query.match('(brands)=([^&=]*)')
-    let matchBrandsQ = ''
-    if(matchBrands){
-      matchBrandsQ = matchBrands[2]
-      query = query.replace(matchBrands[0], '')
-    }
-    // console.log('matchBrandsQ=', matchBrandsQ)
-
-    const matchSuppliers = query.match('(vendors)=([^&=]*)')
-    let matchSuppliersQ = ''
-    if(matchSuppliers){
-      matchSuppliersQ = matchSuppliers[2]
-      query = query.replace(matchSuppliers[0], '')
-    }
-    // console.log('matchSuppliersQ', matchSuppliersQ)
-
-    // parse attributes
-    query = query.replace(/\+/g, ' ')
-    const values = query.split('&')
-    //&&MC_Material=Stainless Steel %2CAluschienenprofile&MC_CableLength=25&
-    let attributeValuesQ = { }
-    values
-      .filter((v) =>  v != "")
-      .map((v) => {
-      const attrId = v.substring(0, v.indexOf("="))
-      const attrValues = v.substring(v.indexOf("=") + 1)
-      const attrValuesArray = attrValues.split('%2C')
-      attributeValuesQ[attrId] = attrValuesArray
-    })
-
+    const parsedQueryString = parseQueryString(query)
 
     const p = await post(
-      `products/search?searchValue=${q}&page=${pxmPageNumber}&sort=${sort}`,
+      `products/search?searchValue=${parsedQueryString.q}&page=${parsedQueryString.pxmPage}&sort=${parsedQueryString.sort}`,
       {
         searchParams: {
         },
@@ -317,9 +243,9 @@ export const fetchProductsOfCategory = async ({
           labels: {
             ["/" + categorySlug]: categorySlug
           },
-          manufacturerId: matchBrandsQ,
-          supplierId: matchSuppliersQ,
-          attributeValues: attributeValuesQ,
+          manufacturerId: parsedQueryString.manufacturerId,
+          supplierId: parsedQueryString.supplierId,
+          attributeValues: parsedQueryString.attributeValuesQ,
         }
       },
       origin
@@ -359,7 +285,7 @@ export const fetchProductsOfCategory = async ({
         "searchParams": {},
         "facetParams": {
           hierarchyPaths: ["/" + categorySlug],
-          attributeValues: attributeValuesQ,
+          attributeValues: parsedQueryString.attributeValuesQ,
         }
       },
       origin
