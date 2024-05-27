@@ -55,7 +55,7 @@ export { clazz as class }
 				{d.name}
 			</a>
 
-			{#if dx < categoryPool?.length -1}
+			{#if dx < categoryPool?.length - 2}
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					class="h-5 w-5 px-1 shrink-0"
