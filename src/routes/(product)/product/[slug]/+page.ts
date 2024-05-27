@@ -23,7 +23,7 @@ export async function load({ params, url, parent }) {
 			return product
 		} catch (e) {
 			console.log(e)
-			//error(404, { message: 'Product Not found..' })
+			error(404, { message: 'Product Not found..' })
 		}
 		// Enabling cache-control will not refresh cart qty indicator
 		// setHeaders({ 'cache-control': `max-age=${CACHE_DURATION}` }) // This is to tell Cloudflare to store in its own cache
