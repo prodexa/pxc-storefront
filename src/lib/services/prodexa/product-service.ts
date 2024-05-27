@@ -204,6 +204,7 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 		let currentPage = 0
 
 		const parsedQueryString = parseQueryString(query)
+    console.log('parsedQueryString=', parsedQueryString)
 
 		const p = await post(
 			`${productsEndpoint}?searchValue=${parsedQueryString.q}&page=${parsedQueryString.pxmPage}&sort=${parsedQueryString.sort}`,
@@ -230,6 +231,8 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 				'searchParams': {},
 				'facetParams': {
 					hierarchyPaths: ['/' + categorySlug],
+          manufacturerId: parsedQueryString.manufacturerId,
+          supplierId: parsedQueryString.supplierId,
           attributeValues: parsedQueryString.attributeValuesQ,
 				}
 			},
@@ -243,6 +246,8 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 				'searchParams': {},
 				'facetParams': {
 					hierarchyPaths: ['/' + categorySlug],
+          manufacturerId: parsedQueryString.manufacturerId,
+          supplierId: parsedQueryString.supplierId,
           attributeValues: parsedQueryString.attributeValuesQ,
 				}
 			},
@@ -258,6 +263,8 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 				'searchParams': {},
 				'facetParams': {
 					hierarchyPaths: ['/' + categorySlug],
+          manufacturerId: parsedQueryString.manufacturerId,
+          supplierId: parsedQueryString.supplierId,
 					attributeValues: parsedQueryString.attributeValuesQ,
 				}
 			},
@@ -272,6 +279,8 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 						'searchParams': {},
 						'facetParams': {
 							hierarchyPaths: ['/' + categorySlug],
+              manufacturerId: parsedQueryString.manufacturerId,
+              supplierId: parsedQueryString.supplierId,
               attributeValues: parsedQueryString.attributeValuesQ,
 						}
 					},
