@@ -1,12 +1,23 @@
 import { error } from '@sveltejs/kit'
-import { del, getAPI, post, put } from 'lib/utils'
+import { currency, getAPI, post, put } from '$lib/utils'
+import { currencySymbol } from '$lib/config'
 
 const CART_ENDPOINT = 'carts'
 
 const mapCart = (cart) => {
 	return {
 		...cart,
-		items: cart.items.map(it => ({ ...it, slug: it.pid, img: '/prodexa-img' + it.img }))
+		items: cart.items.map(it => ({
+				...it,
+				slug: it.pid, img: '/prodexa-img' + it.img,
+				formattedItemAmount: { price: currency(it.price, currencySymbol) }
+			}
+		)),
+		formattedAmount: {
+			subtotal: currency(cart.subtotal, currencySymbol),
+			total: currency(cart.total, currencySymbol),
+			shipping: { value: 0 } // free
+		}
 	}
 }
 
@@ -62,68 +73,31 @@ export const addToCartService = async (
 	}
 }
 
-export const createBackOrder = async (
-	{
-		pid,
-		qty,
-		origin = null,
-		storeId
-	}
-) => {
+export const createBackOrder = async ({ pid, qty, origin = null, storeId }) => {
 	try {
 		let res = {}
-		res = await post(
-			`backorder`,
-			{
-				id: 'new',
-				pid,
-				qty,
-				store: storeId
-			},
-			origin
-		)
+		// TODO ...
 		return res || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
 }
 
-export const applyCouponService = async (
-	{
-		cartId,
-		code,
-		origin,
-		storeId
-	}
-) => {
+export const applyCouponService = async ({ cartId, code, origin, storeId }) => {
 	try {
 		let res = {}
-		res = await post(
-			`coupons/apply?cart_id=${cartId}`,
-			{
-				cart_id: cartId,
-				code,
-				store: storeId
-			},
-			origin
-		)
+		// TODO ...
 		return res || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
 }
 
-export const removeCouponService = async (
-	{
-		cartId,
-		code,
-		origin,
-		storeId
-	}
+export const removeCouponService = async ({ cartId, code, origin, storeId }
 ) => {
 	try {
 		let res = {}
-		res = await del(`coupons/remove?code=${code}&store=${storeId}&cart_id=${cartId}`, origin)
+		// TODO ...
 		return res || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)

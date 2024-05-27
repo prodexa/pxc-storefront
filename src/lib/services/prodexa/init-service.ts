@@ -1,5 +1,5 @@
 import Logo from './prodexa-logo.png'
-import {	IMAGE_CDN_URL } from '$lib/config'
+import { IMAGE_CDN_URL } from '$lib/config'
 
 export const fetchInit = async (host) => {
 	return {

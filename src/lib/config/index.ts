@@ -14,16 +14,16 @@ export const authorInfo = {
 	Whatsapp: '+918249028220',
 	Website: 'http://litekart.in'
 }
-export const currency = { symbol: '$', code: 'USD' }
-export const currencyCode = 'USD'
-export const currencySymbol = '$'
+export const currencyCode = env.PUBLIC_CURRENCY_CODE || 'USD'
+export const currencySymbol = env.PUBLIC_CURRENCY_SYMBOL || '$'
+export const currency = { symbol: currencySymbol, code: currencyCode }
 export const dimentionUnit = 'cm'
 export const DOMAIN = env.PUBLIC_LITEKART_DOMAIN // Never add any default value here, it will break SaaS working
 export const entity = 'Misiki'
 
 //export const HTTP_ENDPOINT = env.PUBLIC_LITEKART_API_URL || 'https://api.litekart.in'
 export const HTTP_ENDPOINT = env.PUBLIC_PRODEXA_API_URL || 'http://localhost:8080/pxm'
-export const IMAGE_CDN_URL= env.PUBLIC_IMAGE_CDN_URL || 'https://ik.imagekit.io/3wzatecz51w3i'
+export const IMAGE_CDN_URL = env.PUBLIC_IMAGE_CDN_URL || 'https://ik.imagekit.io/3wzatecz51w3i'
 export const IS_DEV = env.PUBLIC_IS_DEV == 'true'
 
 export const listOfPagesWithoutBackButton = [
@@ -71,7 +71,7 @@ export const SENTRY_DSN = env.PUBLIC_SENTRY_DSN
 export const MEDUSAJS_BASE_URL = `${env.PUBLIC_MEDUSAJS_API_URL}/store`
 
 export const BIG_COMMERCE_STORE_HASH = env.PUBLIC_BIG_COMMERCE_STORE_HASH || 'ftelcymxrh'
-export const BIG_COMMERCE_ACCESS_TOKEN =env.PUBLIC_BIG_COMMERCE_ACCESS_TOKEN || 'evgagyg76wcxcg9uauodegpc1eybfzx'
+export const BIG_COMMERCE_ACCESS_TOKEN = env.PUBLIC_BIG_COMMERCE_ACCESS_TOKEN || 'evgagyg76wcxcg9uauodegpc1eybfzx'
 export const BIG_COMMERCE_BASE_URL = `https://api.bigcommerce.com/stores/${BIG_COMMERCE_STORE_HASH}/v3/catalog`
 // export const BIG_COMMERCE_CLIENT_ID =
 // 	env.PUBLIC_BIG_COMMERCE_CLIENT_ID || 'nybaukoetx98bdjo5vshh0edr3xsz42'

@@ -1,95 +1,65 @@
 import {
-	id,
-	address,
-	adminUrl,
-	alert,
 	currencyCode,
-	currencySymbol,
-	description,
-	dimentionUnit,
-	domain,
-	DOMAIN,
-	email,
-	GOOGLE_ANALYTICS_ID,
-	GOOGLE_CLIENT_ID,
-	IMAGE_CDN_URL,
-	keywords,
-	loginUrl,
-	logo,
-	phone,
-	saasDomain,
-	saasName,
-	searchbarText,
-	siteTitle,
-	websiteLegalName,
-	websiteName,
-	weightUnit
+	currencySymbol
 } from '$lib/config'
 import { fetchInit } from './init-service'
 
-export const getStoreData = async ({
-	cookieStore,
-	cookieMegamenu,
-	url,
-	cookies,
-	server = false,
-	sid = null
-}: any) => {
+export const getStoreData = async ({ cookieStore, cookieMegamenu, url, cookies }: any) => {
 	let storeRes: any = {}
-	let store = {
-		id,
-		address,
-		adminUrl,
-		alert,
-		allowBackOrder: false,
-		close: {},
-		currencyCode,
-		currencySymbol,
-		description,
-		dimentionUnit,
-		domain,
-		DOMAIN,
-		email,
-		facebookPixel: {},
-		fontFamily: '',
-		GOOGLE_ANALYTICS_ID,
-		GOOGLE_CLIENT_ID,
-		googleAnalytics: {},
-		guaranteed_response_time: null,
-		hellobar: {},
-		homePageSliderBannerImageHeight: null,
-		IMAGE_CDN_URL: IMAGE_CDN_URL,
-		isBulkOrder: false,
-		isDeals: false,
-		isDiscountCoupons: false,
-		isFnb: false,
-		isGDPR: false,
-		isHyperlocal: false,
-		isIndianPincodes: false,
-		isMultiVendor: false,
-		isProductReviewsAndRatings: false,
-		isSecureCatalogue: false,
-		isWishlist: false,
-		keywords,
-		loginUrl,
-		logo,
-		phone,
-		product_image_dimension: null,
-		saasDomain,
-		saasName,
-		searchbarText,
-		socialSharingButtons: {},
-		store_timings: null,
-		storePromoVideo: {},
-		title: siteTitle,
-		websiteLegalName,
-		websiteName,
-		weightUnit,
-		whatsappChatButton: {},
-    imageCdn: {},
+	let store: {
+		keywords: string;
+		websiteLegalName: string;
+		dimentionUnit: string;
+		imageCdn: {};
+		fontFamily: string;
+		isSecureCatalogue: boolean;
+		logo: {};
+		id: string;
+		adminUrl: string;
+		GOOGLE_CLIENT_ID: string;
+		facebookPixel: {};
+		isProductReviewsAndRatings: boolean;
+		phone: string;
+		domain: string;
+		isIndianPincodes: boolean;
+		weightUnit: string;
+		hellobar: {};
+		DOMAIN: string;
+		product_image_dimension: null;
+		saasName: string;
+		description: string;
+		title: string;
+		isBulkOrder: boolean;
+		storePromoVideo: {};
+		alert: string;
+		guaranteed_response_time: null;
+		loginUrl: string;
+		socialSharingButtons: {};
+		close: {};
+		email: string;
+		whatsappChatButton: {};
+		address: string;
+		isDeals: boolean;
+		IMAGE_CDN_URL: string;
+		saasDomain: string;
+		currencySymbol: string;
+		isHyperlocal: boolean;
+		isMultiVendor: boolean;
+		isGDPR: boolean;
+		isFnb: boolean;
+		allowBackOrder: boolean;
+		searchbarText: string;
+		websiteName: string;
+		store_timings: null;
+		googleAnalytics: {};
+		isWishlist: boolean;
+		homePageSliderBannerImageHeight: null;
+		GOOGLE_ANALYTICS_ID: string;
+		currencyCode: string;
+		isDiscountCoupons: boolean
 	}
 
-	let megamenu = null
+	let megamenu: null
 
 	if (
 		!cookieStore ||
@@ -108,8 +78,8 @@ export const getStoreData = async ({
 			alert: storeRes?.storeOne?.alert,
 			allowBackOrder: storeRes.storeOne?.allowBackOrder,
 			close: storeRes?.storeOne?.close,
-			currencyCode: storeRes?.storeOne?.storeCurrency?.isoCode || 'USD',
-			currencySymbol: storeRes?.storeOne?.storeCurrency?.symbol || '$',
+			currencyCode: storeRes?.storeOne?.storeCurrency?.isoCode || currencyCode,
+			currencySymbol: storeRes?.storeOne?.storeCurrency?.symbol || currencySymbol,
 			description: storeRes?.storeOne?.description,
 			dimentionUnit: storeRes?.storeOne?.dimentionUnit,
 			domain: storeRes?.storeOne?.domain,
@@ -158,7 +128,7 @@ export const getStoreData = async ({
 			weightUnit: storeRes?.storeOne?.weightUnit,
 			whatsappChatButton: storeRes?.storeOne?.whatsappChatButton,
 
-      imageCdn:  storeRes?.storeOne?.imageCdn,
+			imageCdn: storeRes?.storeOne?.imageCdn
 		}
 
 		megamenu = storeRes.megamenu

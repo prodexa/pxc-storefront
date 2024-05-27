@@ -1,7 +1,6 @@
 import { error } from '@sveltejs/kit'
 import { getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import type { AllOrders, Error } from '$lib/types'
-import { mapMedusajsAllOrders } from './prodexa-utils'
 
 // export const fetchOrders = async ({ origin, storeId, server = false, sid = null }: any) => {
 // 	try {
