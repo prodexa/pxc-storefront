@@ -1,2 +1,4 @@
 export * from '$lib/themes/misiki'
-// export { default as Home } from '$lib/themes/prodexa/Home.svelte'
+import Pricesummary from '$lib/themes/prodexa/Pricesummary.svelte'
+
+export { Pricesummary }

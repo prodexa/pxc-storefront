@@ -7,16 +7,22 @@ const CART_ENDPOINT = 'carts'
 const mapCart = (cart) => {
 	return {
 		...cart,
-		items: cart.items?.map(it => ({
+		qty: cart.quantity,
+		items: cart.items?.map(it => {
+			const _id = it.catalogId + '___' + it.productId
+			return {
 				...it,
-				slug: it.pid, img: '/prodexa-img' + it.img,
+				_id, slug: _id, pid: _id,
+				img: '/prodexa-img' + it.image,
+				name: it.shortDescription,
+				qty: it.quantity,
 				formattedItemAmount: { price: currency(it.price, currencySymbol) }
 			}
-		)),
+		}),
 		formattedAmount: {
 			subtotal: currency(cart.subtotal, currencySymbol),
 			total: currency(cart.total, currencySymbol),
-			shipping: { value: 0 } // free
+			shipping: { value: 0 } // free shipping
 		}
 	}
 }
@@ -35,33 +41,17 @@ export const fetchCartData = loadCart
 export const fetchRefreshCart = loadCart
 export const fetchMyCart = loadCart
 
-export const addToCartService = async (
-	{
-		cartId,
-		customizedData = null,
-		customizedImg = null,
-		options = null,
-		pid,
-		qty,
-		vid,
-		origin = null,
-		storeId
-	}
-) => {
+export const addToCartService = async ({ cartId, pid, qty, origin = null }) => {
 	try {
 		let res = {}
 
 		res = await post(
 			cartId ? `${CART_ENDPOINT}/${cartId}/add` : CART_ENDPOINT,
 			{
-				pid,
-				vid,
-				qty,
-				customizedImg,
-				store: storeId,
-				cart_id: cartId,
-				customizedData,
-				options
+				catalogId: pid.split('___')[0],
+				productId: pid.split('___')[1],
+				quantity: qty,
+				cart_id: cartId
 			},
 			origin
 		)
