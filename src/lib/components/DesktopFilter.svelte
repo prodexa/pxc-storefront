@@ -75,6 +75,7 @@ function goCheckbox(e) {
 
   // goto does not force refresh page
   // goto(`${url}page=1`)
+  console.log('appliedFilters=', appliedFilters)
   window.location.href = `${url}page=1`
 }
 
@@ -278,7 +279,7 @@ function handleToggleSubCategory2(c, cx) {
 							{/each}
 						{:else}
 							<span>
-								{value}
+								{key}:{value}
 							</span>
 						{/if}
 
