@@ -7,7 +7,7 @@ const CART_ENDPOINT = 'carts'
 const mapCart = (cart) => {
 	return {
 		...cart,
-		items: cart.items.map(it => ({
+		items: cart.items?.map(it => ({
 				...it,
 				slug: it.pid, img: '/prodexa-img' + it.img,
 				formattedItemAmount: { price: currency(it.price, currencySymbol) }
@@ -22,11 +22,13 @@ const mapCart = (cart) => {
 }
 
 const loadCart = async ({ cartId = null, origin = null }) => {
+	let cart
 	try {
-		return mapCart(cartId ? await getAPI(`${CART_ENDPOINT}/${cartId}`, origin) : {})
+		cart = cartId ? await getAPI(`${CART_ENDPOINT}/${cartId}`, origin) : {}
 	} catch (e) {
-		error(e.status, e.data.message || e.message)
+		error(e.status, e.data?.message || e.message)
 	}
+	return cart ? mapCart(cart) : {}
 }
 
 export const fetchCartData = loadCart
