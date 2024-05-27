@@ -229,7 +229,8 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 			{
 				'searchParams': {},
 				'facetParams': {
-					hierarchyPaths: ['/' + categorySlug]
+					hierarchyPaths: ['/' + categorySlug],
+          attributeValues: parsedQueryString.attributeValuesQ,
 				}
 			},
 			origin
@@ -241,7 +242,8 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 			{
 				'searchParams': {},
 				'facetParams': {
-					hierarchyPaths: ['/' + categorySlug]
+					hierarchyPaths: ['/' + categorySlug],
+          attributeValues: parsedQueryString.attributeValuesQ,
 				}
 			},
 			origin
@@ -256,7 +258,7 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 				'searchParams': {},
 				'facetParams': {
 					hierarchyPaths: ['/' + categorySlug],
-					attributeValues: parsedQueryString.attributeValuesQ
+					attributeValues: parsedQueryString.attributeValuesQ,
 				}
 			},
 			origin
@@ -269,7 +271,8 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 					{
 						'searchParams': {},
 						'facetParams': {
-							hierarchyPaths: ['/' + categorySlug]
+							hierarchyPaths: ['/' + categorySlug],
+              attributeValues: parsedQueryString.attributeValuesQ,
 						}
 					},
 					origin
