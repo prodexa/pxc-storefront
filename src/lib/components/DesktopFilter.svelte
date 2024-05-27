@@ -72,7 +72,10 @@ function goCheckbox(e) {
 	delete appliedFilters?.sort
 	delete appliedFilters?.lat
 	delete appliedFilters?.lng
-	goto(`${url}page=1`)
+
+  // goto does not force refresh page
+  // goto(`${url}page=1`)
+  window.location.href = `${url}page=1`
 }
 
 onMount(async () => {
