@@ -9,6 +9,7 @@ import {
 	mapProdexaProduct
 } from './prodexa-utils'
 import queryString from 'query-string'
+import { currencyCode } from '$lib/config'
 
 const productsEndpoint = 'products/search/full-product'
 const productsFacetsEndpoint = 'products/search/facets'
@@ -16,7 +17,7 @@ const productsFacetsEndpoint = 'products/search/facets'
 const enGB = 'en-GB'
 const shortDescription = 'ShortDescription'
 const parseQueryString = query => {
-	const params = queryString.parse(query, { arrayFormat: 'comma' })
+	const params = queryString.parse(query)
 	// console.log('params=', params)
 	// sort
 	let sort = params.sort || ''
@@ -38,6 +39,11 @@ const parseQueryString = query => {
 				sortPxm = 'changedOn'
 				break
 			}
+      case 'price' : {
+        // TODO temp solution
+        sortPxm = 'minPrice_' + currencyCode
+        break
+      }
 			default: {
 				sortPxm = ''
 			}

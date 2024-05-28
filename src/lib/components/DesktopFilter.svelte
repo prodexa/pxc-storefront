@@ -279,7 +279,7 @@ function handleToggleSubCategory2(c, cx) {
 							{/each}
 						{:else}
 							<span>
-								{key}:{value}
+								{value}
 							</span>
 						{/if}
 
