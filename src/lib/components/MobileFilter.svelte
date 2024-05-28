@@ -267,7 +267,8 @@ function applyFilter() {
 	delete appliedFilters?.sort
 	delete appliedFilters?.lat
 	delete appliedFilters?.lng
-	goto(`${url}page=1`)
+	// goto(`${url}page=1`)
+  window.location.href = `${url}page=1`
 }
 
 async function sortNow(s) {

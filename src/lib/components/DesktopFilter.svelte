@@ -75,7 +75,7 @@ function goCheckbox(e) {
 
   // goto does not force refresh page
   // goto(`${url}page=1`)
-  console.log('appliedFilters=', appliedFilters)
+  // console.log('appliedFilters=', appliedFilters)
   window.location.href = `${url}page=1`
 }
 
