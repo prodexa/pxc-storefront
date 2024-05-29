@@ -43,7 +43,7 @@ export const fetchMyCart = loadCart
 
 export const addToCartService = async ({ cartId, pid, qty, origin = null }) => {
 	try {
-		let res = {}
+		let res: { cart_id?: string, sid?: string } = {}
 
 		res = await post(
 			cartId ? `${CART_ENDPOINT}/${cartId}/add` : CART_ENDPOINT,
@@ -109,8 +109,7 @@ export const updateCart = async (
 	}
 ) => {
 	try {
-		let res = {}
-		res = await put(
+		await put(
 			`${CART_ENDPOINT}/${cartId}`,
 			{
 				billing_address_id,
@@ -123,7 +122,6 @@ export const updateCart = async (
 			},
 			origin
 		)
-		return res || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}

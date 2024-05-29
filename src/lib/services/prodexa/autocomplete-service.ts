@@ -3,27 +3,27 @@ import { post } from '$lib/utils/api'
 import { mapProdexaAutocomplete } from './prodexa-utils'
 
 export const fetchAutocompleteData = async ({ origin, q }: any) => {
-	try {
+	if (q?.length < 4) {
+		return []
+	}
 
+	try {
 		// search by product
 		const res = await post(
 			`products/search/short-product?searchValue=${q}&page=0&size=10`,
-			{
-				'searchParams': {},
-				'facetParams': {}
-			},
+			{},
 			origin
 		)
 
-		const data = res?.content?.map((product: any) => mapProdexaAutocomplete(product))
+		const data = res?.content?.map(mapProdexaAutocomplete)
 
 		const search = {
-			'count': res?.totalElements,
-			'type': 'search',
-			'key': q
+			count: res?.totalElements,
+			type: 'search',
+			key: q
 		}
 
-		return [search, ...data] || [search]
+		return search.count ? [search, ...data] : []
 	} catch (e) {
 		error(e.status, e.message)
 	}

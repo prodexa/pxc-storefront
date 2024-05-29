@@ -50,7 +50,7 @@
 
 		// generate anchor tag, click it for download and then remove it again
 		let a = document.createElement('a')
-		a.setAttribute('download', `cart-${cartId}.xlsx`)
+		a.setAttribute('download', `shopping-cart-${cartId}.xlsx`)
 		a.setAttribute('href', link)
 		document.body.appendChild(a)
 		a.click()

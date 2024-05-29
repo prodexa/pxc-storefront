@@ -7,9 +7,7 @@ export const fetchFooterCategories = async ({}) => {
 	console.log('fetchFooterCategories')
 	try {
 		let data: []
-
 		// TODO ...
-
 		return data || []
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
@@ -87,7 +85,7 @@ export const fetchMegamenuData = async ({ megamenu = false, origin }) => {
 		// to navigate any megamenu item to the categories page
 		// it has to have the slug: 'categories'
 
-		let menuItems = []
+		let menuItems: Category[] = []
 
 		for (let i = 0; i < 2; i++) {
 			if (allCategories.length > i) {
@@ -111,8 +109,15 @@ export const fetchMegamenuData = async ({ megamenu = false, origin }) => {
 			menuItems.push(c)
 		}
 
-		return menuItems || []
+		return menuItems as [] || []
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
 }
+
+export declare const fetchCategoriesSelectedByUser: ({ isCors, origin, sid, storeId }: {
+	isCors?: boolean;
+	origin: any;
+	sid?: any;
+	storeId: any;
+}) => Promise<[]>

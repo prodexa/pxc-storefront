@@ -69,7 +69,7 @@ export const getStoreData = async ({ cookieStore, cookieMegamenu, url, cookies }
 	) {
 		const uri = new URL(url)
 
-		storeRes = await fetchInit(uri.host)
+		storeRes = await fetchInit()
 
 		store = {
 			id: storeRes?.storeOne?._id,

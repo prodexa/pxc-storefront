@@ -8,13 +8,14 @@ import type { ProxyOptions } from 'vite'
 /** @type {import('vite').UserConfig} */
 export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, process.cwd(), '')
+
 	// const HTTP_ENDPOINT = env.PUBLIC_LITEKART_API_URL || 'https://api.litekart.in'
-	const HTTP_ENDPOINT = env.PUBLIC_PRODEXA_API_URL || 'http://localhost:8080/pxm'
-	const PXM_USER = env.PUBLIC_PRODEXA_API_USER || 'admin'
+	const HTTP_ENDPOINT = env.PUBLIC_HTTP_ENDPOINT
+
 
 	const proxyConfig: ProxyOptions = {
 		target: HTTP_ENDPOINT,
-		headers: { PXM_USER },
+		headers: { PXM_USER: env.PUBLIC_PRODEXA_API_USER },
 		secure: false,
 		changeOrigin: true,
 		cookiePathRewrite: '/pxc',
@@ -52,20 +53,24 @@ export default defineConfig(({ command, mode }) => {
 		server: {
 			host: true,
 			port: 3000,
-			proxy: {
-				'/api/': proxyConfig,
-				'/prodexa-img/': {
-					...proxyConfig,
-					// replace `/prodexa-img/` with `/workarea/`
-					rewrite: (path) => `${path.replace(/^\/prodexa-img\//, '/workarea/')}`
-				},
-				'/workarea-cdn/': {
-					...proxyConfig,
-					// replace `/workarea-cdn/fit-in/${w}x${h}/prodexa-img/` with `/workarea/`
-					rewrite: (path) => `${path.replace(/^\/workarea-cdn\/fit-in\/(\d*)x(\d*)\/prodexa-img\//, '/workarea/')}`
-				}
-				// '/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in',
-			}
+			proxy:
+				HTTP_ENDPOINT === env.PUBLIC_PRODEXA_API_URL ? {
+						'/api/': proxyConfig,
+						'/prodexa-img/': {
+							...proxyConfig,
+							// replace `/prodexa-img/` with `/workarea/`
+							rewrite: (path) => `${path.replace(/^\/prodexa-img\//, '/workarea/')}`
+						},
+						'/workarea-cdn/': {
+							...proxyConfig,
+							// replace `/workarea-cdn/fit-in/${w}x${h}/prodexa-img/` with `/workarea/`
+							rewrite: (path) => `${path.replace(/^\/workarea-cdn\/fit-in\/(\d*)x(\d*)\/prodexa-img\//, '/workarea/')}`
+						}
+					} :
+					{
+						'/api': HTTP_ENDPOINT,
+						'/sitemap': 'https://s3.ap-south-1.amazonaws.com/litekart.in'
+					}
 		}
 	}
 })

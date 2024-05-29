@@ -1,12 +1,15 @@
 import { error } from '@sveltejs/kit'
 import { getAPI, post } from '$lib/utils/api'
-import type { AllProducts, Product } from '$lib/types'
+import type { AllProducts } from '$lib/types'
 import {
 	mapProdexaAllProducts,
 	mapProdexaAttrFacets,
 	mapProdexaFacet,
 	mapProdexaFacets,
-	mapProdexaProduct
+	mapProdexaProduct,
+	SLUG_SEPARATOR,
+	LANGUAGE_TAG,
+	ATTRIBUTE_SHORT_DESCRIPTION
 } from './prodexa-utils'
 import queryString from 'query-string'
 import { currencyCode } from '$lib/config'
@@ -14,149 +17,134 @@ import { currencyCode } from '$lib/config'
 const productsEndpoint = 'products/search/full-product'
 const productsFacetsEndpoint = 'products/search/facets'
 
-const enGB = 'en-GB'
-const shortDescription = 'ShortDescription'
-const parseQueryString = query => {
+const parseQueryString = (query, categorySlug = null) => {
 	const params = queryString.parse(query)
-	// console.log('params=', params)
+
 	// sort
-	let sort = params.sort || ''
-	let sortPxm = ''
-	let dir = ''
+	let sort = params.sort as string
+	let direction: 'asc' | 'desc' | null
+
 	if (sort) {
 		if (sort.startsWith('-')) {
 			sort = sort.substring(1)
-			dir = 'desc'
+			direction = 'desc'
 		} else {
-			dir = 'asc'
+			direction = 'asc'
 		}
-		switch (sort) {
-			case 'name' : {
-				sortPxm = `attrValue_string_${shortDescription}_${enGB}`
-				break
-			}
-			case 'updatedAt' : {
-				sortPxm = 'changedOn'
-				break
-			}
-      case 'price' : {
-        // TODO temp solution
-        sortPxm = 'minPrice_' + currencyCode
-        break
-      }
-			default: {
-				sortPxm = ''
-			}
-		}
-		if (sortPxm) {
-			sort = sortPxm + ',' + dir
-		} else {
-			sort = ''
+
+		sort = ({
+			name: `attrValue_string_${ATTRIBUTE_SHORT_DESCRIPTION}_${LANGUAGE_TAG}`,
+			updatedAt: 'changedOn',
+			price: 'minPrice_' + currencyCode
+		})[sort]
+
+		if (sort) {
+			sort = sort + ',' + direction
 		}
 	}
 
-	// pxmPage starts from 0, svelte page starts from 1
-	let pxmPage = 0
-	if (params.page) {
-		pxmPage = params.page - 1
-	}
+	// backend page starts from 0, svelte page starts from 1
+	const page = params.page ? (params.page as unknown as number - 1) : 0
 
 	// q - query string from search field
-	const q = params.q || ''
+	const searchValue = params.q || ''
 
 	const manufacturerId = params.brands || ''
 	const supplierId = params.vendors || ''
 
-	let attributeValuesQ = {}
-	const fixedParamNames = ['sort', 'page', 'q', 'brands', 'vendors']
-	const attrValues = Object.keys(params).filter((k) => fixedParamNames.indexOf(k) === -1)
-		.map((k) => {
-			attributeValuesQ[k] = params[k] instanceof Array ? params[k] : [params[k]]
+	let attributeValues = {}
+	Object.keys(params)
+		.filter((param) => !['sort', 'page', 'q', 'brands', 'vendors'].includes(param))
+		.forEach((param) => {
+			attributeValues[param] = params[param] instanceof Array ? params[param] : [params[param]]
 		})
 
-	return {
-		sort, pxmPage, q, manufacturerId, supplierId, attributeValuesQ
-	}
+	const hierarchyPaths = categorySlug ? [`/${categorySlug}`] : []
+
+	return ({
+		query: {
+			searchValue,
+			page,
+			sort
+		},
+		searchData: {
+			facetParams: {
+				hierarchyPaths,
+				manufacturerId,
+				supplierId,
+				attributeValues
+			}
+		}
+	})
 }
 
-export const searchProducts = async ({ origin, query }) => {
-	console.log('searchProducts', query)
+const stringifySearchParams = (searchParams) => {
+	const queryStr = queryString.stringify(searchParams.query, {
+		skipNull: true,
+		skipEmptyString: true
+	})
+	return queryStr ? `?${queryStr}` : ''
+}
 
-	try {
-		let category = ''
-		let count = 0
-		let err = ''
-		let facets = ''
-		let pageSize = 0
-		let products = []
-		let res = {}
-		let style_tags = []
+const fetchFacets = async ({ searchParams, origin }) => {
+	const searchData = searchParams.searchData
+	const query = stringifySearchParams(searchParams)
 
-		const p = await post(
-			`${productsEndpoint}?${query}`,
-			{
-				'searchParams': {},
-				'facetParams': {
-					'hierarchyPaths': ['/' + category],
-					'labels': {
-						['/' + category]: category
-					}
-				}
-			},
-			origin
+	const brands = mapProdexaFacets(await post(
+		`${productsFacetsEndpoint}/fields/manufacturerId${query}`,
+		searchData,
+		origin
+	))
+
+	const vendors = mapProdexaFacets(await post(
+		`${productsFacetsEndpoint}/fields/supplierId${query}`,
+		searchData,
+		origin
+	))
+
+	const attributes = mapProdexaAttrFacets(await post(
+		`${productsFacetsEndpoint}/attributes${query}`,
+		searchData,
+		origin
+	))
+
+	// TODO need to have only one call that will fetch attr with values
+	attributes.all.key.buckets = await Promise.all(
+		attributes.all.key.buckets.map((bucket) => post(
+				`${productsFacetsEndpoint}/attribute-values/${bucket.id}/${query}`,
+				searchData,
+				origin
+			)
+				.then(res => res.map(mapProdexaFacet))
+				.then(res => ({ ...bucket, value: { buckets: res } }))
 		)
+	)
 
-		res = {
-			count: p?.totalElements,
-			pageSize: p?.size,
-			noOfPage: p?.number,
-			maxPage: p?.totalPages,
-			estimatedTotalHits: p?.totalElements,
-			category: category
+	return {
+		all_aggs: {
+			doc_count: 1,
+			brands,
+			vendors,
+			attributes
 		}
-
-		products = p?.content?.map(mapProdexaProduct)
-		count = res?.count
-		facets = res?.facets
-		pageSize = res?.pageSize
-		category = res?.category
-		err = !res?.estimatedTotalHits ? 'No result Not Found' : null
-
-		return { products, count, facets, pageSize, err }
-	} catch (e) {
-		error(e.status, e.data?.message || e.message)
 	}
 }
 
 // Fetch all products called from the search field
 export const fetchProducts = async ({ query = '', origin }: any) => {
-	console.log('fetchProducts', query)
+	const searchParams = parseQueryString(query)
 
 	try {
-		const parsedQuery = parseQueryString(query)
-		// console.log(parsedQuery)
-		const p = await post(
-			`${productsEndpoint}?searchValue=${parsedQuery.q}&page=${parsedQuery.pxmPage}&sort=${parsedQuery.sort}`,
-			{ 'searchParams': {} },
+		const productsPage = await post(
+			`${productsEndpoint}${stringifySearchParams(searchParams)}`,
+			searchParams.searchData,
 			origin
 		)
-		return mapProdexaAllProducts(p) || []
 
-	} catch (e) {
-		console.log(e)
-		error(e.status, e.data?.message || e.message)
-	}
-}
+		const facets = await fetchFacets({ searchParams, origin })
 
-export const fetchReels = async ({ origin, storeId, slug, id, sid = null }: any) => {
-	console.log('fetchReels')
+		return mapProdexaAllProducts({ ...productsPage, facets }) || []
 
-	try {
-		let res: AllProducts | {} = {}
-
-		// TODO ...
-
-		return res || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
@@ -164,20 +152,12 @@ export const fetchReels = async ({ origin, storeId, slug, id, sid = null }: any)
 
 // Fetch single product
 export const fetchProduct = async ({ origin, slug }) => {
-	console.log('fetchProduct', slug)
-
 	try {
-		let res: Product | object = {}
-		const slug1 = slug.replace('___', '/')
-		// console.log('slug', slug)
-		const p = await getAPI(
-			`product-editor/products/${slug1}`,
+		const product = await getAPI(
+			`product-editor/products/${slug.replace(SLUG_SEPARATOR, '/')}`,
 			origin
 		)
-		res = mapProdexaProduct(p)
-		// console.log('fetchProduct res=', res)
-
-		return res || {}
+		return mapProdexaProduct(product)
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
@@ -190,221 +170,86 @@ export const fetchProduct = async ({ origin, slug }) => {
 // while fetchProduct used by routes/(product)/product/[slug]/+page.ts
 // this is weird and as a result we have 2 product api calls
 // on the product details page
-export const fetchProduct2 = async ({ origin, slug }) => {
-	console.log('fetchProduct2', slug)
-	return fetchProduct({ origin, slug })
-}
+export const fetchProduct2 = fetchProduct
 
 // Fetch products based on category called when selecting category
 export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) => {
-	console.log('fetchProductsOfCategory')
+	const searchParams = parseQueryString(query, categorySlug)
 
 	try {
-		let res = {}
-		let products: Product[] = []
-		let count = 0
-		let facets = ''
-		let pageSize = 0
-		let category = {}
-		let err = ''
-		let currentPage = 0
-
-		const parsedQueryString = parseQueryString(query)
-
-		const p = await post(
-			`${productsEndpoint}?searchValue=${parsedQueryString.q}&page=${parsedQueryString.pxmPage}&sort=${parsedQueryString.sort}`,
-			{
-				searchParams: {},
-				facetParams: {
-					hierarchyPaths: ['/' + categorySlug],
-					labels: {
-						['/' + categorySlug]: categorySlug
-					},
-					manufacturerId: parsedQueryString.manufacturerId,
-					supplierId: parsedQueryString.supplierId,
-					attributeValues: parsedQueryString.attributeValuesQ
-				}
-			},
+		const productsPage = await post(
+			`${productsEndpoint}${stringifySearchParams(searchParams)}`,
+			searchParams.searchData,
 			origin
 		)
-		products = p?.content?.map((p) => mapProdexaProduct(p))
 
-		// facets
-		const manufacturerFacetsPxm = await post(
-			`${productsFacetsEndpoint}/fields/manufacturerId`,
-			{
-				'searchParams': {},
-				'facetParams': {
-					hierarchyPaths: ['/' + categorySlug],
-          manufacturerId: parsedQueryString.manufacturerId,
-          supplierId: parsedQueryString.supplierId,
-          attributeValues: parsedQueryString.attributeValuesQ,
-				}
-			},
-			origin
-		)
-		const manufacturerFacets = mapProdexaFacets(manufacturerFacetsPxm)
+		const products = productsPage?.content?.map((p) => mapProdexaProduct(p))
+		const facets = await fetchFacets({ searchParams, origin })
 
-		const supplierFacetsPxm = await post(
-			`${productsFacetsEndpoint}/fields/supplierId`,
-			{
-				'searchParams': {},
-				'facetParams': {
-					hierarchyPaths: ['/' + categorySlug],
-          manufacturerId: parsedQueryString.manufacturerId,
-          supplierId: parsedQueryString.supplierId,
-          attributeValues: parsedQueryString.attributeValuesQ,
-				}
-			},
-			origin
-		)
-		const supplierFacets = mapProdexaFacets(supplierFacetsPxm)
-
-		// !!!!!!!
-		// TODO need to have only one call that will fetch attr with values
-		const attributesFacetsPxm = await post(
-			`${productsFacetsEndpoint}/attributes`,
-			{
-				'searchParams': {},
-				'facetParams': {
-					hierarchyPaths: ['/' + categorySlug],
-          manufacturerId: parsedQueryString.manufacturerId,
-          supplierId: parsedQueryString.supplierId,
-					attributeValues: parsedQueryString.attributeValuesQ,
-				}
-			},
-			origin
-		)
-		const attributesFacets = mapProdexaAttrFacets(attributesFacetsPxm)
-		for (const bucket of attributesFacets?.all?.key.buckets) {
-			try {
-				const attributeValuesPxm = await post(
-					`${productsFacetsEndpoint}/attribute-values/${bucket.id}`,
-					{
-						'searchParams': {},
-						'facetParams': {
-							hierarchyPaths: ['/' + categorySlug],
-              manufacturerId: parsedQueryString.manufacturerId,
-              supplierId: parsedQueryString.supplierId,
-              attributeValues: parsedQueryString.attributeValuesQ,
-						}
-					},
-					origin
-				)
-				bucket.value.buckets = attributeValuesPxm.map((av) => mapProdexaFacet(av))
-			} catch (e) {
-				console.log('e=', e)
-			}
-		}
-
-		const allFacets = {
-			'all_aggs': {
-				doc_count: 1,
-				brands: manufacturerFacets,
-				vendors: supplierFacets,
-				attributes: attributesFacets
-			}
-		}
-
-		res = {
-			count: p?.totalElements,
-			pageSize: p?.size,
-			noOfPage: p?.number,
-			maxPage: p?.totalPages,
-			estimatedTotalHits: p?.totalElements,
-			category: categorySlug,
-			facets: allFacets
-		}
-		count = res?.count
-		facets = res?.facets
-		pageSize = res?.pageSize
-		category = res?.category
-		err = !res?.estimatedTotalHits ? 'No result Not Found' : null
-		currentPage = res?.noOfPage
-
-		currentPage = currentPage + 1
+		const count = productsPage?.totalElements
+		const pageSize = productsPage?.size
+		const category = categorySlug
+		const err = !productsPage?.totalElements ? 'No result Not Found' : null
+		const currentPage = productsPage?.totalPages + 1
 
 		return {
 			category,
 			count,
 			currentPage,
 			err,
-			facets,
 			pageSize,
-			products
+			products,
+			facets: facets as unknown as string
 		}
 	} catch (e) {
-		return {}
+		error(e.status, e.data?.message || e.message)
 	}
 }
 
 // Fetch next product
-
-export const fetchNextPageProducts = async ({ origin, categorySlug, nextPage }) => {
-	console.log('fetchNextPageProducts')
+export const fetchNextPageProducts = async ({ categorySlug, nextPage, searchParams: query = {}, origin }) => {
+	const searchParams = parseQueryString(query)
+	searchParams.query.page = nextPage - 1
 
 	try {
-		let nextPageData = []
-		let res = {}
-
-		const p = await post(
-			`${productsEndpoint}?page=${nextPage}`,
-			{
-				'searchParams': {},
-				'facetParams': {
-					'hierarchyPaths': ['/' + categorySlug],
-					'labels': {
-						['/' + categorySlug]: categorySlug
-					}
-				}
-			},
+		const productsPage = await post(
+			`${productsEndpoint}${stringifySearchParams(searchParams)}`,
+			searchParams.searchData,
 			origin
 		)
-		res = {
-			category: categorySlug,
-			count: p?.totalElements,
-			// pageSize: p?.size,
-			// noOfPage: p?.number,
-			// maxPage: p?.totalPages,
-			estimatedTotalHits: p?.totalElements
-			//facets:
-		}
-		nextPageData = p?.content?.map((p) => mapProdexaProduct(p))
 
-		// count = res?.count
-		// facets = res?.facets
-		// pageSize = res?.pageSize
-		// category = res?.category
-		// err = !res?.estimatedTotalHits ? 'No result Not Found' : null
+		const nextPageData = productsPage.content.map((p) => mapProdexaProduct(p))
+		const facets = await fetchFacets({ searchParams: searchParams, origin })
 
 		return {
-			category: res.category,
-			count: res.count,
-			estimatedTotalHits: res.estimatedTotalHits,
-			facets: res.facets,
-			nextPageData: nextPageData || []
+			category: categorySlug,
+			count: productsPage.totalElements,
+			estimatedTotalHits: productsPage.totalElements,
+			facets,
+			nextPageData
 		}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
 }
 
-// Fetch related products
-
-export const fetchRelatedProducts = async ({ pid }) => {
-	console.log('fetchRelatedProducts')
+export const fetchReels = async ({}: any) => {
 
 	try {
-		let relatedProductsRes = {}
+		let res: AllProducts | {} = {}
 
-		// TODO ..
+		// TODO ...
 
-		const relatedProducts = relatedProductsRes?.data.filter((p) => {
-			return p._id !== pid
-		})
-
-		return relatedProducts || []
+		return res || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
 }
+
+export declare const fetchRelatedProducts: ({ origin, storeId, categorySlug, pid, sid }: {
+	origin: any;
+	storeId: any;
+	categorySlug: any;
+	pid: any;
+	sid?: any;
+}) => Promise<any>

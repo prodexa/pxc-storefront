@@ -1,6 +1,6 @@
 {
-	"name": "svelte-commerce",
-	"version": "2.0.1",
+	"name": "pxc-storefront",
+	"version": "1.0.0-SNAPSHOT",
 	"private": true,
 	"scripts": {
 		"prepare": "svelte-kit sync",

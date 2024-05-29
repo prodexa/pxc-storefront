@@ -1,7 +1,7 @@
 import Logo from './prodexa-logo.png'
 import { IMAGE_CDN_URL } from '$lib/config'
 
-export const fetchInit = async (host) => {
+export const fetchInit = async () => {
 	return {
 		storeOne: {
 			id: 'prodexa',
