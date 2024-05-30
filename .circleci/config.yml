@@ -5,6 +5,8 @@ aliases:
     username: $DOCKER_USER
     password: $DOCKER_PASS
 
+  - &deploy-branches
+    - prodexa
 
 jobs:
   init:
@@ -22,14 +24,26 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Build
+          command: |
+            set -eo pipefail
+            npm install
+            npm run build
+  build_deploy:
+    docker:
+      - image: node:21-slim
+    working_directory: ~/build
+    steps:
+      - checkout
+      - run:
           name: Build, tar, publish
           command: |
             set -eo pipefail
-            apt-get update && apt-get install --no-install-recommends -y bash ca-certificates openssh-client curl unzip
             npm install
             npm run build
             npm run copy
             npm run package
+            apt-get update && apt-get install --no-install-recommends -y bash ca-certificates openssh-client curl unzip
             curl -fsSLk -o /tmp/vault.zip https://releases.hashicorp.com/vault/1.3.2/vault_1.3.2_linux_amd64.zip \
             && unzip /tmp/vault.zip -d /usr/local/bin/ \
             && rm -f /tmp/vault.zip
@@ -50,7 +64,6 @@ jobs:
             -H "X-Checksum-Sha256:${ARTIFACT_SHA256_CHECKSUM}" \
             -X PUT "https://artifacts.dev.prodexa.com/artifactory/maven-deploy/com/prodexa/${CIRCLE_PROJECT_REPONAME}/${APP_VERSION}/${CIRCLE_PROJECT_REPONAME}-${APP_VERSION}.tar.gz" \
             -T ${APP_FILE}
-
 workflows:
   version: 2
   build-and-publish:
@@ -63,5 +76,13 @@ workflows:
           requires:
             - init
           filters:
+            branches:
+              ignore: *deploy-branches
+      - build_deploy:
+          requires:
+            - init
+          filters:
             tags:
               only: /.*/
+            branches:
+              only: *deploy-branches
