@@ -22,7 +22,8 @@
 		"copy": "node devops/copy",
 		"package": "node devops/package",
 		"run": "node devops/run",
-		"bcpr": "run-s build copy package run",
+		"bcp": "run-s build copy package",
+		"bcpr": "run-s bcp run",
 		"liveS": "node devops/deploy",
 		"live": "run-s build copy liveS"
 	},
