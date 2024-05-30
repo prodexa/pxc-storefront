@@ -81,10 +81,10 @@ async function onSearchSubmit({ detail }) {
 	let newUrl
 
 	if (detail.type === 'category') {
-		const u = new URL(base +`/${detail.slug}`, $page.data.origin)
+		const u = new URL(`${base}/${detail.slug}`, $page.data.origin)
 		newUrl = u.toString()
 	} else {
-		const u = new URL(base + '/search', $page.data.origin)
+		const u = new URL(`${base}/search`, $page.data.origin)
 		u.searchParams.set('q', detail?.name)
 		newUrl = u.toString()
 	}

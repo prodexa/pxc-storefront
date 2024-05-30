@@ -528,7 +528,7 @@ function handleFilterTags() {
 
 						<p class="mb-5">Please check the spelling or try searching something else</p>
 
-						<PrimaryButton class="text-sm" on:click="{() => goto(base + '/')}">Back to Home</PrimaryButton>
+						<PrimaryButton class="text-sm" on:click="{() => goto(`${base}/`)}">Back to Home</PrimaryButton>
 					</div>
 				</div>
 			{/if}
