@@ -29,8 +29,7 @@ jobs:
             set -eo pipefail
             npm install
             npm run build
-
-  build-deploy:
+  build_deploy:
     docker:
       - image: node:21-slim
     working_directory: ~/build
