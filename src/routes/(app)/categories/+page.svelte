@@ -6,6 +6,7 @@ import { navigateToProperPath, toast } from '$lib/utils'
 import { onMount } from 'svelte'
 import { page } from '$app/stores'
 import SEO from '$lib/components/SEO/index.svelte'
+import { base } from '$app/paths';
 
 let seoProps = {
 	title: `Categories`,
@@ -111,7 +112,7 @@ function toggle2(cx) {
 								</button>
 							{:else}
 								<a
-									href="/{m.slug}"
+									href="{base}/{m.slug}"
 									aria-label="Click to visit {m.name || '##'}"
 									class="text-left flex h-24 w-full items-end justify-between {bgColors[mx]}">
 									<div class="flex h-full w-full flex-1 items-center px-6">

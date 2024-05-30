@@ -5,6 +5,7 @@
 </style>
 
 <script lang="ts">
+import { base } from '$app/paths';
 export let selected = null
 </script>
 
@@ -12,7 +13,7 @@ export let selected = null
 	<div
 		class=" flex w-full justify-between text-center text-xs font-semibold tracking-widest text-zinc-800 md:w-2/3 lg:w-1/3">
 		<a
-			href="/cart"
+			href="{base}/cart"
 			aria-label="Click to go inside cart"
 			class="mx-2 flex flex-col"
 			data-sveltekit-preload-data>
@@ -41,7 +42,7 @@ export let selected = null
 					<span class="mt-1 text-center text-primary-500">Prescription</span>
 				</div>
 			{:else}
-				<a href="/products/cart/prescription" aria-label="Click to go inside prescription" class="flex flex-col items-center text-center">
+				<a href="{base}/products/cart/prescription" aria-label="Click to go inside prescription" class="flex flex-col items-center text-center">
 					<div
 						class="mx-auto flex h-8 w-8 items-center justify-center  rounded-full border border-primary-500 text-center
 						{selected === 'prescription' ? 'bg-primary-500  text-white' : 'bg-white text-primary-500'}">

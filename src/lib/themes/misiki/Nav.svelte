@@ -22,6 +22,7 @@ import Cookie from 'cookie-universal'
 import menu from '$lib/config/menu'
 import PincodeInputBox from '$lib/themes/misiki/PincodeInputBox.svelte'
 import userEmptyProfile from '$lib/assets/user-empty-profile.png'
+import { base } from '$app/paths';
 
 const dispatch = createEventDispatcher()
 const cookies = Cookie()
@@ -80,10 +81,10 @@ async function onSearchSubmit({ detail }) {
 	let newUrl
 
 	if (detail.type === 'category') {
-		const u = new URL(`/${detail.slug}`, $page.data.origin)
+		const u = new URL(base +`/${detail.slug}`, $page.data.origin)
 		newUrl = u.toString()
 	} else {
-		const u = new URL('/search', $page.data.origin)
+		const u = new URL(base + '/search', $page.data.origin)
 		u.searchParams.set('q', detail?.name)
 		newUrl = u.toString()
 	}
@@ -139,7 +140,7 @@ async function onSearchSubmit({ detail }) {
 
 			<!-- Website Logo/Name -->
 
-			<a href="/" aria-label="Go to home" class="block shrink-0">
+			<a href="{base}/" aria-label="Go to home" class="block shrink-0">
 				{#if $page.data.store?.logo}
 					<img
 						src="{$page.data.store?.logo}"
@@ -226,7 +227,7 @@ async function onSearchSubmit({ detail }) {
 			<!-- Cart -->
 
 			<a
-				href="/cart"
+				href="{base}/cart"
 				class="relative flex flex-col items-center justify-center gap-1 focus:outline-none lg:border-b-4 lg:border-transparent"
 				aria-label="Click to visit cart"
 				data-sveltekit-preload-data>

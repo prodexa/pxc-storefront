@@ -22,6 +22,7 @@ import { wishlistStore } from '$lib/store/wishlist'
 import dotsLoading from '$lib/assets/dots-loading.gif'
 import noDataAvailable from '$lib/assets/no/no-data-available.png'
 import SEO from '$lib/components/SEO/index.svelte'
+import { base } from '$app/paths';
 
 export let data
 
@@ -527,7 +528,7 @@ function handleFilterTags() {
 
 						<p class="mb-5">Please check the spelling or try searching something else</p>
 
-						<PrimaryButton class="text-sm" on:click="{() => goto('/')}">Back to Home</PrimaryButton>
+						<PrimaryButton class="text-sm" on:click="{() => goto(base + '/')}">Back to Home</PrimaryButton>
 					</div>
 				</div>
 			{/if}
@@ -563,7 +564,7 @@ function handleFilterTags() {
 								{#if p && px < 10}
 									<li>
 										<a
-											href="/product/{p.slug}"
+											href="{base}/product/{p.slug}"
 											aria-label="Click to visit product details page"
 											class="grid grid-cols-6 gap-5">
 											<p class="col-span-5 text-justify">{p.name}</p>

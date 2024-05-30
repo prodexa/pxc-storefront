@@ -1,9 +1,10 @@
 import { sveltekit } from '@sveltejs/kit/vite'
+import type { ProxyOptions } from 'vite'
 import { defineConfig, loadEnv } from 'vite'
 // import { join } from 'path'
 // import { partytownVite } from '@builder.io/partytown/utils'
 import { SvelteKitPWA } from '@vite-pwa/sveltekit'
-import type { ProxyOptions } from 'vite'
+import { BASE_PATH } from './svelte.config'
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig(({ command, mode }) => {
@@ -12,13 +13,13 @@ export default defineConfig(({ command, mode }) => {
 	// const HTTP_ENDPOINT = env.PUBLIC_LITEKART_API_URL || 'https://api.litekart.in'
 	const HTTP_ENDPOINT = env.PUBLIC_HTTP_ENDPOINT
 
-
 	const proxyConfig: ProxyOptions = {
 		target: HTTP_ENDPOINT,
 		headers: { PXM_USER: env.PUBLIC_PRODEXA_API_USER },
 		secure: false,
 		changeOrigin: true,
-		cookiePathRewrite: '/pxc',
+		cookiePathRewrite: '/pxc-remove',
+		rewrite: (path) => `${path.replace(new RegExp(`^${BASE_PATH}/`), '/')}`,
 		configure: (proxy, _options) => {
 			proxy.on('proxyRes', (proxyRes, req, res) => {
 				delete proxyRes.headers['set-cookie']
@@ -55,16 +56,18 @@ export default defineConfig(({ command, mode }) => {
 			port: 3000,
 			proxy:
 				HTTP_ENDPOINT === env.PUBLIC_PRODEXA_API_URL ? {
-						'/api/': proxyConfig,
-						'/prodexa-img/': {
+						[`${BASE_PATH}/api/`]: proxyConfig,
+						[`${BASE_PATH}/prodexa-img/`]: {
 							...proxyConfig,
 							// replace `/prodexa-img/` with `/workarea/`
-							rewrite: (path) => `${path.replace(/^\/prodexa-img\//, '/workarea/')}`
+							rewrite: (path) =>
+								`${path.replace(new RegExp(`^${BASE_PATH}/prodexa-img/`), '/workarea/')}`
 						},
-						'/workarea-cdn/': {
+						[`${BASE_PATH}/workarea-cdn/`]: {
 							...proxyConfig,
 							// replace `/workarea-cdn/fit-in/${w}x${h}/prodexa-img/` with `/workarea/`
-							rewrite: (path) => `${path.replace(/^\/workarea-cdn\/fit-in\/(\d*)x(\d*)\/prodexa-img\//, '/workarea/')}`
+							rewrite: (path) =>
+								`${path.replace(new RegExp(`^${BASE_PATH}/workarea-cdn/fit-in/(\\d*)x(\\d*)/prodexa-img/`), '/workarea/')}`
 						}
 					} :
 					{

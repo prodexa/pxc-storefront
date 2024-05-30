@@ -37,6 +37,7 @@ import productVeg from '$lib/assets/product/veg.png'
 // import { storeStore } from '$lib/store/store'
 import { browser } from '$app/environment'
 import { onMount } from 'svelte'
+import { base } from '$app/paths';
 
 export let product = {}
 
@@ -81,7 +82,7 @@ onMount(async () => {
 		on:mouseenter="{showitems}"
 		on:mouseleave="{hideitems}">
 		<a
-			href="/product/{product.slug}"
+			href="{base}/product/{product.slug}"
 			rel="noopener noreferrer"
 			aria-label="Click to view the product details"
 			data-sveltekit-preload-data="tap"
@@ -428,7 +429,7 @@ onMount(async () => {
 				{/if} -->
 
 				<a
-					href="/product/{product.slug}"
+					href="{base}/product/{product.slug}"
 					aria-label="Click to view the product details"
 					data-sveltekit-preload-data>
 					<!-- <div class="mb-1.5 flex items-center justify-between"> -->
@@ -481,7 +482,7 @@ onMount(async () => {
 						<span> By </span>
 
 						<a
-							href="/store/{product?.vendor?.slug}"
+							href="{base}/store/{product?.vendor?.slug}"
 							class="block w-full truncate font-semibold hover:text-zinc-800 capitalize">
 							{product?.vendor?.businessName}
 						</a>
@@ -492,7 +493,7 @@ onMount(async () => {
 
 			{#if product.price}
 				<a
-					href="/product/{product.slug}"
+					href="{base}/product/{product.slug}"
 					aria-label="Click to view the product details"
 					data-sveltekit-preload-data>
 					<!-- Price, MRP and Discount -->
@@ -557,7 +558,7 @@ onMount(async () => {
 						<div class="grid grid-cols-2 sm:gap-4">
 							{#each product.relatedProducts as relatedProduct}
 								<a
-									href="/product/{relatedProduct.slug}"
+									href="{base}/product/{relatedProduct.slug}"
 									rel="noopener noreferrer"
 									class="group relative w-full sm:w-48"
 									on:click="{() => (showRelatedProducts = false)}">

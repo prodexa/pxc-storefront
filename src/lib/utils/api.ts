@@ -1,4 +1,5 @@
 import { loadingDelayed } from '$lib/store'
+import { base } from '$app/paths';
 import cookie from 'cookie'
 // import Cookie from 'cookie-universal'
 
@@ -18,11 +19,11 @@ const send = async ({ method, path, params, data, token, headers, origin }: any)
 		return
 	}
 
-	let uri = new URL(path, origin)
+	let uri = new URL(`${base}/${path}`, origin)
 
 	if (!path.includes('/api/')) {
 		// When microservice path provided
-		uri = new URL('api/' + path, origin)
+		uri = new URL(`${base}/api/${path}`, origin)
 	}
 
 	const opts: any = {

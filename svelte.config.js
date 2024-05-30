@@ -4,6 +4,8 @@
 import adapter from '@sveltejs/adapter-auto'
 import preprocess from 'svelte-preprocess'
 
+export const BASE_PATH = '/pxc'
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: [
@@ -20,6 +22,9 @@ const config = {
 		// 	fallback: 'index.html'
 		// }),
 		adapter: adapter(),
+		paths: {
+			base: BASE_PATH
+		},
 		csrf: {
 			checkOrigin: false
 		}

@@ -7,6 +7,7 @@ import { slide } from 'svelte/transition'
 import Cookie from 'cookie-universal'
 import LazyImg from '$lib/components/Image/LazyImg.svelte'
 import { getCategoriesFromStore } from '$lib/store/categories'
+import { base } from '$app/paths';
 
 const cookies = Cookie()
 
@@ -35,15 +36,15 @@ function submit() {
 	showSuggestionOptions = false
 
 	if (autocomplete?.length && autocomplete[0].slug && autocomplete[0].type === 'products') {
-		goto(`/product/${autocomplete[0].slug}`)
+		goto(`${base}/product/${autocomplete[0].slug}`)
 	} else if (
 		autocomplete?.length &&
 		autocomplete[0].slug &&
 		autocomplete[0].type === 'categories'
 	) {
-		goto(`/${autocomplete[0].slug}`)
+		goto(`${base}/${autocomplete[0].slug}`)
 	} else {
-		goto(`/search?q=${q}`)
+		goto(`${base}/search?q=${q}`)
 	}
 }
 
@@ -52,11 +53,11 @@ function onselect(v: any) {
 
 	if (v) {
 		if (v.type === 'products') {
-			goto(`/product/${v.slug}`)
+			goto(`${base}/product/${v.slug}`)
 		} else if (v.type === 'categories') {
-			goto(`/${v.slug}`)
+			goto(`${base}/${v.slug}`)
 		} else {
-			goto(`/search?q=${encodeURIComponent(v.key)}`)
+			goto(`${base}/search?q=${encodeURIComponent(v.key)}`)
 		}
 	}
 }

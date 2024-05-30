@@ -23,6 +23,7 @@ import noAddToCartAnimate from '$lib/assets/no/add-to-cart-animate.svg'
 import productNonVeg from '$lib/assets/product/non-veg.png'
 import productVeg from '$lib/assets/product/veg.png'
 import SEO from '$lib/components/SEO/index.svelte'
+import { base } from '$app/paths';
 
 const cookies = Cookie()
 
@@ -204,7 +205,7 @@ async function getCoupons() {
 
 function chnageJsonInLocalStore({ json, pid, slug }) {
 	localStorage.setItem(pid, json)
-	goto('/product/' + slug)
+	goto(`${base}/product/${slug}`)
 }
 
 function handleCheckedAllCartItems() {
@@ -310,7 +311,7 @@ function updateCheckedCartItemsInGroup() {
 										{#each cart?.unavailableItems as item (item._id)}
 											<div class="flex w-full items-start gap-4 py-5">
 												<a
-													href="/product/{item?.slug}"
+													href="{base}/product/{item?.slug}"
 													aria-label="Click to visit product details"
 													class="block shrink-0 overflow-hidden">
 													{#if item.customizedImg || item.img}
@@ -346,7 +347,7 @@ function updateCheckedCartItemsInGroup() {
 												<div class="w-full flex-1">
 													<div class="mb-1 flex justify-between">
 														<a
-															href="/product/{item?.slug}"
+															href="{base}/product/{item?.slug}"
 															aria-label="Click to visit product details"
 															class="cart-item flex-1 cursor-pointer text-zinc-500 hover:underline">
 															{item?.name}
@@ -397,7 +398,7 @@ function updateCheckedCartItemsInGroup() {
 								</div>
 
 								<form
-									action="/cart?/handleUnavailableItems"
+									action="{base}/cart?/handleUnavailableItems"
 									method="POST"
 									use:enhance="{() => {
 										loadingMoveUnavailableItemsToWishlist = true
@@ -458,7 +459,7 @@ function updateCheckedCartItemsInGroup() {
 											{/if}
 
 											{#if item.customizedImg || item.img}
-												<a href="/product/{item?.slug}" aria-label="Click to visit product details">
+												<a href="{base}/product/{item?.slug}" aria-label="Click to visit product details">
 													<LazyImg
 														src="{item.isCustomized ? item.customizedImg : item.img}"
 														alt=" "
@@ -468,7 +469,7 @@ function updateCheckedCartItemsInGroup() {
 														class="object-contain object-top h-28 w-20 text-xs" />
 												</a>
 											{:else}
-												<a href="/product/{item?.slug}" aria-label="Click to visit product details">
+												<a href="{base}/product/{item?.slug}" aria-label="Click to visit product details">
 													<div
 														class="h-32 sm:h-40 w-20 bg-zinc-100 flex flex-col items-center justify-center p-5 text-zinc-500 text-xs text-center">
 														<svg
@@ -494,7 +495,7 @@ function updateCheckedCartItemsInGroup() {
 										<div class="w-full flex-1 flex flex-col gap-1">
 											<div class="flex justify-between">
 												<a
-													href="/product/{item?.slug}"
+													href="{base}/product/{item?.slug}"
 													aria-label="Click to visit product details"
 													class="flex-1 cursor-pointer text-zinc-500 hover:underline">
 													{item?.name}
@@ -594,7 +595,7 @@ function updateCheckedCartItemsInGroup() {
 													<!-- Minus icon -->
 
 													<form
-														action="/cart?/add"
+														action="{base}/cart?/add"
 														method="POST"
 														use:enhance="{() => {
 															loading[ix] = true
@@ -660,7 +661,7 @@ function updateCheckedCartItemsInGroup() {
 													<!-- Puls icon -->
 
 													<form
-														action="/cart?/add"
+														action="{base}/cart?/add"
 														method="POST"
 														use:enhance="{() => {
 															loading[ix] = true
@@ -710,7 +711,7 @@ function updateCheckedCartItemsInGroup() {
 												<!-- Delete icon -->
 
 												<form
-													action="/cart?/add"
+													action="{base}/cart?/add"
 													method="POST"
 													use:enhance="{() => {
 														selectedLoadingType = 'delete'

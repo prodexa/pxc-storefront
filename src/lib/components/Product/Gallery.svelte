@@ -11,6 +11,7 @@ import { onMount } from 'svelte'
 import { page } from '$app/stores'
 import { SplideSlide } from '@splidejs/svelte-splide'
 import LazyImg from '../Image/LazyImg.svelte'
+import { base } from '$app/paths';
 
 export let images = []
 export let title = ''
@@ -119,7 +120,7 @@ onMount(async () => {
 					class="flex h-full w-full flex-1 shrink-0 items-center justify-center overflow-hidden px-5 sm:px-10"
 					in:fade="{{ duration: 300 }}">
 					<img
-						src="{selectedimg}"
+						src="{base}{selectedimg}"
 						alt="image"
 						class="object-center w-full h-full first-line:text-xs object-contain" />
 				</div>

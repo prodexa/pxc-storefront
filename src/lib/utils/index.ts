@@ -2,12 +2,13 @@ import { currency as currencyConfig } from '../config'
 import { toasts } from 'svelte-toasts'
 import type { ToastType } from 'svelte-toasts/types/common'
 import { goto } from '$app/navigation'
+import { base } from '$app/paths';
 
 let allToasts: any
 
 export const goback = () => {
 	if (history.length < 3) {
-		goto('/')
+		goto(`${base}/`)
 	} else {
 		window.history.go(-1)
 	}
@@ -20,7 +21,7 @@ export function constructURL2(url: string, fl: any) {
 		if (fl[e] && fl[e] !== 'undefined' && fl[e].length > 0)
 			url += `${e}=${encodeURIComponent(fl[e])}&`
 	})
-	return url
+	return url.startsWith(base) ? url : `${base}/${url}`
 }
 
 export const delay = (delayInms: number) => {
@@ -251,8 +252,8 @@ export const navigateToProperPath = (url) => {
 		// 		}
 		// 	}
 		// 	return originalUrl
-	} else if (url[0] !== '/') {
-		return `/${url.trim()}`
+	} else if (url[0] !== base) {
+		return `${base}/${url.trim()}`
 	} else {
 		return url.trim()
 	}
