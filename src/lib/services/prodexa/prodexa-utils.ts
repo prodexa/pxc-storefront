@@ -143,7 +143,8 @@ export const mapProdexaFacets = (f: any) => {
 
 export const mapProdexaFacet = (f: any) => f ? {
 	key: f.val?.toString(),
-	doc_count: f.count
+	doc_count: f.count,
+  label: f.label
 } : {}
 
 export const mapProdexaAttrFacets = (f: any) => {
@@ -165,7 +166,7 @@ export const mapProdexaAttrFacets = (f: any) => {
 export const mapProdexaAttrFacet = (f: any) => f ? {
 	key: f.val,
 	doc_count: f.count,
-	id: f.val,
+  label: f.label,
 	value: {
 		buckets: []
 	}

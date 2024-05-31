@@ -111,7 +111,7 @@ const fetchFacets = async ({ searchParams, origin }) => {
 	// TODO need to have only one call that will fetch attr with values
 	attributes.all.key.buckets = await Promise.all(
 		attributes.all.key.buckets.map((bucket) => post(
-				`${productsFacetsEndpoint}/attribute-values/${bucket.id}/${query}`,
+				`${productsFacetsEndpoint}/attribute-values/${bucket.key}/${query}`,
 				searchData,
 				origin
 			)
