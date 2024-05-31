@@ -6,7 +6,7 @@ export const {
 	BlogService,
 	BrandService,
 	CollectionService,
-	ContactService,
+	// ContactService,
 	CountryService,
 	// CouponService,
 	DealsService,
@@ -30,7 +30,8 @@ export const {
 	ChatService
 } = services
 
-export * as UserService  from '../litekart/user-service'
+export * as UserService from '../litekart/user-service'
+export * as ContactService from '../litekart/contact-service'
 
 export * as AutocompleteService from './autocomplete-service'
 export * as CartService from './cart-service'
