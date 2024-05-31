@@ -3,6 +3,7 @@ import { page } from '$app/stores'
 import LazyImg from '$lib/components/Image/LazyImg.svelte'
 import PrimaryButton from '$lib/ui/PrimaryButton.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
+import { base } from '$app/paths'
 
 const seoProps = {
 	title: 'Verification Success',
@@ -53,7 +54,7 @@ const seoProps = {
 		<p class="text-zinc-500">Account successfully verified, you may login now</p>
 	</div>
 
-	<a href="/auth/login" aria-label="Home">
+	<a href="{base}/auth/login" aria-label="Home">
 		<PrimaryButton class="w-full" type="button">Login</PrimaryButton>
 	</a>
 </section>

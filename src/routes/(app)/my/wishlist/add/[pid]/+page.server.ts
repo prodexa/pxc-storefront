@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import { WishlistService } from '$lib/services'
+import { base } from '$app/paths'
 
 export async function load({ locals, cookies, params, request }) {
 	try {
@@ -29,7 +30,7 @@ export async function load({ locals, cookies, params, request }) {
 		if (e.status === 307 && e.location) {
 			redirect(307, e.location)
 		} else if (e.status === 401) {
-			redirect(307, '/auth/login')
+			redirect(307, `${base}/auth/login`)
 		}
 	}
 }

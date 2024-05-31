@@ -1,11 +1,12 @@
 import { OrdersService, WishlistService, ReviewService } from '$lib/services'
 import { redirect } from '@sveltejs/kit'
+import { base } from '$app/paths'
 
 export async function load({ parent, url }) {
 	const { me, sid, storeId, origin } = await parent()
 
 	if (!me || !sid) {
-		redirect(307, `/auth/login?ref=${url.pathname}${url.search}`)
+		redirect(307, `${base}/auth/login?ref=${url.pathname}${url.search}`)
 	}
 
 	let orders = []
@@ -38,7 +39,7 @@ export async function load({ parent, url }) {
 			orders = res1.value
 		} else {
 			console.error('Error fetching orders:', res1.reason)
-			redirect(307, '/auth/login')
+			redirect(307, `${base}/auth/login`)
 		}
 		if (res2.status === 'fulfilled') {
 			wishlists = res2.value

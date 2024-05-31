@@ -100,7 +100,7 @@ onMount(() => {})
 					{$page.data.store?.websiteName}’s name or trademarks without the express written consent
 					of {$page.data.store?.websiteName}. Any unauthorized use terminates the permission or
 					license granted by {$page.data.store?.websiteName}. You are granted a limited, revocable,
-					and nonexclusive right to create a hyperlink to the home page of {store.websiteName}
+					and nonexclusive right to create a hyperlink to the home page of {$page.data.store?.websiteName}
 					so long as the link does not portray {$page.data.store?.websiteName}, its associates, or
 					their products or services in a false, misleading, derogatory, or otherwise offensive
 					matter. You may not use any
@@ -139,13 +139,13 @@ onMount(() => {})
 					material, and unless we indicate otherwise, you grant {$page.data.store?.websiteName} and its
 					associates a nonexclusive, royalty-free, perpetual, irrevocable, and fully sub-license-able
 					right to use, reproduce, modify, adapt, publish, translate, create derivative works from, distribute,
-					and display such content throughout the world in any media. You grant {store.websiteName} and
+					and display such content throughout the world in any media. You grant {$page.data.store?.websiteName} and
 					its associates and sub-licensees the right to use the name that you submit in connection with
 					such content, if they choose. You represent and warrant that you own or otherwise control all
 					of the rights to the content that you post: that the content is accurate: that use of the content
 					you supply does not violate this policy and will not cause injury to any person or entity:
 					and that you will indemnify {$page.data.store?.websiteName}
-					or its associates for all claims resulting from content you supply. {store.websiteName} has
+					or its associates for all claims resulting from content you supply. {$page.data.store?.websiteName} has
 					the right but not the obligation to monitor and edit or remove any activity or content. {$page
 						.data?.store?.websiteName}
 					takes no responsibility and assumes no liability for any content posted by you or any third
@@ -183,8 +183,8 @@ onMount(() => {})
 						.data?.store?.websiteName}
 					disclaims all warranties, express or implied, including, but not limited to, implied warranties
 					of merchant-ability and fitness for a particular purpose. {$page.data.store?.websiteName}
-					does not warrant that this site, its servers, or e-mail sent from {store.websiteName} are free
-					of viruses or other harmful components. {store.websiteName} will not be liable for any damages
+					does not warrant that this site, its servers, or e-mail sent from {$page.data.store?.websiteName} are free
+					of viruses or other harmful components. {$page.data.store?.websiteName} will not be liable for any damages
 					of any kind arising from the use of this site, including, but not limited to direct, indirect,
 					incidental, punitive, and consequential damages. certain state laws do not allow limitations
 					on implied warranties or the exclusion or limitation of certain damages. if these laws apply
@@ -212,7 +212,7 @@ onMount(() => {})
 					you purchase through
 					{$page.data.store?.websiteName} shall be submitted to confidential arbitration in Odisha, India,
 					except that, to the extent you have in any manner violated or threatened to violate
-					{$page.data.store?.websiteName}’s intellectual property rights, {store.websiteName} may seek
+					{$page.data.store?.websiteName}’s intellectual property rights, {$page.data.store?.websiteName} may seek
 					injunctive or other appropriate relief in any state or federal court in the state of Telangana,
 					India, and you consent to exclusive jurisdiction and venue in such courts. Arbitration under
 					this agreement shall be conducted under the rules then prevailing of the American Arbitration
@@ -242,7 +242,7 @@ onMount(() => {})
 				<p class="text-zinc-500">
 					Questions regarding our Conditions of Usage, Privacy Policy, or other policy related
 					material can be directed to our support staff by clicking on the “Contact Us” link in the
-					side menu or in the footer. Or you can email us at: {store?.websiteEmail}
+					side menu or in the footer. Or you can email us at: {$page.data.store?.websiteEmail}
 				</p>
 			</li>
 		</ul>

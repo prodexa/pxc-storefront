@@ -8,6 +8,7 @@ import { PrimaryButton, Textarea, Textbox } from '$lib/ui'
 import { CountryService, ZipService } from '$lib/services'
 import { slide } from 'svelte/transition'
 import { toast } from '$lib/utils'
+import { base } from '$app/paths'
 
 const IS_DEV = import.meta.env.DEV
 
@@ -524,7 +525,7 @@ function validatePhoneNumber(phoneNumber, addresstype) {
 							</p>{/if}
 					{:else}
 						<a
-							href="/contact-us"
+							href="{base}/contact-us"
 							aria-label="contact us"
 							class="py-2 text-sm text-zinc-500 hover:text-zinc-800 hover:underline">
 							Contact the website admin to enable your country
@@ -796,7 +797,7 @@ function validatePhoneNumber(phoneNumber, addresstype) {
 									{/if}
 								{:else}
 									<a
-										href="/contact-us"
+										href="{base}/contact-us"
 										aria-label="contact us"
 										class="py-2 text-sm text-zinc-500 hover:text-zinc-800 hover:underline">
 										Contact the website admin to enable your country

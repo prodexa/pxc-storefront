@@ -1,11 +1,12 @@
 import { error, redirect } from '@sveltejs/kit'
 import { ReviewService } from '$lib/services'
+import { base } from '$app/paths'
 
 export async function load({ cookies, locals, url }) {
 	const { store, storeId, origin, me, sid } = locals
 
 	if (!me || !sid) {
-		redirect(307, `/auth/login?ref=${url.pathname}${url.search}`)
+		redirect(307, `${base}/auth/login?ref=${url.pathname}${url.search}`)
 	}
 	try {
 		const res = await ReviewService.fetchReviews({
@@ -19,6 +20,6 @@ export async function load({ cookies, locals, url }) {
 		}
 		error(404, 'Reviews not found')
 	} catch (e) {
-		redirect(307, '/auth/login')
+		redirect(307, `${base}/auth/login`)
 	}
 }

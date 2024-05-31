@@ -30,6 +30,7 @@ import { page } from '$app/stores'
 import { getPopularSearchFromStore } from '$lib/store/popular-search'
 import { getAllMegamenuFromStore } from '$lib/store/megamenu'
 import { browser } from '$app/environment'
+import { base } from '$app/paths'
 
 let megamenu = []
 let pages = []
@@ -582,14 +583,14 @@ onMount(async () => {
 
 			<div class="flex items-center justify-center gap-4">
 				<a
-					href="/contact-us"
+					href="{base}/contact-us"
 					aria-label="Click to visit this page"
 					class="font-bold uppercase text-zinc-500 transition duration-300 hover:text-zinc-800">
 					Contact Us
 				</a>
 
 				<a
-					href="/faqs"
+					href="{base}/faqs"
 					aria-label="Click to visit this page"
 					class="font-bold uppercase text-zinc-500 transition duration-300 hover:text-zinc-800">
 					Faqs

@@ -31,6 +31,7 @@ import { page } from '$app/stores'
 import type { Category } from '$lib/types'
 import { browser } from '$app/environment'
 // import { storeStore } from '$lib/store/store'
+import { base } from '$app/paths'
 
 export let content = ``
 // export let me
@@ -603,7 +604,7 @@ function positionToDisplayIsMultiVendor(itemsLength) {
 				<!-- Contact Us -->
 
 				<a
-					href="/contact-us"
+					href="{base}/contact-us"
 					aria-label="Click to visit this page"
 					class="font-bold uppercase text-zinc-500 transition duration-300 hover:text-zinc-800">
 					Contact Us
@@ -612,7 +613,7 @@ function positionToDisplayIsMultiVendor(itemsLength) {
 				<!-- Faqs -->
 
 				<a
-					href="/faqs"
+					href="{base}/faqs"
 					aria-label="Click to visit this page"
 					class="font-bold uppercase text-zinc-500 transition duration-300 hover:text-zinc-800">
 					Faqs

@@ -1,5 +1,6 @@
 import { error, redirect } from '@sveltejs/kit'
 import { ProductService } from '$lib/services'
+import { base } from '$app/paths'
 
 export const prerender = false
 
@@ -22,7 +23,7 @@ export async function load({ url, locals, cookies }) {
 		return { ref, product }
 	} catch (e) {
 		if (e.status === 401 || e.status === 403) {
-			redirect(307, '/auth/login')
+			redirect(307, `${base}/auth/login`)
 		}
 
 		error(e.status, e.message)

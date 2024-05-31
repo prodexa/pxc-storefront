@@ -42,7 +42,7 @@ export async function load({ url, params, parent, setHeaders }) {
 			category = res1.value
 		} else {
 			console.error('Error fetching deals:', res1.reason)
-			// redirect(307, '/auth/login')
+			// redirect(307, `${base}/auth/login`)
 		}
 		if (res2.status === 'fulfilled') {
 			megamenu = res2.value

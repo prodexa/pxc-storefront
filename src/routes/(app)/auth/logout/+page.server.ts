@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 import { UserService } from '$lib/services'
+import { base } from '$app/paths'
 
 export const load: PageServerLoad = async () => {
 	// we only use this endpoint for the api
@@ -53,7 +54,7 @@ export const actions: Actions = {
 			locals.session = null
 			locals.me = null
 			locals.sid = null
-			redirect(307, '/auth/login')
+			redirect(307, `${base}/auth/login`)
 		} catch (e) {
 			//redirect the user
 		}

@@ -388,7 +388,7 @@ async function onSearchSubmit({ detail }) {
 				<!-- Login -->
 
 				<a
-					href="{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page?.url
+					href="{base}{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page?.url
 						?.search}"
 					aria-label="Click to visit login"
 					data-sveltekit-preload-data>
@@ -585,7 +585,7 @@ async function onSearchSubmit({ detail }) {
 				<!-- Login -->
 
 				<a
-					href="{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page?.url
+					href="{base}{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page?.url
 						?.search}"
 					aria-label="Click to visit login"
 					data-sveltekit-preload-data

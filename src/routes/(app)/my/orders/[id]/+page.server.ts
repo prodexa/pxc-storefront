@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit'
 import { OrdersService } from '$lib/services'
-
+import { base } from '$app/paths'
 export const prerender = false
 
 export async function load({ params, locals, cookies }) {
@@ -27,7 +27,7 @@ export async function load({ params, locals, cookies }) {
 			return { order, orderTracking }
 		}
 	} catch (e) {
-		redirect(307, '/auth/login')
+		redirect(307, `${base}/auth/login`)
 	}
 
 	error(404, 'Order not found')

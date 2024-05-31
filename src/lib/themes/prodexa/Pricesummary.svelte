@@ -4,7 +4,7 @@
 	import { currency, toast } from '$lib/utils'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import { PrimaryButton } from '$lib/ui'
+	import { PrimaryButton, WhiteButton } from '$lib/ui'
 	// import { storeStore } from '$lib/store/store'
 	import { CartService } from '$lib/services'
 	import { fetchCartData } from 'lib/services/prodexa/cart-service'
@@ -18,8 +18,7 @@
 	export let nextpage = null
 	export let showNextIcon = false
 
-	export let text = 'Export Cart'
-	$: prodexaText = text === 'Select Address' ? 'Export Cart' : text // 'Select Address' -> 'Export Cart'
+	export let text = 'Select Address'
 
 	$: cart = {}
 	$: store = $page.data.store
@@ -35,7 +34,7 @@
 		return ((n % m) + m) % m
 	}
 
-	async function download() {
+	const download = async () => {
 		const cartId = cart?.cart_id || cart?.cartId || $page.data?.cartId
 
 		let res = await fetch(`api/carts/${cartId}?format=xlsx`, {
@@ -58,13 +57,8 @@
 	}
 
 	async function submit() {
-		if (prodexaText === 'Export Cart') {
-			try {
-				await download()
-			} catch (e) {
-				console.error(e)
-			}
-		} else if (prodexaText === 'Select Address') {
+		if (text === 'Select Address') {
+			console.log(checkedCartItems)
 			if (checkedCartItems?.length) {
 				try {
 
@@ -238,6 +232,7 @@
 		{:else}
 			<div class="hidden md:block">
 				{#if cart?.qty > 0 && !hideCheckoutButton}
+
 					<PrimaryButton
 						roundedNone
 						type="submit"
@@ -246,7 +241,7 @@
 						{loading}
 						{disabled}
 						on:click="{submit}">
-						<span>{prodexaText}</span>
+						<span>{text}</span>
 
 						{#if showNextIcon}
 							<svg
@@ -261,6 +256,33 @@
 							</svg>
 						{/if}
 					</PrimaryButton>
+
+					<div class="my-2"></div>
+
+					<WhiteButton
+						roundedNone
+						type="submit"
+						class="group w-full uppercase"
+						clickEffect="{false}"
+						{loading}
+						{disabled}
+						on:click="{download}">
+						<span>Export Cart</span>
+
+						{#if showNextIcon}
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-5 w-5 transform transition duration-700 group-hover:translate-x-2"
+								viewBox="0 0 20 20"
+								fill="currentColor">
+								<path
+									fill-rule="evenodd"
+									d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+									clip-rule="evenodd"></path>
+							</svg>
+						{/if}
+					</WhiteButton>
+
 				{/if}
 			</div>
 
@@ -274,7 +296,7 @@
 						{loading}
 						{disabled}
 						on:click="{submit}">
-						<span>{prodexaText}</span>
+						<span>{text}</span>
 
 						{#if showNextIcon}
 							<svg
@@ -289,6 +311,29 @@
 							</svg>
 						{/if}
 					</PrimaryButton>
+					<WhiteButton
+						roundedNone
+						type="submit"
+						class="group w-full uppercase h-14"
+						clickEffect="{false}"
+						{loading}
+						{disabled}
+						on:click="{download}">
+						<span>Export Cart</span>
+
+						{#if showNextIcon}
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-5 w-5 transform transition duration-700 group-hover:translate-x-2"
+								viewBox="0 0 20 20"
+								fill="currentColor">
+								<path
+									fill-rule="evenodd"
+									d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+									clip-rule="evenodd"></path>
+							</svg>
+						{/if}
+					</WhiteButton>
 				{/if}
 			</div>
 		{/if}

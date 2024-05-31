@@ -1,12 +1,13 @@
 import { error, redirect } from '@sveltejs/kit'
 import { AddressService, CartService, CountryService } from '$lib/services'
 import { z } from 'zod'
+import { base } from '$app/paths'
 
 export async function load({ locals, url }) {
 	const { me, origin, sid, store, storeId } = locals
 
 	if (!me || !sid) {
-		redirect(307, `/auth/login?ref=${url.pathname}${url.search}`);
+		redirect(307, `${base}/auth/login?ref=${url.pathname}${url.search}`);
 	}
 
 	try {
@@ -29,7 +30,7 @@ export async function load({ locals, url }) {
 		}
 	} catch (e) {
 		if (e.status === 401 || e.status === 403) {
-			redirect(307, '/auth/login');
+			redirect(307, `${base}/auth/login`);
 		}
 
 		error(e.status, e.message);
