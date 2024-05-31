@@ -37,9 +37,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 	try {
 		const url = new URL(event.request.url)
 		const host = url.host
-		const protocol = !IS_DEV && !dev ? `https://` : `http://`
+
+		// TODO how to deal with it under reverse proxy with HTTPS?
+		//   what is wrong for vercel with url.protocol?
+		// const protocol = !IS_DEV && !dev ? `https://` : `http://`
+		const protocol= url.protocol
 		// This is required for vercel as it parse URL as http instead of https
 		event.locals.origin = protocol + host
+
 		event.locals.host = url.host
 
 		const userAgent = event.request.headers.get('user-agent')

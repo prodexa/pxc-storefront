@@ -1,10 +1,11 @@
 // import adapter from '@sveltejs/adapter-vercel'
-// npm i -D @sveltejs/adapter-static
-// import adapter from '@sveltejs/adapter-static'
+//import adapter from '@sveltejs/adapter-static'
+//import adapter from '@sveltejs/adapter-node'
 import adapter from '@sveltejs/adapter-auto'
 import preprocess from 'svelte-preprocess'
 
 export const BASE_PATH = '/pxc'
+//export const BASE_PATH = ''
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -18,12 +19,10 @@ const config = {
 		alias: {
 			'lib/*': 'src/lib/*'
 		},
-		// adapter: adapter({
-		// 	fallback: 'index.html'
-		// }),
 		adapter: adapter(),
 		paths: {
-			base: BASE_PATH
+			base: BASE_PATH,
+			relative: false
 		},
 		csrf: {
 			checkOrigin: false
