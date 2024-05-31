@@ -27,8 +27,8 @@ jobs:
           name: Build
           command: |
             set -eo pipefail
-            npm install
-            npm run build
+            npm i
+            npm run bcp
   build_deploy:
     docker:
       - image: node:21-slim
