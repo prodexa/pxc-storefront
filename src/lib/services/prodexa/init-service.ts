@@ -6,8 +6,8 @@ export const fetchInit = async () => {
 		storeOne: {
 			id: 'prodexa',
 			_id: 'prodexa',
-			GOOGLE_ANALYTICS_ID: '123',
 			logo: Logo,
+			favicon: 'prodexa-favicon.ico',
 			domain: 'prodexa.com',
 			email: 'admin@prodexa.com',
 			websiteLegalName: 'prodexa Gmbh',
@@ -18,7 +18,8 @@ export const fetchInit = async () => {
 			imageCdn: {
 				url: { val: IMAGE_CDN_URL },
 				provider: { val: 'thumbor' }
-			}
+			},
+			GOOGLE_ANALYTICS_ID: '123',
 		}
 	}
 }

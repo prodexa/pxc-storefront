@@ -1,11 +1,13 @@
 import { DOMAIN, HTTP_ENDPOINT } from '$lib/config'
 import { error } from '@sveltejs/kit'
 
+import { base } from '$app/paths';
+
 export const prerender = false
 export const load = async ({ parent, data, fetch }) => {
 	await parent()
 	try {
-		const res2 = await fetch('/server/store')
+		const res2 = await fetch(`${base}/server/store`)
 		const storeFromServer = await res2.json()
 		// locals.storeId = storeFromServer.store?.id
 		data.store = storeFromServer.store

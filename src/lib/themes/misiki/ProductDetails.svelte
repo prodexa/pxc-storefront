@@ -85,6 +85,7 @@ import Textarea from '$lib/ui/Textarea.svelte'
 import Textbox from '$lib/ui/Textbox.svelte'
 import viewport from '$lib/actions/useViewPort'
 import WhiteButton from '$lib/ui/WhiteButton.svelte'
+import { base } from '$app/paths';
 
 const cookies = Cookie()
 const isServer = import.meta.env.SSR
@@ -737,7 +738,7 @@ async function updateVariant(variant) {
 										<li>
 											{#if cg.hasStock}
 												<a
-													href="/product/{cg.slug}"
+													href="{base}/product/{cg.slug}"
 													class="relative border h-20 w-14 flex items-center justify-center p-1 group transition duration-300 focus:outline-none
 													{cg?.color?.name === data.product?.color?.name
 														? 'border-primary-500'
@@ -756,7 +757,7 @@ async function updateVariant(variant) {
 												</a>
 											{:else}
 												<a
-													href="/product/{cg.slug}"
+													href="{base}/product/{cg.slug}"
 													class="relative border grayscale h-20 w-14 flex items-center justify-center p-1 group transition duration-300 focus:outline-none
 													{cg?.color?.name === data.product?.color?.name
 														? 'border-primary-500'
@@ -822,7 +823,7 @@ async function updateVariant(variant) {
 										<li>
 											{#if sg.hasStock}
 												<a
-													href="/product/{sg.slug}"
+													href="{base}/product/{sg.slug}"
 													class="reltive flex flex-col items-center justify-center text-center border rounded py-2 px-4 text-sm font-medium uppercase group transition duration-300 focus:outline-none
 													{sg?.size?.name === data.product?.size?.name
 														? 'bg-primary-500 border-primary-500 text-white'
@@ -840,7 +841,7 @@ async function updateVariant(variant) {
 												</a>
 											{:else}
 												<a
-													href="/product/{sg.slug}"
+													href="{base}/product/{sg.slug}"
 													class="flex flex-col items-center justify-center text-center border text-zinc-200 rounded py-2 px-4 text-sm font-medium uppercase group transition duration-300 focus:outline-none
 													{sg?.size?.name === data.product?.size?.name ? 'border-primary-500' : 'hover:border-primary-500'}">
 													<span class="w-full truncate">
@@ -1145,7 +1146,7 @@ async function updateVariant(variant) {
 					<form
 						id="create_back_order"
 						in:fade="{{ duration: 300 }}"
-						action="/cart?/createBackOrder"
+						action="{base}/cart?/createBackOrder"
 						method="POST"
 						enctype="multipart/form-data"
 						use:enhance="{() => {
@@ -1322,7 +1323,7 @@ async function updateVariant(variant) {
 										<a
 											in:fade="{{ duration: 300 }}"
 											class="block"
-											href="/cart"
+											href="{base}/cart"
 											data-sveltekit-preload-data>
 											<PrimaryButton
 												type="button"
@@ -1352,7 +1353,7 @@ async function updateVariant(variant) {
 										<form
 											id="add_to_cart_1"
 											in:fade="{{ duration: 300 }}"
-											action="/cart?/add"
+											action="{base}/cart?/add"
 											method="POST"
 											enctype="multipart/form-data"
 											use:enhance="{() => {
@@ -1725,7 +1726,7 @@ async function updateVariant(variant) {
 										<a
 											in:fade="{{ duration: 300 }}"
 											class="block"
-											href="/cart"
+											href="{base}/cart"
 											data-sveltekit-preload-data>
 											<PrimaryButton
 												type="button"
@@ -1755,7 +1756,7 @@ async function updateVariant(variant) {
 										<form
 											id="add_to_cart_2"
 											in:fade="{{ duration: 300 }}"
-											action="/cart?/add"
+											action="{base}/cart?/add"
 											method="POST"
 											enctype="multipart/form-data"
 											use:enhance="{() => {
@@ -1975,7 +1976,7 @@ async function updateVariant(variant) {
 										<a
 											in:fade="{{ duration: 300 }}"
 											class="block"
-											href="/cart"
+											href="{base}/cart"
 											data-sveltekit-preload-data>
 											<PrimaryButton
 												type="button"
@@ -2005,7 +2006,7 @@ async function updateVariant(variant) {
 										<form
 											id="add_to_cart_3"
 											in:fade="{{ duration: 300 }}"
-											action="/cart?/add"
+											action="{base}/cart?/add"
 											method="POST"
 											enctype="multipart/form-data"
 											use:enhance="{() => {

@@ -6,6 +6,7 @@ import { SplideSlide } from '@splidejs/svelte-splide'
 import LazyImg from '../Image/LazyImg.svelte'
 import { browser } from '$app/environment'
 // import { storeStore } from '$lib/store/store'
+import { base } from '$app/paths';
 
 export let products = []
 export let title = ''
@@ -56,7 +57,7 @@ onMount(async () => {
 				<SplideSlide>
 					{#if p.slug && p.img && p.price && px + 1 != products?.length}
 						<a
-							href="/product/{p.slug}"
+							href="{base}/product/{p.slug}"
 							aria-label="Click to view the product details"
 							data-sveltekit-preload-data
 							class="flex flex-col items-center w-48 shrink-0">

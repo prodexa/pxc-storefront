@@ -1,12 +1,15 @@
 import {
 	currencyCode,
-	currencySymbol
+	currencySymbol,
+	favicon
 } from '$lib/config'
 import { fetchInit } from './init-service'
 
 export const getStoreData = async ({ cookieStore, cookieMegamenu, url, cookies }: any) => {
 	let storeRes: any = {}
 	let store: {
+		favicon:string;
+
 		keywords: string;
 		websiteLegalName: string;
 		dimentionUnit: string;
@@ -73,6 +76,7 @@ export const getStoreData = async ({ cookieStore, cookieMegamenu, url, cookies }
 
 		store = {
 			id: storeRes?.storeOne?._id,
+			favicon: storeRes?.storeOne?.favicon || favicon,
 			address: storeRes?.storeOne?.address,
 			adminUrl: storeRes?.storeOne?.adminUrl || storeRes?.settings?.adminUrl, // storeRes?.storeOne?.adminUrl used for arialmall
 			alert: storeRes?.storeOne?.alert,

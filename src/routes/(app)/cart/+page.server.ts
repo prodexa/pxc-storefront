@@ -1,6 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { CartService, WishlistService } from '$lib/services'
 import type { Action, Actions, PageServerLoad } from './$types'
+import { base } from '$app/paths';
 
 export const load: PageServerLoad = async ({ url, request, locals, cookies, depends }) => {
 	const { store, storeId, origin } = locals
@@ -88,12 +89,12 @@ const add: Action = async ({ request, cookies, locals }) => {
 		})
 		// if (!cartId) { // Commented out because when can't find cart_id in database, it will still won't set the new cart_id in cookies
 		cartId = cart.cart_id // This is required because when cart_id is null, it will add 3 items with null cart id hence last one prevails
-		cookies.set('cartId', cartId, { path: '/', maxAge: 31536000 })
+		cookies.set('cartId', cartId, { path: `${base}/`, maxAge: 31536000 })
 		// }
 
 		if (!sid) {
 			sid = cart.sid
-			cookies.set('connect.sid', sid, { path: '/' })
+			cookies.set('connect.sid', sid, { path: `${base}/` })
 		}
 
 		if (linkedItems?.length) {
@@ -134,10 +135,10 @@ const add: Action = async ({ request, cookies, locals }) => {
 			// locals.cartQty = cartObj.qty
 
 			if (!sid) {
-				cookies.set('connect.sid', cart.sid, { path: '/' })
+				cookies.set('connect.sid', cart.sid, { path: `${base}/` })
 			}
 
-			if (!cartId) cookies.set('cartId', cartObj.cartId, { path: '/', maxAge: 31536000 })
+			if (!cartId) cookies.set('cartId', cartObj.cartId, { path: `${base}/`, maxAge: 31536000, secure: false })
 
 			return cartObj
 		} else {
@@ -169,7 +170,7 @@ const createBackOrder: Action = async ({ request, cookies, locals }) => {
 
 		if (!sid) {
 			sid = cart.sid
-			cookies.set('connect.sid', sid, { path: '/' })
+			cookies.set('connect.sid', sid, { path: `${base}/` })
 		}
 	} catch (e) {
 		return {}

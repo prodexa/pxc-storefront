@@ -12,6 +12,7 @@ import { goback } from '$lib/utils'
 import { cartStore } from '$lib/store/cart'
 import { browser } from '$app/environment'
 import { onMount } from 'svelte'
+import { base } from '$app/paths';
 
 export let data
 export let me
@@ -117,7 +118,7 @@ onMount(() => {
 			<!-- Cart -->
 
 			<a
-				href="/cart"
+				href="{base}/cart"
 				aria-label="Click to visit cart"
 				class="h-8 w-8 relative flex items-center justify-center frosted-white rounded-full focus:outline-none"
 				data-sveltekit-preload-data>

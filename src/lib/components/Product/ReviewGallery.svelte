@@ -12,6 +12,7 @@ import { SplideSlide } from '@splidejs/svelte-splide'
 import LazyImg from '../Image/LazyImg.svelte'
 import { browser } from '$app/environment'
 // import { storeStore } from '$lib/store/store'
+import { base } from '$app/paths';
 
 const dispatch = createEventDispatcher()
 
@@ -185,7 +186,7 @@ onMount(async () => {
 												<h6 class="mb-2">Purchased Item:</h6>
 
 												<a
-													href="/product/{g.product?.slug}"
+													href="{base}/product/{g.product?.slug}"
 													aria-label="View product"
 													target="_blank"
 													rel="noopener noreferrer"
@@ -298,7 +299,7 @@ onMount(async () => {
 									<h6>Purchased Item:</h6>
 
 									<a
-										href="/product/{g.product?.slug}"
+										href="{base}/product/{g.product?.slug}"
 										aria-label="View product"
 										target="_blank"
 										rel="noopener noreferrer"

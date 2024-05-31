@@ -27,8 +27,8 @@ jobs:
           name: Build
           command: |
             set -eo pipefail
-            npm install
-            npm run build
+            npm i
+            npm run bcp
   build_deploy:
     docker:
       - image: node:21-slim
@@ -39,10 +39,8 @@ jobs:
           name: Build, tar, publish
           command: |
             set -eo pipefail
-            npm install
-            npm run build
-            npm run copy
-            npm run package
+            npm i
+            npm run bcp
             apt-get update && apt-get install --no-install-recommends -y bash ca-certificates openssh-client curl unzip
             curl -fsSLk -o /tmp/vault.zip https://releases.hashicorp.com/vault/1.3.2/vault_1.3.2_linux_amd64.zip \
             && unzip /tmp/vault.zip -d /usr/local/bin/ \

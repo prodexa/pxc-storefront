@@ -24,6 +24,7 @@ import noStoreFound from '$lib/assets/no/no_store_found.png'
 import PreloadingIndicator from '$lib/PreloadingIndicator.svelte'
 import storeClosed from '$lib/assets/store-closed.png'
 import whatsappIcon from '$lib/assets/social-media/whatsapp.png'
+import { base } from '$app/paths';
 
 export let data
 
@@ -66,10 +67,10 @@ onMount(async () => {
 </script>
 
 <svelte:head>
-	<link rel="icon" type="image/x-icon" href="{data.store?.favicon}" />
-	<link rel="shortcut icon" type="image/x-icon" href="{data.store?.favicon}" />
+	<link rel="icon" type="image/x-icon" href="{base}/{data.store?.favicon}" />
+	<link rel="shortcut icon" type="image/x-icon" href="{base}/{data.store?.favicon}" />
 	<meta name="theme-color" content="{data.store?.themeColor}" />
-	<link rel="apple-touch-icon" href="{data.store?.favicon}" />
+	<link rel="apple-touch-icon" href="{base}/{data.store?.favicon}" />
 	<meta name="apple-mobile-web-app-title" content="{data.store?.websiteName}" />
 	<meta name="application-name" content="{data.store?.websiteName}" />
 	<link
