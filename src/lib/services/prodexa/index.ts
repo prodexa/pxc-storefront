@@ -19,7 +19,7 @@ export const {
 	PaymentMethodService,
 	PopularSearchService,
 	ReelService,
-	UserService,
+	// UserService,
 	VendorService,
 	WishlistService,
 	ZipService,
@@ -30,6 +30,7 @@ export const {
 	ChatService
 } = services
 
+export * as UserService  from '../litekart/user-service'
 
 export * as AutocompleteService from './autocomplete-service'
 export * as CartService from './cart-service'
@@ -43,3 +44,4 @@ export * as PopularityService from './popularity-service'
 export * as ProductService from './product-service'
 export * as ReviewService from './review-service'
 export * as StoreService from './store-service'
+

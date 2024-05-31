@@ -34,7 +34,7 @@ export async function load({ params, parent, url }) {
 	// 		deals = res1.value
 	// 	} else {
 	// 		console.error('Error fetching deals:', res1.reason)
-	// 		// redirect(307, '/auth/login')
+	// 		// redirect(307, `${base}/auth/login`)
 	// 	}
 	// 	if (res2.status === 'fulfilled') {
 	// 		collections = res2.value

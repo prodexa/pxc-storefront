@@ -9,6 +9,7 @@ import SendOtp from '../_SendOtp.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import VerifyOtp from '../_VerifyOtp.svelte'
 import { UserService } from '$lib/services'
+import { base } from '$app/paths'
 
 const cookies = Cookie()
 
@@ -110,7 +111,7 @@ function getLoginUrl(baseUrl) {
 	} else {
 		url = baseUrl + '?' + query
 	}
-	return url.toString()
+	return `${base}${url.toString()}`
 }
 </script>
 

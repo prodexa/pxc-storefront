@@ -1,5 +1,6 @@
 import { error, redirect } from '@sveltejs/kit'
 import { CartService, PaymentMethodService } from '$lib/services'
+import { base } from '$app/paths'
 
 export const prerender = false
 
@@ -40,7 +41,7 @@ export async function load({ url, parent }) {
 		if (e.status === 307 && e.location === '/cart') {
 			redirect(307, '/cart')
 		} else if (e.status === 401 || e.status === 307) {
-			redirect(307, `/auth/login?ref=${url?.pathname}`)
+			redirect(307, `${base}/auth/login?ref=${url?.pathname}`)
 		} else {
 			error(500, e?.message)
 		}

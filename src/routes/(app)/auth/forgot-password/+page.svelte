@@ -6,6 +6,7 @@ import { LazyImg, Error } from '$lib/components'
 import { TextboxFloating, PrimaryButton } from '$lib/ui'
 import SEO from '$lib/components/SEO/index.svelte'
 import { UserService } from '$lib/services'
+import { base } from '$app/paths';
 const seoProps = {
 	title: 'Forgot Password',
 	description: 'Forgot Password'
@@ -79,7 +80,7 @@ async function submit() {
 
 		<div class="mx-auto flex max-w-max flex-col gap-1 text-center text-sm">
 			<a
-				href="{`/auth/login?ref=${$page.url.searchParams.get('ref') || '/'}`}"
+				href="{`${base}/auth/login?ref=${$page.url.searchParams.get('ref') || '/'}`}"
 				aria-label="Click to login with phone number"
 				class="max-w-max whitespace-nowrap text-primary-500 hover:text-primary-700 hover:underline">
 				Back to Login

@@ -513,7 +513,7 @@ async function updateVariant(variant) {
 				<div class="block sm:hidden">
 					{#if $page.data.store?.isSecureCatalogue && !$page.data?.me}
 						<a
-							href="{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page?.url
+							href="{base}{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page?.url
 								?.search}"
 							class="block hover:underline max-w-max font-bold text-sm">
 							Login to view price
@@ -638,7 +638,7 @@ async function updateVariant(variant) {
 				<div class="hidden sm:block">
 					{#if $page.data.store?.isSecureCatalogue && !$page.data?.me}
 						<a
-							href="{$page.data.store?.otpLogin ? '/auth/otp-login' : '/auth/login'}?ref={$page?.url
+							href="{base}{$page.data.store?.otpLogin ? '/auth/otp-login' : '/auth/login'}?ref={$page?.url
 								?.pathname}{$page?.url?.search}"
 							class="block hover:underline max-w-max font-bold">
 							Login to view price
@@ -1289,7 +1289,7 @@ async function updateVariant(variant) {
 							<div class="col-span-1">
 								{#if $page.data.store?.isSecureCatalogue && !$page.data?.me}
 									<a
-										href="{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page
+										href="{base}{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page
 											?.url?.search}"
 										class="block">
 										<WhiteButton
@@ -1692,7 +1692,7 @@ async function updateVariant(variant) {
 							<div class="{$page.data.store?.isWishlist ? ' col-span-3' : ' col-span-5'}">
 								{#if $page.data.store?.isSecureCatalogue && !$page.data?.me}
 									<a
-										href="{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page
+										href="{base}{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page
 											?.url?.search}"
 										class="block">
 										<WhiteButton
@@ -1942,7 +1942,7 @@ async function updateVariant(variant) {
 							<div class="{$page.data.store?.isWishlist ? ' col-span-3' : ' col-span-5'}">
 								{#if $page.data.store?.isSecureCatalogue && !$page.data?.me}
 									<a
-										href="{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page
+										href="{base}{$page.data?.loginUrl || '/auth/login'}?ref={$page?.url?.pathname}{$page
 											?.url?.search}"
 										class="block">
 										<WhiteButton

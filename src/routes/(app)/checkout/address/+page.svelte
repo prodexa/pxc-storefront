@@ -10,6 +10,7 @@ import SelectAddress from '../_SelectAddress.svelte'
 import SelectBillingAddress from '../_SelectBillingAddress.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import { CartService } from '$lib/services'
+import { base } from '$app/paths'
 
 export let data
 
@@ -237,7 +238,7 @@ async function refreshAddress() {
 				<h2 class="mb-5">Enter Your Delivery Address</h2>
 
 				<a
-					href="/auth/login?ref={$page.url.pathname}"
+					href="{base}/auth/login?ref={$page.url.pathname}"
 					class="block mb-5 text-sm underline text-zinc-500 hover:text-zinc-800">
 					Login to view your saved address
 				</a>

@@ -15,6 +15,7 @@ import Cookie from 'cookie-universal'
 import SEO from '$lib/components/SEO/index.svelte'
 import VerifyOtp from '../_VerifyOtp.svelte'
 import { UserService } from '$lib/services'
+import { base } from '$app/paths'
 
 const cookies = Cookie()
 
@@ -145,7 +146,7 @@ function changeNumber() {
 <SEO {...seoProps} />
 
 <div class="flex w-full max-w-md flex-col rounded-2xl border bg-white p-10 shadow-2xl">
-	<a href="/" aria-label="Go to home" class="mx-auto mb-8 block max-w-max">
+	<a href="{base}/" aria-label="Go to home" class="mx-auto mb-8 block max-w-max">
 		{#if $page.data.store?.logo}
 			<img
 				src="{$page.data.store?.logo}"
@@ -169,7 +170,7 @@ function changeNumber() {
 
 	{#if !otpRequestSend}
 		<form
-			action="/auth/login?/login"
+			action="{base}/auth/login?/login"
 			method="POST"
 			use:enhance="{() => {
 				err = null
@@ -309,7 +310,7 @@ function changeNumber() {
 						<label for="password" class="flex-1">Password</label>
 
 						<a
-							href="/auth/forgot-password"
+							href="{base}/auth/forgot-password"
 							tabindex="-1"
 							class="max-w-max text-xs text-zinc-500 focus:outline-none hover:underline">
 							Forgot Password
@@ -420,14 +421,14 @@ function changeNumber() {
 
 	<div class="mx-auto mb-5 flex max-w-max flex-col gap-1 text-center text-sm">
 		<a
-			href="{`/auth/signup?ref=${$page.url.searchParams.get('ref') || '/'}`}"
+			href="{`${base}/auth/signup?ref=${$page.url.searchParams.get('ref') || '/'}`}"
 			aria-label="Click to login with email"
 			class="whitespace-nowrap text-primary-500 hover:text-primary-700 hover:underline">
 			Signup
 		</a>
 
 		<!-- <a
-			href="{$page.data.store?.adminUrl}?role=vendor&store={$page.data.store}"
+			href="{base}{$page.data.store?.adminUrl}?role=vendor&store={$page.data.store}"
 			aria-label="Click to login as vendor"
 			class="whitespace-nowrap text-primary-500 hover:text-primary-700 hover:underline">
 			Join as Vendor
@@ -442,7 +443,7 @@ function changeNumber() {
 		<br />
 
 		<a
-			href="/terms-conditions"
+			href="{base}/terms-conditions"
 			aria-label="Click to visit terms & conditions"
 			target="_blank"
 			rel="noopener noreferrer"

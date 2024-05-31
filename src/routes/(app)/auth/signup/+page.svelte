@@ -12,6 +12,7 @@ import PrimaryButton from '$lib/ui/PrimaryButton.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import TextboxFloating from '$lib/ui/TextboxFloating.svelte'
 import { UserService } from '$lib/services'
+import { base } from '$app/paths'
 const IS_DEV = import.meta.env.DEV
 
 const cookies = Cookie()
@@ -101,7 +102,7 @@ function getLoginUrl(baseUrl) {
 	} else {
 		url = baseUrl + '?' + query
 	}
-	return url.toString()
+	return `${base}${url.toString()}`
 }
 
 async function submit(n) {

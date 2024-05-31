@@ -19,6 +19,7 @@ import { PrimaryButton } from '$lib/ui'
 import { ReviewService } from '$lib/services'
 import noOnlineReviewAnimate from '$lib/assets/no/online-review-animate.svg'
 import SEO from '$lib/components/SEO/index.svelte'
+import { base } from '$app/paths'
 
 const seoProps = {
 	title: 'Dashboard - Reviews ',
@@ -67,7 +68,7 @@ async function remove(id) {
 	} catch (e) {
 		if (e.message === 'You must be logged in') {
 			const url = '/'
-			goto(`/auth/login?ref=${url}`)
+			goto(`${base}/auth/login?ref=${url}`)
 		}
 	} finally {
 		// refreshData()

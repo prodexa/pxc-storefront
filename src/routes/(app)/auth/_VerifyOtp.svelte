@@ -18,6 +18,7 @@ import { page } from '$app/stores'
 import { toast } from '$lib/utils'
 import { tweened } from 'svelte/motion'
 import PrimaryButton from '$lib/ui/PrimaryButton.svelte'
+import { base } from '$app/paths'
 
 const dispatch = createEventDispatcher()
 
@@ -177,7 +178,7 @@ async function updateOTP() {
 	</div>
 
 	<form
-		action="/auth/login?/verifyOtp"
+		action="{base}/auth/login?/verifyOtp"
 		method="POST"
 		use:enhance="{() => {
 			return async ({ result }) => {
