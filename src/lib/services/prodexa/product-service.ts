@@ -1,21 +1,22 @@
-import { error } from '@sveltejs/kit'
-import { getAPI, post } from '$lib/utils/api'
-import type { AllProducts } from '$lib/types'
+import {error} from '@sveltejs/kit'
+import {getAPI, post} from '$lib/utils/api'
+import type {AllProducts} from '$lib/types'
 import {
-	mapProdexaAllProducts,
-	mapProdexaAttrFacets,
-	mapProdexaFacet,
-	mapProdexaFacets,
-	mapProdexaProduct,
-	SLUG_SEPARATOR,
-	LANGUAGE_TAG,
-	ATTRIBUTE_SHORT_DESCRIPTION
+  ATTRIBUTE_SHORT_DESCRIPTION,
+  LANGUAGE_TAG,
+  mapProdexaAllProducts,
+  mapProdexaAttrFacets,
+  mapProdexaFacet,
+  mapProdexaFacets,
+  mapProdexaProduct,
+  SLUG_SEPARATOR
 } from './prodexa-utils'
 import queryString from 'query-string'
-import { currencyCode } from '$lib/config'
+import {currencyCode} from '$lib/config'
 
 const productsEndpoint = 'products/search/full-product'
 const productsFacetsEndpoint = 'products/search/facets'
+const attributesEndpoint = 'attributes'
 
 const parseQueryString = (query, categorySlug = null) => {
 	const params = queryString.parse(query)
@@ -157,7 +158,21 @@ export const fetchProduct = async ({ origin, slug }) => {
 			`product-editor/products/${slug.replace(SLUG_SEPARATOR, '/')}`,
 			origin
 		)
-		return mapProdexaProduct(product)
+    const mappedProduct = mapProdexaProduct(product)
+
+    // replace specifications attr id with name
+    // better to have it with product coming from be in the above call
+    await Promise.all(
+      mappedProduct?.specifications?.map((sp) => getAPI(
+          `${attributesEndpoint}/${sp._id}`,
+          origin
+        )
+          .then(res => (
+            sp.name = res?.attribute?.shortDescriptions?.[LANGUAGE_TAG] || sp._id
+          ))
+      ))
+
+    return mappedProduct
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}

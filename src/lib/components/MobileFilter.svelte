@@ -445,7 +445,7 @@ $: {
 									? 'text-primary-500 border-primary-500 bg-white'
 									: 'border-zinc-100 bg-transparent'}"
 								on:click="{() => (selected = attribute.key)}">
-								<span> {attribute.label ? attribute.label : attribute.key} </span>
+								<span> {attribute.label || attribute.key} </span>
 
 								{#if fl[attribute.key]?.length}
 									<div class="h-1.5 w-1.5 rounded-full bg-primary-500"></div>
