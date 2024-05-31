@@ -170,6 +170,7 @@ export const fetchProduct = async ({ origin, slug }) => {
           .then(res => (
             sp.name = res?.attribute?.shortDescriptions?.[LANGUAGE_TAG] || sp._id
           ))
+        .catch(e => console.log(e))
       ))
 
     return mappedProduct
