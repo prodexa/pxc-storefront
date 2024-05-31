@@ -169,7 +169,7 @@ function getLoginUrl(baseUrl) {
 	<p class="text-center text-sm text-zinc-500">
 		By clicking send OTP you are accepting our
 		<a
-			href="/terms-conditions"
+			href="{base}/terms-conditions"
 			aria-label="Click to visit terms & conditions"
 			target="_blank"
 			rel="noopener noreferrer"

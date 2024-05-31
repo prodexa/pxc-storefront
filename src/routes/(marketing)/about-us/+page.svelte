@@ -1,6 +1,7 @@
 <script>
 import { page } from '$app/stores'
 import SEO from '$lib/components/SEO/index.svelte'
+import { base } from '$app/paths'
 
 let seoProps = {
 	title: `About Us`,
@@ -32,7 +33,7 @@ let seoProps = {
 		<div class="grid grid-cols-1 gap-5 text-left sm:grid-cols-2 sm:gap-10">
 			<div class="col-span-1 flex items-start gap-5">
 				<div>
-					<img src="/about-us/design.png" alt=" " width="64" class="h-auto w-16 object-contain" />
+					<img src="{base}/about-us/design.png" alt=" " width="64" class="h-auto w-16 object-contain" />
 				</div>
 
 				<div class="flex-1">
@@ -47,7 +48,7 @@ let seoProps = {
 
 			<div class="col-span-1 flex items-start gap-5">
 				<div>
-					<img src="/about-us/design-2.png" alt=" " width="64" class="h-auto w-16 object-contain" />
+					<img src="{base}/about-us/design-2.png" alt=" " width="64" class="h-auto w-16 object-contain" />
 				</div>
 
 				<div class="flex-1">
@@ -62,7 +63,7 @@ let seoProps = {
 
 			<div class="col-span-1 flex items-start gap-5">
 				<div>
-					<img src="/about-us/team.png" alt=" " width="64" class="h-auto w-16 object-contain" />
+					<img src="{base}/about-us/team.png" alt=" " width="64" class="h-auto w-16 object-contain" />
 				</div>
 
 				<div class="flex-1">
@@ -79,7 +80,7 @@ let seoProps = {
 
 			<div class="col-span-1 flex items-start gap-5">
 				<div>
-					<img src="/about-us/product.png" alt=" " width="64" class="h-auto w-16 object-contain" />
+					<img src="{base}/about-us/product.png" alt=" " width="64" class="h-auto w-16 object-contain" />
 				</div>
 
 				<div class="flex-1">
@@ -96,7 +97,7 @@ let seoProps = {
 
 		<div class="relative">
 			<div>
-				<img src="/about-us/phone.jpg" alt="" width="400" class="h-full w-full" />
+				<img src="{base}/about-us/phone.jpg" alt="" width="400" class="h-full w-full" />
 			</div>
 
 			<div
@@ -122,7 +123,7 @@ let seoProps = {
 
 		<div class="mt-20 grid grid-cols-2 gap-5 sm:gap-10 md:grid-cols-4">
 			<div class="col-span-1 flex flex-col items-center gap-4 bg-zinc-100 text-center">
-				<img src="/about-us/profile-1.jpg" alt="" width="250" height="250" class="h-full w-full" />
+				<img src="{base}/about-us/profile-1.jpg" alt="" width="250" height="250" class="h-full w-full" />
 
 				<div class="p-4">
 					<h6 class="mb-1 font-bold">Brian Anderson</h6>
@@ -134,7 +135,7 @@ let seoProps = {
 			</div>
 
 			<div class="col-span-1 flex flex-col items-center gap-4 bg-zinc-100 text-center">
-				<img src="/about-us/profile-2.jpg" alt="" width="250" height="250" class="h-full w-full" />
+				<img src="{base}/about-us/profile-2.jpg" alt="" width="250" height="250" class="h-full w-full" />
 
 				<div class="p-4">
 					<h6 class="mb-1 font-bold">Jennifer Cameron</h6>
@@ -146,7 +147,7 @@ let seoProps = {
 			</div>
 
 			<div class="col-span-1 flex flex-col items-center gap-4 bg-zinc-100 text-center">
-				<img src="/about-us/profile-3.jpg" alt="" width="250" height="250" class="h-full w-full" />
+				<img src="{base}/about-us/profile-3.jpg" alt="" width="250" height="250" class="h-full w-full" />
 
 				<div class="p-4">
 					<h6 class="mb-1 font-bold">Katherine Lambert</h6>
@@ -158,7 +159,7 @@ let seoProps = {
 			</div>
 
 			<div class="col-span-1 flex flex-col items-center gap-4 bg-zinc-100 text-center">
-				<img src="/about-us/profile-4.jpg" alt="" width="250" height="250" class="h-full w-full" />
+				<img src="{base}/about-us/profile-4.jpg" alt="" width="250" height="250" class="h-full w-full" />
 
 				<div class="p-4">
 					<h6 class="mb-1 font-bold">Eric Martin</h6>

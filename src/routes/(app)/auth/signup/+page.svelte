@@ -379,7 +379,7 @@ async function submit(n) {
 		<br />
 
 		<a
-			href="/terms-conditions"
+			href="{base}/terms-conditions"
 			aria-label="Click to visit terms & conditions"
 			target="_blank"
 			rel="noopener noreferrer"
