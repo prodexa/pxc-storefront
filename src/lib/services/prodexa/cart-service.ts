@@ -5,28 +5,33 @@ import { SLUG_SEPARATOR } from './prodexa-utils'
 
 const CART_ENDPOINT = 'carts'
 
-const mapCart = (cart) => {
+const mapCartItem = (item) => {
+	const _id = `${item.catalogId}${SLUG_SEPARATOR}${item.productId}`
 	return {
+		...item,
+		_id, slug: _id, pid: _id,
+		img: '/prodexa-img' + item.previewUrl,
+		name: item.productDescShort,
+		qty: item.quantity,
+		formattedItemAmount: { price: currency(item.netPrice, currencySymbol) }
+	}
+}
+
+const mapCart = (cart) => {
+	const totalNetPrice = cart.totalNetPrice
+	const fmtTotalNetPrice = currency(totalNetPrice, currencySymbol)
+	return ({
 		...cart,
-		cart_id: cart.cartId,
-		qty: cart.quantity,
-		items: cart.items?.map(it => {
-			const _id = `${it.catalogId}${SLUG_SEPARATOR}${it.productId}`
-			return {
-				...it,
-				_id, slug: _id, pid: _id,
-				img: '/prodexa-img' + it.image,
-				name: it.shortDescription,
-				qty: it.quantity,
-				formattedItemAmount: { price: currency(it.price, currencySymbol) }
-			}
-		}),
+		cart_id: cart.businessDocumentId,
+		qty: cart.totalQuantity,
+		total: totalNetPrice, subtotal: totalNetPrice,
+		items: cart.items?.filter((item) => item.isStockedItem)?.map(mapCartItem),
+		unavailableItems: cart.items?.filter((item) => !item.isStockedItem)?.map(mapCartItem),
 		formattedAmount: {
-			subtotal: currency(cart.subtotal, currencySymbol),
-			total: currency(cart.total, currencySymbol),
+			subtotal: fmtTotalNetPrice, total: fmtTotalNetPrice,
 			shipping: { value: 0 } // free shipping
 		}
-	}
+	})
 }
 
 const loadCart = async ({ cartId = null, origin = null }) => {
