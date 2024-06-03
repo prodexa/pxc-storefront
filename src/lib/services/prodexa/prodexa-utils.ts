@@ -116,7 +116,7 @@ export const mapProdexaCategoryClassification = (c: any) => {
 
 	return {
 		id: c.classificationId,
-		name: c.fallbackDescription,
+		name: c.fallbackDescription || c.classificationId,
 		slug: c.classificationId,
 		link: c.classificationId,
 		children: c.category_children
