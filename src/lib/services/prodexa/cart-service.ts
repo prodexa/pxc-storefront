@@ -1,30 +1,37 @@
 import { error } from '@sveltejs/kit'
 import { currency, getAPI, post, put } from '$lib/utils'
 import { currencySymbol } from '$lib/config'
+import { SLUG_SEPARATOR } from './prodexa-utils'
 
 const CART_ENDPOINT = 'carts'
 
-const mapCart = (cart) => {
+const mapCartItem = (item) => {
+	const _id = `${item.catalogId}${SLUG_SEPARATOR}${item.productId}`
 	return {
+		...item,
+		_id, slug: _id, pid: _id,
+		img: '/prodexa-img' + item.previewUrl,
+		name: item.productDescShort,
+		qty: item.quantity,
+		formattedItemAmount: { price: currency(item.netPrice, currencySymbol) }
+	}
+}
+
+const mapCart = (cart) => {
+	const totalNetPrice = cart.totalNetPrice
+	const fmtTotalNetPrice = currency(totalNetPrice, currencySymbol)
+	return ({
 		...cart,
-		qty: cart.quantity,
-		items: cart.items?.map(it => {
-			const _id = it.catalogId + '___' + it.productId
-			return {
-				...it,
-				_id, slug: _id, pid: _id,
-				img: '/prodexa-img' + it.image,
-				name: it.shortDescription,
-				qty: it.quantity,
-				formattedItemAmount: { price: currency(it.price, currencySymbol) }
-			}
-		}),
+		cart_id: cart.businessDocumentId,
+		qty: cart.totalQuantity,
+		total: totalNetPrice, subtotal: totalNetPrice,
+		items: cart.items?.filter((item) => item.isStockedItem)?.map(mapCartItem),
+		unavailableItems: cart.items?.filter((item) => !item.isStockedItem)?.map(mapCartItem),
 		formattedAmount: {
-			subtotal: currency(cart.subtotal, currencySymbol),
-			total: currency(cart.total, currencySymbol),
+			subtotal: fmtTotalNetPrice, total: fmtTotalNetPrice,
 			shipping: { value: 0 } // free shipping
 		}
-	}
+	})
 }
 
 const loadCart = async ({ cartId = null, origin = null }) => {
@@ -43,23 +50,21 @@ export const fetchMyCart = loadCart
 
 export const addToCartService = async ({ cartId, pid, qty, origin = null }) => {
 	try {
-		let res: { cart_id?: string, sid?: string } = {}
+		let res: { cartId?: string, sid?: string }
 
+		const catalogId___productsId = pid.split(SLUG_SEPARATOR)
 		res = await post(
 			cartId ? `${CART_ENDPOINT}/${cartId}/add` : CART_ENDPOINT,
 			{
-				catalogId: pid.split('___')[0],
-				productId: pid.split('___')[1],
+				catalogId: catalogId___productsId[0],
+				productId: catalogId___productsId[1],
 				quantity: qty,
-				cart_id: cartId
+				cartId: cartId
 			},
 			origin
 		)
 
-		res = { ...res, sid: res.cart_id }
-		res = mapCart(res)
-
-		return res || {}
+		return mapCart({ ...res, sid: res.cartId }) || {}
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)
 	}
@@ -114,7 +119,7 @@ export const updateCart = async (
 			{
 				billing_address_id,
 				billing_address: billingAddress,
-				cart_id: cartId,
+				cartId: cartId,
 				selfTakeout,
 				shipping_address_id,
 				shipping_address: shippingAddress,
