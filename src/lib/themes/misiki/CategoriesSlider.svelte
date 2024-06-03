@@ -80,7 +80,7 @@ onMount(async () => {
 						</a>
 					{:else}
 						<a
-							href="/{category.slug || '##'}"
+              href="{navigateToProperPath(category.link || category.slug || '##')}"
 							aria-label="Click to view related products of this category"
 							class="group flex flex-col items-center justify-center hover:text-primary-500 sm:w-24 lg:w-28">
 							<div
