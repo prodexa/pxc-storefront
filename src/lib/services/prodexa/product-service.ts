@@ -6,6 +6,7 @@ import {
   LANGUAGE_TAG,
   mapProdexaAllProducts,
   mapProdexaAttrFacets,
+  mapProdexaCategoryClassification,
   mapProdexaFacet,
   mapProdexaFacets,
   mapProdexaProduct,
@@ -204,7 +205,24 @@ export const fetchProductsOfCategory = async ({ categorySlug, origin, query }) =
 
 		const count = productsPage?.totalElements
 		const pageSize = productsPage?.size
-		const category = categorySlug
+
+    let category = {
+      name: categorySlug,
+      id: categorySlug,
+      slug: categorySlug,
+      link: categorySlug,
+    }
+
+    // retrieve category data
+    try {
+      const res = await getAPI(`classifications/${categorySlug}`, origin)
+      const category1 =  mapProdexaCategoryClassification(res) || {}
+      category = {...category1}
+    } catch (e) {
+      //error(e.status, e.data?.message || e.message)
+      console.log(e)
+    }
+
 		const err = !productsPage?.totalElements ? 'No result Not Found' : null
 		const currentPage = productsPage?.totalPages + 1
 

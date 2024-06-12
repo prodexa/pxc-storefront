@@ -182,3 +182,11 @@ export const mapProdexaAutocomplete = (prodexaProduct: any) => {
 		img: product.img
 	})
 }
+
+export const mapProdexaAutocompleteNonProduct = (f: any) => {
+  return ({
+    count: f.count,
+    type: 'search',
+    key: f.val
+  })
+}
