@@ -1,30 +1,49 @@
-import { error } from '@sveltejs/kit'
-import { post } from '$lib/utils/api'
-import { mapProdexaAutocomplete } from './prodexa-utils'
+import {error} from '@sveltejs/kit'
+import {post} from '$lib/utils/api'
+import {mapProdexaAutocomplete, mapProdexaAutocompleteNonProduct} from './prodexa-utils'
 
-export const fetchAutocompleteData = async ({ origin, q }: any) => {
-	if (q?.length < 4) {
-		return []
-	}
+export const LANGUAGE_TAG = 'en-GB'
 
-	try {
-		// search by product
-		const res = await post(
-			`products/search/short-product?searchValue=${q}&page=0&size=10`,
-			{},
-			origin
-		)
+export const fetchAutocompleteData = async ({origin, q}: any) => {
+  if (q?.length < 3) {
+    return []
+  }
+  let dataProd = []
+  let dataNonProd = []
 
-		const data = res?.content?.map(mapProdexaAutocomplete)
+  try {
+    // search by product
+    const resProd = await post(
+      `products/search/short-product?searchValue=${q}&page=0&size=10`,
+      {},
+      origin
+    )
+    dataProd = resProd?.content?.map(mapProdexaAutocomplete) || []
+  } catch (e) {
+    console.log(e)
+  }
 
-		const search = {
-			count: res?.totalElements,
-			type: 'search',
-			key: q
-		}
+  try {
+    // search by facets
+    const resNonProd = await post(
+      `products/search/autocomplete?searchValue=${q}&limit=5&anguage=${LANGUAGE_TAG}`,
+      {},
+      origin
+    )
+    dataNonProd = resNonProd?.map(mapProdexaAutocompleteNonProduct) || []
+  } catch (e) {
+    console.log(e)
+  }
 
-		return search.count ? [search, ...data] : []
-	} catch (e) {
-		error(e.status, e.message)
-	}
+  const search = {
+    count: 1,
+    type: 'search',
+    key: q
+  }
+
+  if (dataNonProd.length == 0) {
+    dataNonProd.push(search)
+  }
+
+  return search.count ? [...dataNonProd, ...dataProd] : []
 }

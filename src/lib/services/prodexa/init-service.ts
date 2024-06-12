@@ -9,10 +9,10 @@ export const fetchInit = async () => {
 			logo: Logo,
 			favicon: 'prodexa-favicon.ico',
 			domain: 'prodexa.com',
-			email: 'admin@prodexa.com',
+      websiteEmail: 'info@prodexa.com',
 			websiteLegalName: 'prodexa Gmbh',
-			websiteName: 'prodexa',
-			saasName: 'prodexa',
+			websiteName: 'prodexa PXC',
+			saasName: 'prodexa PXC',
 			saasDomain: 'https://prodexa.com',
 			IMAGE_CDN_URL,
 			imageCdn: {
@@ -20,6 +20,8 @@ export const fetchInit = async () => {
 				provider: { val: 'thumbor' }
 			},
 			GOOGLE_ANALYTICS_ID: '123',
+      phone: '+49 (0) 231 226158 00',
+      address: 'Rheinische Straße 171, 44147 Dortmund',
 		}
 	}
 }
