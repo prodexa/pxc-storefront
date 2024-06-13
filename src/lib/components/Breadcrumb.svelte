@@ -1,5 +1,6 @@
 <script lang="ts">
 import { navigateToProperPath } from '$lib/utils'
+import { base } from '$app/paths';
 
 export let categoryPool = []
 export let currentProductName = ''
@@ -15,7 +16,7 @@ export { clazz as class }
 	{isMultipleLine ? 'flex-wrap' : 'truncate'}">
 	<!-- Home -->
 
-	<a href="/" aria-label="Click to go inside this page" class="hover:text-primary-500">
+	<a href="{base}" aria-label="Click to go inside this page" class="hover:text-primary-500">
 		{#if isHomeIcon}
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
