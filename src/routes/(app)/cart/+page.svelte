@@ -1030,7 +1030,7 @@ function updateCheckedCartItemsInGroup() {
 					We didn't find any item inside cart, Go ahead, order some essentials from the menu
 				</span>
 
-				<PrimaryButton class="w-40 py-2 text-sm" on:click="{() => goto(`/`)}">
+				<PrimaryButton class="w-40 py-2 text-sm" on:click="{() => goto(`${base}`)}">
 					BROWSE ITEMS
 				</PrimaryButton>
 			</div>
