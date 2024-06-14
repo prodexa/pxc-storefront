@@ -27,6 +27,9 @@ import SEO from '$lib/components/SEO/index.svelte'
 export let data
 // console.log('zzzzzzzzzzzzzzzzzz', data)
 
+// remove unsupported sortings
+const sortsProdexa = sorts.filter((s) => !s.name.startsWith('Discount'))
+
 let today = dayjs(new Date()).toISOString()
 
 let seoProps = {
@@ -434,7 +437,7 @@ function handleFilterTags() {
 									bind:value="{data.sort}"
 									class="max-w-max border-b bg-transparent pr-2 font-semibold focus:border-primary-500 focus:outline-none hover:border-primary-500"
 									on:change="{() => sortNow(data.sort)}">
-									{#each sorts as s}
+									{#each sortsProdexa as s}
 										<option value="{s.val}">{s.name}</option>
 									{/each}
 								</select>

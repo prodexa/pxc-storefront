@@ -772,10 +772,11 @@ async function updateVariant(variant) {
 						</a>
 					{:else}
 						<div class="mb-2 flex flex-wrap items-baseline gap-2 text-sm">
-							<span class="text-xl font-bold whitespace-nowrap">
-								{currency(currentVariantPrice, $page.data.store?.currencySymbol)}
-							</span>
-
+              {#if currentVariantPrice > 0}
+                <span class="text-xl font-bold whitespace-nowrap">
+                  {currency(currentVariantPrice, $page.data.store?.currencySymbol)}
+                </span>
+              {/if}
 							{#if data.product?.mrp > currentVariantPrice}
 								<span class="whitespace-nowrap text-zinc-500">
 									<strike>
@@ -791,18 +792,18 @@ async function updateVariant(variant) {
 							{/if}
 						</div>
 
-						{#if data?.moreProductDetails}
-							<h6 class="text-brand-500">
-								{#if data?.moreProductDetails?.igst}
-									Inclusive {currency(
-										data?.moreProductDetails?.igst,
-										$page.data.store?.currencySymbol
-									)} GST
-								{:else}
-									Inclusive of all taxes
-								{/if}
-							</h6>
-						{/if}
+						<!--{#if data?.moreProductDetails}-->
+						<!--	<h6 class="text-brand-500">-->
+						<!--		{#if data?.moreProductDetails?.igst}-->
+						<!--			Inclusive {currency(-->
+						<!--				data?.moreProductDetails?.igst,-->
+						<!--				$page.data.store?.currencySymbol-->
+						<!--			)} GST-->
+						<!--		{:else}-->
+						<!--			Inclusive of all taxes-->
+						<!--		{/if}-->
+						<!--	</h6>-->
+						<!--{/if}-->
 					{/if}
 				</div>
 
@@ -897,10 +898,11 @@ async function updateVariant(variant) {
 						</a>
 					{:else}
 						<div class="mb-2 flex flex-wrap items-baseline gap-2">
-							<span class="text-2xl font-bold whitespace-nowrap">
-								{currency(currentVariantPrice, $page.data.store?.currencySymbol)}
-							</span>
-
+              {#if currentVariantPrice > 0}
+                <span class="text-2xl font-bold whitespace-nowrap">
+                  {currency(currentVariantPrice, $page.data.store?.currencySymbol)}
+                </span>
+              {/if}
 							{#if data.product?.mrp > currentVariantPrice}
 								<span class="whitespace-nowrap text-zinc-500">
 									<strike>
@@ -916,18 +918,18 @@ async function updateVariant(variant) {
 							{/if}
 						</div>
 
-						{#if data.moreProductDetails}
-							<h6 class="text-brand-500">
-								{#if data.moreProductDetails?.igst}
-									Inclusive {currency(
-										data.moreProductDetails?.igst,
-										$page.data.store?.currencySymbol
-									)} GST
-								{:else}
-									Inclusive of all taxes
-								{/if}
-							</h6>
-						{/if}
+						<!--{#if data.moreProductDetails}-->
+						<!--	<h6 class="text-brand-500">-->
+						<!--		{#if data.moreProductDetails?.igst}-->
+						<!--			Inclusive {currency(-->
+						<!--				data.moreProductDetails?.igst,-->
+						<!--				$page.data.store?.currencySymbol-->
+						<!--			)} GST-->
+						<!--		{:else}-->
+						<!--			Inclusive of all taxes-->
+						<!--		{/if}-->
+						<!--	</h6>-->
+						<!--{/if}-->
 					{/if}
 				</div>
 
@@ -1427,7 +1429,7 @@ async function updateVariant(variant) {
 				{#if data.product?.specifications?.length}
 					<div>
 						<div class="mb-2 flex items-center gap-2 uppercase">
-							<h5>Specifications</h5>
+							<h5>Product Specifications</h5>
 
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -1447,13 +1449,10 @@ async function updateVariant(variant) {
 						<ul class="m-0 p-0 list-none flex flex-col gap-1">
 							{#each data.product?.specifications as s}
 								<li class="flex items-center gap-3 p-3 border">
-									<h6 class="w-24 sm:w-44 font-medium">
+									<h6 class="font-medium">
 										{s.name || '_'}
 									</h6>
-
-									:
-
-									<p class="flex-1">
+                  <p class="flex-1">
 										{s.value || '_'}
 									</p>
 								</li>

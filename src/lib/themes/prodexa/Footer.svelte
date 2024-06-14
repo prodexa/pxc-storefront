@@ -611,7 +611,7 @@ function positionToDisplayIsMultiVendor(itemsLength) {
             alt="logo"
             class="max-h-8 sm:max-h-16 w-10 object-contain object-left" />
         </a>
-        Product Experience Catalog 1.0 &copy;
+        Product Experience Commerce 1.0 &copy;
         <a class="prodexa-footer__link"
            href="https://prodexa.com"
            target="_blank"
