@@ -2,7 +2,7 @@ import {
 	BackButton,
 	BlackButton,
 	Checkbox,
-	CheckboxEs,
+	// CheckboxEs,
 	CheckboxOfMultiProducts,
 	Errors,
 	GradientButton,
@@ -30,6 +30,9 @@ import {
 // Varni components
 // import CheckboxEs from './../components/Varni/CheckboxEs.svelte'
 // import RadioEs from './../components/Varni/RadioEs.svelte'
+
+// Prodexa components
+import CheckboxEs from './../themes/prodexa/CheckboxEs.svelte'
 
 export {
 	BackButton,
