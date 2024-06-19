@@ -340,7 +340,7 @@ function handleFilterTags() {
 <CatelogNav me="{$page?.data?.me}" cart="{$page?.data?.cart}" store="{$page.data.store}">
 	<div class="flex max-w-max flex-col items-start gap-1">
 		{#if data.searchData}
-			<h5 class="w-40 shrink-0 truncate capitalize leading-4 text-left">{data.searchData}</h5>
+			<h5 class="w-40 shrink-0 truncate leading-4 text-left">{data.searchData}</h5>
 		{/if}
 
 		<p>
@@ -407,7 +407,7 @@ function handleFilterTags() {
 
 						<div class="flex flex-wrap items-baseline gap-2">
 							{#if data.searchData}
-								<h1 class="capitalize">{data.searchData}</h1>
+								<h1>{data.searchData}</h1>
 							{/if}
 
 							<p>

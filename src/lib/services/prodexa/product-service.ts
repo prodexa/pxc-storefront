@@ -161,18 +161,68 @@ export const fetchProduct = async ({ origin, slug }) => {
 		)
     const mappedProduct = mapProdexaProduct(product)
 
-    // replace specifications attr id with name
-    // better to have it with product coming from be in the above call
+    // replace specifications attr id with name, boolean value with yes/no
+    // TODO  better to have it with product coming from BE with the above call
     await Promise.all(
       mappedProduct?.specifications?.map((sp) => getAPI(
           `${attributesEndpoint}/${sp._id}`,
           origin
         )
-          .then(res => (
+          .then(res => {
             sp.name = res?.attribute?.shortDescriptions?.[LANGUAGE_TAG] || sp._id
-          ))
-        .catch(e => console.log(e))
-      ))
+            sp.type = res?.attribute?.type
+            if('boolean' === sp.type){
+              sp.value = sp.value === 'true' ? 'Yes' : 'No'
+            }
+          })
+          .catch(e => console.log(e))
+      )
+    )
+
+    // get attr names, also better to have it with product coming from BE with the above call
+    let missedVariantNamesSet = new Set()
+    let missedVariantAttrMap = new Map()
+    mappedProduct?.variants?.map((v) => {
+      v.variantValues?.map((vv) => {
+        let sp = mappedProduct?.specifications?.filter((sp) => sp._id == vv._id)[0]
+        if (!sp) {
+          missedVariantNamesSet.add(vv._id)
+        } else {
+          vv.name = sp.name
+          vv.type = sp.type
+          if(vv.type === 'boolean'){
+            vv.value = vv.value == 'true' ? 'Yes' : 'No'
+          }
+        }
+      })
+    })
+    if (missedVariantNamesSet.size) {
+      const bliadSet = [...missedVariantNamesSet]
+      await Promise.all(
+        bliadSet.map(key => getAPI(
+            `${attributesEndpoint}/${key}`,
+            origin
+          )
+            .then((res) => {
+              missedVariantAttrMap.set(key, res?.attribute)
+              }
+            )
+            .catch(e => console.log(e))
+        )
+      )
+      mappedProduct?.variants?.map((v) => {
+        v.variantValues?.map((vv) => {
+          if (missedVariantAttrMap.has(vv._id)) {
+            vv.name = missedVariantAttrMap.get(vv._id)?.shortDescriptions?.[LANGUAGE_TAG]
+            vv.type = missedVariantAttrMap.get(vv._id)?.type
+            if('boolean' === vv.type){
+              vv.value = vv.value === 'true' ? 'Yes' : 'No'
+            }
+          }
+        })
+      })
+    }
+
 
     return mappedProduct
 	} catch (e) {
