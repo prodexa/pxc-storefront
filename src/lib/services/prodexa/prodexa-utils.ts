@@ -1,5 +1,5 @@
 import { currencyCode } from '$lib/config'
-import type { AllProducts, Brand } from '$lib/types'
+import type { AllProducts, Brand, Product } from '$lib/types'
 
 export const LANGUAGE_TAG = 'en-GB'
 export const SLUG_SEPARATOR = '___'
@@ -91,7 +91,31 @@ export const mapProdexaProduct = (product: any) => {
 
 	const slug = product.catalogId + SLUG_SEPARATOR + product.productId
 
-	return {
+  const variantsEntries = Object.entries(product.variantValues)
+  const variants = variantsEntries?.map((v) => {
+    const variantEntries = Object.entries(v[1])
+    const variantValues = variantEntries.map(([attributeId, value]) => {
+        if (typeof value === 'object' && value !== null) {
+          value = value[LANGUAGE_TAG] ? value[LANGUAGE_TAG] : value
+        }
+        if (typeof value === 'object' && value !== null) {
+          value = JSON.stringify(value)
+        }
+        return ({
+          _id: attributeId,
+          name: attributeId,  // TODO (gor) attribute.name
+          value: value?.toString(),
+          active: true
+        })
+      })
+    return {
+      id: v[0],
+      title: v[0],
+      variantValues,
+    }
+  }) || []
+
+  const prod: Product = {
 		_id: slug,
 		id: slug,
 		slug,
@@ -105,8 +129,10 @@ export const mapProdexaProduct = (product: any) => {
 		brand,
 		specifications,
 		active: true,
-		hasStock: true
-	}
+		hasStock: true,
+    variants
+  }
+  return prod
 }
 
 export const mapProdexaCategoryClassification = (c: any) => {

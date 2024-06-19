@@ -34,6 +34,15 @@
 		box-shadow: 0px -4px 10px rgba(50, 50, 50, 0.2);
 	}
 }
+
+.redText{
+  color: red;
+}
+
+.redLine{
+  border: 1px solid red;
+}
+
 </style>
 
 <script lang="ts">
@@ -86,6 +95,7 @@ import Textbox from '$lib/ui/Textbox.svelte'
 import viewport from '$lib/actions/useViewPort'
 import WhiteButton from '$lib/ui/WhiteButton.svelte'
 import { base } from '$app/paths';
+import {array} from "zod";
 
 const cookies = Cookie()
 const isServer = import.meta.env.SSR
@@ -200,10 +210,54 @@ if (data.product?.tags?.length) {
 	})
 }
 
+let allVariantsAttrs = []
+const collectAllVariantsAttrs = async () => {
+  if (data?.product?.variants?.length) {
+    let headers  = []
+    let header : any = {}
+    const vAttrsMap = new Map()
+    data?.product?.variants.forEach((v) => {
+      v?.variantValues.forEach((vv) => {
+        header = {}
+        header._id = (vv._id)
+        header.name = (vv.name)
+        vAttrsMap.set(vv._id, header)
+      })
+    })
+
+    headers = Array.from(vAttrsMap.values())
+    header = {}
+    header._id = ('Order_Code')
+    header.name = ('Order Code')
+    headers.push(header)
+
+    allVariantsAttrs.push(headers)
+
+    let dataRow = []
+    let dataRowItem : any = {}
+    data?.product?.variants.forEach((v) => {
+      dataRow  = []
+      v?.variantValues.forEach((vv) => {
+        dataRowItem = {}
+        dataRowItem._id = (vv._id || '_')
+        dataRowItem.name = (vv.value || '_')
+        let headerArrayIndex = headers.findIndex((h) => h._id === vv._id)
+        dataRow[headerArrayIndex] = dataRowItem
+      })
+      dataRowItem = {}
+      dataRowItem._id = (v.title || '_')
+      dataRowItem.name = (v.title || '_')
+      dataRow[headers.length -1 ] = dataRowItem
+      allVariantsAttrs.push(dataRow)
+    })
+  }
+}
+
 onMount(async () => {
 	try {
 		screenWidth = screen.width
 		storeRecentlyViewedToLocatStorage()
+    collectAllVariantsAttrs()
 	} catch (e) {}
 })
 
@@ -1448,7 +1502,7 @@ async function updateVariant(variant) {
 
 						<ul class="m-0 p-0 list-none flex flex-col gap-1">
 							{#each data.product?.specifications as s}
-								<li class="flex items-center gap-3 p-3 border">
+								<li class="flex items-center gap-2 p-2">
 									<h6 class="font-medium">
 										{s.name || '_'}
 									</h6>
@@ -2117,6 +2171,52 @@ async function updateVariant(variant) {
 				{/if}
 			</div>
 		</div>
+
+    {#if data?.moreProductDetails?.variants?.length}
+      <div>
+        <div class="mb-2 flex items-center gap-2 uppercase">
+          <h5>Product Variations</h5>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-5 w-5">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z"
+            ></path>
+          </svg>
+        </div>
+
+        <div class="flex flex-col justify-between m-0 p-1 gap-1">
+          {#each allVariantsAttrs as v, index}
+            <div class="flex flex-row p-2 gap-2">
+              {#each v as va}
+                <div class="flex-1">
+                  {#if (index === 0)}
+                    <h6 class="font-bold redText">
+                      {va?.name || '-'}
+                    </h6>
+                  {:else }
+                    <h6 class="font-medium ">
+                      {va?.name || '-'}
+                    </h6>
+                  {/if}
+                </div>
+              {/each}
+            </div>
+            {#if (index === 0)}
+              <hr class="redLine"/>
+            {/if}
+          {/each}
+        </div>
+
+      </div>
+
+    {/if}
 
 		<div class="px-3 sm:px-10 lg:px-0 flex flex-col gap-5 sm:gap-10">
 			<!-- Frequently bought together -->
