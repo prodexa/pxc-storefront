@@ -1500,18 +1500,37 @@ async function updateVariant(variant) {
 							</svg>
 						</div>
 
-						<ul class="m-0 p-0 list-none flex flex-col gap-1">
-							{#each data.product?.specifications as s}
-								<li class="flex items-center gap-2 p-2">
-									<h6 class="font-medium">
-										{s.name || '_'}
-									</h6>
-                  <p class="flex-1">
-										{s.value || '_'}
-									</p>
-								</li>
+						<div class="m-0 p-1 list-none flex flex-col justify-between gap-1">
+							{#each data.product?.specifications as s, index}
+                {#if (index === 0)}
+                  <div class="flex flex-row gap-1 p-1">
+                    <div class="flex-1">
+                      <h6 class="font-bold redText">
+                        Attribute
+                      </h6>
+                    </div>
+                    <div class="flex-1">
+                      <h6 class="font-bold redText">
+                        Value
+                      </h6>
+                    </div>
+                  </div>
+                  <hr class="redLine"/>
+                {/if}
+                <div class="flex flex-row gap-1 p-1">
+                  <div class="flex-1">
+                    <h6 class="font-medium">
+                      {s.name || '_'}
+                    </h6>
+                  </div>
+                  <div class="flex-1">
+                    <p>
+                      {s.value || '_'}
+                    </p>
+                  </div>
+								</div>
 							{/each}
-						</ul>
+						</div>
 					</div>
 				{/if}
 
