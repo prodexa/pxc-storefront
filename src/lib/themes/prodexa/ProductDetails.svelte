@@ -240,15 +240,15 @@ const collectAllVariantsAttrs = async () => {
       dataRow  = []
       v?.variantValues.forEach((vv) => {
         dataRowItem = {}
-        dataRowItem._id = (vv._id || '_')
-        dataRowItem.name = (vv.value || '_')
+        dataRowItem._id = (vv._id || '-')
+        dataRowItem.name = (vv.value || '-')
         dataRowItem.type = vv.type
         let headerArrayIndex = headers.findIndex((h) => h._id === vv._id)
         dataRow[headerArrayIndex] = dataRowItem
       })
       dataRowItem = {}
-      dataRowItem._id = (v.title || '_')
-      dataRowItem.name = (v.title || '_')
+      dataRowItem._id = (v.title || '-')
+      dataRowItem.name = (v.title || '-')
       dataRow[headers.length -1 ] = dataRowItem
       allVariantsAttrs.push(dataRow)
     })
@@ -1522,15 +1522,15 @@ async function updateVariant(variant) {
                 <div class="flex flex-row gap-1 p-1">
                   <div class="flex-1">
                     <h6 class="font-medium">
-                      {s.name || '_'}
+                      {s?.name || '-'}
                     </h6>
                   </div>
                   <div class="flex-1">
                     <p>
-                      {#if (s.type === 'text-table' || s.type === 'markdown')}
-                        {@html s.value}
+                      {#if (s?.type === 'text-table' || s?.type === 'markdown')}
+                        {@html s?.value}
                       {:else }
-                        {s.value || '_'}
+                        {s?.value || '-'}
                       {/if}
                     </p>
                   </div>
@@ -2227,7 +2227,7 @@ async function updateVariant(variant) {
                     </h6>
                   {:else }
                     <h6 class="font-medium ">
-                      {#if (va.type === 'text-table' || va.type === 'markdown')}
+                      {#if (va?.type === 'text-table' || va?.type === 'markdown')}
                         {@html va?.name || '-'}
                       {:else }
                         {va?.name || '-'}
