@@ -152,34 +152,59 @@ export const fetchProducts = async ({ query = '', origin }: any) => {
 	}
 }
 
+function enrichFromAttr(attr ,sp){
+  if(attr){
+    sp.name = attr.description || attr.shortDescriptions?.[LANGUAGE_TAG] || sp._id
+    enrichFromTo(attr, sp)
+  }
+}
+
+function enrichFromSp(sp ,vv){
+  if(sp){
+    vv.name = sp.name
+    enrichFromTo(sp, vv)
+  }
+}
+
+function enrichFromTo(from ,to){
+  if(from){
+    to.type = from.type
+    if ('boolean' === from.type) {
+      to.value = to.value === 'true' ? 'Yes' : 'No'
+    } else if ('markdown' === from.type) {
+      // TODO use EP to get markdown
+      //to.value = `<h2>markdown ${to.value}</h2>`
+    } else if ('text-table' === from.type) {
+      // TODO  use EP to get text-table
+      //to.value = `<h2>text-table ${to.value}</h2>`
+    }
+  }
+}
+
 // Fetch single product
 export const fetchProduct = async ({ origin, slug }) => {
 	try {
+
+    // retrieve product
 		const product = await getAPI(
 			`product-editor/products/${slug.replace(SLUG_SEPARATOR, '/')}`,
 			origin
 		)
     const mappedProduct = mapProdexaProduct(product)
 
-    // replace specifications attr id with name, boolean value with yes/no
-    // TODO  better to have it with product coming from BE with the above call
-    await Promise.all(
-      mappedProduct?.specifications?.map((sp) => getAPI(
-          `${attributesEndpoint}/${sp._id}`,
-          origin
-        )
-          .then(res => {
-            sp.name = res?.attribute?.shortDescriptions?.[LANGUAGE_TAG] || sp._id
-            sp.type = res?.attribute?.type
-            if('boolean' === sp.type){
-              sp.value = sp.value === 'true' ? 'Yes' : 'No'
-            }
-          })
-          .catch(e => console.log(e))
-      )
+    // retrieve attributes
+    const attrs = await getAPI(
+      `product-editor/products/${slug.replace(SLUG_SEPARATOR, '/')}/attributes?language=${LANGUAGE_TAG}`,
+      origin
     )
+    // console.log('attrs=', attrs)
+    mappedProduct?.specifications?.map((sp) => {
+      let attr = attrs.attributes[sp._id]
+      enrichFromAttr(attr, sp)
+    })
 
-    // get attr names, also better to have it with product coming from BE with the above call
+    // pxm/api/product-editor/variants/attributes?language=en-GB - retrieves all var attr - not so good
+    // retrieve only variant attrs missing after retrieve attributes
     let missedVariantNamesSet = new Set()
     let missedVariantAttrMap = new Map()
     mappedProduct?.variants?.map((v) => {
@@ -188,11 +213,7 @@ export const fetchProduct = async ({ origin, slug }) => {
         if (!sp) {
           missedVariantNamesSet.add(vv._id)
         } else {
-          vv.name = sp.name
-          vv.type = sp.type
-          if(vv.type === 'boolean'){
-            vv.value = vv.value == 'true' ? 'Yes' : 'No'
-          }
+          enrichFromSp(sp, vv)
         }
       })
     })
@@ -213,16 +234,11 @@ export const fetchProduct = async ({ origin, slug }) => {
       mappedProduct?.variants?.map((v) => {
         v.variantValues?.map((vv) => {
           if (missedVariantAttrMap.has(vv._id)) {
-            vv.name = missedVariantAttrMap.get(vv._id)?.shortDescriptions?.[LANGUAGE_TAG]
-            vv.type = missedVariantAttrMap.get(vv._id)?.type
-            if('boolean' === vv.type){
-              vv.value = vv.value === 'true' ? 'Yes' : 'No'
-            }
+            enrichFromAttr(missedVariantAttrMap.get(vv._id), vv)
           }
         })
       })
     }
-
 
     return mappedProduct
 	} catch (e) {

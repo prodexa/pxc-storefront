@@ -221,6 +221,7 @@ const collectAllVariantsAttrs = async () => {
         header = {}
         header._id = (vv._id)
         header.name = (vv.name)
+        header.type = 'header'
         vAttrsMap.set(vv._id, header)
       })
     })
@@ -241,6 +242,7 @@ const collectAllVariantsAttrs = async () => {
         dataRowItem = {}
         dataRowItem._id = (vv._id || '_')
         dataRowItem.name = (vv.value || '_')
+        dataRowItem.type = vv.type
         let headerArrayIndex = headers.findIndex((h) => h._id === vv._id)
         dataRow[headerArrayIndex] = dataRowItem
       })
@@ -1525,7 +1527,11 @@ async function updateVariant(variant) {
                   </div>
                   <div class="flex-1">
                     <p>
-                      {s.value || '_'}
+                      {#if (s.type === 'text-table' || s.type === 'markdown')}
+                        {@html s.value}
+                      {:else }
+                        {s.value || '_'}
+                      {/if}
                     </p>
                   </div>
 								</div>
@@ -2221,7 +2227,11 @@ async function updateVariant(variant) {
                     </h6>
                   {:else }
                     <h6 class="font-medium ">
-                      {va?.name || '-'}
+                      {#if (va.type === 'text-table' || va.type === 'markdown')}
+                        {@html va?.name || '-'}
+                      {:else }
+                        {va?.name || '-'}
+                      {/if}
                     </h6>
                   {/if}
                 </div>
