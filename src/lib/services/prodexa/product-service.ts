@@ -19,6 +19,9 @@ const productsEndpoint = 'products/search/full-product'
 const productsFacetsEndpoint = 'products/search/facets'
 const attributesEndpoint = 'attributes'
 
+// pxm/api/markdownRenderer/html?languageId=${contentLanguage}`, normalizedValue
+const markdownEndpoint = 'markdownRenderer/html'
+
 const parseQueryString = (query, categorySlug = null) => {
 	const params = queryString.parse(query)
 
@@ -152,31 +155,29 @@ export const fetchProducts = async ({ query = '', origin }: any) => {
 	}
 }
 
-function enrichFromAttr(attr ,sp){
+const enrichFromAttr = async (attr, to) => {
   if(attr){
-    sp.name = attr.description || attr.shortDescriptions?.[LANGUAGE_TAG] || sp._id
-    enrichFromTo(attr, sp)
-  }
-}
-
-function enrichFromSp(sp ,vv){
-  if(sp){
-    vv.name = sp.name
-    enrichFromTo(sp, vv)
-  }
-}
-
-function enrichFromTo(from ,to){
-  if(from){
-    to.type = from.type
-    if ('boolean' === from.type) {
+    to.name = attr.description || attr.shortDescriptions?.[LANGUAGE_TAG] || to._id
+    to.type = attr.type
+    if ('boolean' === attr.type) {
       to.value = to.value === 'true' ? 'Yes' : 'No'
-    } else if ('markdown' === from.type) {
+    } else if ('markdown' === attr.type) {
       // TODO use EP to get markdown
       //to.value = `<h2>markdown ${to.value}</h2>`
-    } else if ('text-table' === from.type) {
+    } else if ('text-table' === attr.type) {
       // TODO  use EP to get text-table
       //to.value = `<h2>text-table ${to.value}</h2>`
+    }
+    to.isMultivalued = attr.isMultivalued
+    if (attr.isMultivalued) {
+      const m = JSON.parse(to.value)
+      let ul = ''
+      ul += (`<ul class="mult-value">`)
+      m?.forEach((v) => {
+        ul += (`<li>${v}</li>`)
+      })
+      ul += (`</ul>`)
+      to.value = ul
     }
   }
 }
@@ -209,11 +210,11 @@ export const fetchProduct = async ({ origin, slug }) => {
     let missedVariantAttrMap = new Map()
     mappedProduct?.variants?.map((v) => {
       v.variantValues?.map((vv) => {
-        let sp = mappedProduct?.specifications?.filter((sp) => sp._id == vv._id)[0]
-        if (!sp) {
+        let attr = attrs.attributes[vv._id]
+        if (!attr) {
           missedVariantNamesSet.add(vv._id)
         } else {
-          enrichFromSp(sp, vv)
+          enrichFromAttr(attr, vv)
         }
       })
     })
