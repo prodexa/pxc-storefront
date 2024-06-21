@@ -1,8 +1,6 @@
 import {error} from '@sveltejs/kit'
 import {post} from '$lib/utils/api'
-import {mapProdexaAutocomplete, mapProdexaAutocompleteNonProduct} from './prodexa-utils'
-
-export const LANGUAGE_TAG = 'en-GB'
+import {mapProdexaAutocomplete, mapProdexaAutocompleteNonProduct, LANGUAGE_TAG} from './prodexa-utils'
 
 export const fetchAutocompleteData = async ({origin, q}: any) => {
   if (q?.length < 3) {
