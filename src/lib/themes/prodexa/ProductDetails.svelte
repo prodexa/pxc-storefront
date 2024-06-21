@@ -43,6 +43,10 @@
   border: 1px solid red;
 }
 
+.mult-value{
+  list-style-type:none
+}
+
 </style>
 
 <script lang="ts">
@@ -221,7 +225,6 @@ const collectAllVariantsAttrs = async () => {
         header = {}
         header._id = (vv._id)
         header.name = (vv.name)
-        header.type = 'header'
         vAttrsMap.set(vv._id, header)
       })
     })
@@ -241,14 +244,15 @@ const collectAllVariantsAttrs = async () => {
       v?.variantValues.forEach((vv) => {
         dataRowItem = {}
         dataRowItem._id = (vv._id || '-')
-        dataRowItem.name = (vv.value || '-')
+        dataRowItem.value = (vv.value || '-')
         dataRowItem.type = vv.type
         let headerArrayIndex = headers.findIndex((h) => h._id === vv._id)
         dataRow[headerArrayIndex] = dataRowItem
       })
       dataRowItem = {}
       dataRowItem._id = (v.title || '-')
-      dataRowItem.name = (v.title || '-')
+      dataRowItem.value = (v.title || '-')
+      dataRowItem.type = 'title'
       dataRow[headers.length -1 ] = dataRowItem
       allVariantsAttrs.push(dataRow)
     })
@@ -1527,7 +1531,7 @@ async function updateVariant(variant) {
                   </div>
                   <div class="flex-1">
                     <p>
-                      {#if (s?.type === 'text-table' || s?.type === 'markdown')}
+                      {#if (s?.type === 'text-table' || s?.type === 'markdown' || s?.isMultivalued)}
                         {@html s?.value}
                       {:else }
                         {s?.value || '-'}
@@ -2227,10 +2231,10 @@ async function updateVariant(variant) {
                     </h6>
                   {:else }
                     <h6 class="font-medium ">
-                      {#if (va?.type === 'text-table' || va?.type === 'markdown')}
-                        {@html va?.name || '-'}
+                      {#if (va?.type === 'text-table' || va?.type === 'markdown' || va?.isMultivalued)}
+                        {@html va?.value || '-'}
                       {:else }
-                        {va?.name || '-'}
+                        {va?.value || '-'}
                       {/if}
                     </h6>
                   {/if}
