@@ -149,7 +149,8 @@ export const mapProdexaCategoryClassification = (c: any) => {
 			? c.category_children.map((i: any) => {
 				if (i) return mapProdexaCategoryClassification(i)
 			})
-			: []
+			: [],
+    img:  c.documentUrl1 ? `/prodexa-img/${c.documentUrl1}` : ''
 	}
 }
 

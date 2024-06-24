@@ -1531,11 +1531,7 @@ async function updateVariant(variant) {
                   </div>
                   <div class="flex-1">
                     <p>
-                      {#if (s?.type === 'text-table' || s?.type === 'markdown' || s?.isMultivalued)}
-                        {@html s?.value}
-                      {:else }
-                        {s?.value || '-'}
-                      {/if}
+                      {@html s?.value}
                     </p>
                   </div>
 								</div>
@@ -2231,11 +2227,7 @@ async function updateVariant(variant) {
                     </h6>
                   {:else }
                     <h6 class="font-medium ">
-                      {#if (va?.type === 'text-table' || va?.type === 'markdown' || va?.isMultivalued)}
-                        {@html va?.value || '-'}
-                      {:else }
-                        {va?.value || '-'}
-                      {/if}
+                      {@html va?.value || '-'}
                     </h6>
                   {/if}
                 </div>
