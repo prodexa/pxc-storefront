@@ -155,18 +155,38 @@ export const fetchProducts = async ({ query = '', origin }: any) => {
 	}
 }
 
-const enrichFromAttr = async (attr, to) => {
+function normalizeValue(value) {
+  const normalizedValue = value
+    ? value
+      .split('\n')
+      .map((line) => (line.startsWith('|') ? line : `| ${line}`))
+      .map((line) => (line.endsWith('|') ? line : `${line} |`))
+      .join('\n')
+    : value
+  return normalizedValue
+}
+
+const enrichFromAttr = async (attr, to, origin) => {
   if(attr){
     to.name = attr.description || attr.shortDescriptions?.[LANGUAGE_TAG] || to._id
     to.type = attr.type
     if ('boolean' === attr.type) {
       to.value = to.value === 'true' ? 'Yes' : 'No'
-    } else if ('markdown' === attr.type) {
-      // TODO use EP to get markdown
-      //to.value = `<h2>markdown ${to.value}</h2>`
-    } else if ('text-table' === attr.type) {
-      // TODO  use EP to get text-table
-      //to.value = `<h2>text-table ${to.value}</h2>`
+    } else if ('text-table' === attr.type || 'markdown' === attr.type) {
+      try {
+        //const normalizedValue = normalizeValue(to.value)
+        const mark = await post(
+          `${markdownEndpoint}?languageId=${LANGUAGE_TAG}`,
+          to.value,
+          origin,
+          {
+            Accept: 'text/html',
+          },
+        )
+        to.value = mark || to.value
+      } catch (e) {
+        console.log(e)
+      }
     }
     to.isMultivalued = attr.isMultivalued
     if (attr.isMultivalued) {
@@ -201,7 +221,7 @@ export const fetchProduct = async ({ origin, slug }) => {
     // console.log('attrs=', attrs)
     mappedProduct?.specifications?.map((sp) => {
       let attr = attrs.attributes[sp._id]
-      enrichFromAttr(attr, sp)
+      enrichFromAttr(attr, sp, origin)
     })
 
     // pxm/api/product-editor/variants/attributes?language=en-GB - retrieves all var attr - not so good
@@ -214,7 +234,7 @@ export const fetchProduct = async ({ origin, slug }) => {
         if (!attr) {
           missedVariantNamesSet.add(vv._id)
         } else {
-          enrichFromAttr(attr, vv)
+          enrichFromAttr(attr, vv, origin)
         }
       })
     })
@@ -235,7 +255,7 @@ export const fetchProduct = async ({ origin, slug }) => {
       mappedProduct?.variants?.map((v) => {
         v.variantValues?.map((vv) => {
           if (missedVariantAttrMap.has(vv._id)) {
-            enrichFromAttr(missedVariantAttrMap.get(vv._id), vv)
+            enrichFromAttr(missedVariantAttrMap.get(vv._id), vv, origin)
           }
         })
       })
