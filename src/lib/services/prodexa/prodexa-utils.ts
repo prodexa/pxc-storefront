@@ -139,7 +139,7 @@ export const mapProdexaCategoryClassification = (c: any) => {
 	if (!c) {
 		return {}
 	}
-
+  console.log('c=', c)
 	return {
 		id: c.classificationId,
 		name: c.fallbackDescription || c.classificationId,
@@ -150,7 +150,8 @@ export const mapProdexaCategoryClassification = (c: any) => {
 				if (i) return mapProdexaCategoryClassification(i)
 			})
 			: [],
-    img:  c.documentUrl1 ? `/prodexa-img/${c.documentUrl1}` : ''
+    img:  c.documentUrl1 ? `/prodexa-img/${c.documentUrl1}` : '',
+    orderNo: c.orderNo,
 	}
 }
 
