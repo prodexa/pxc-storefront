@@ -1,7 +1,7 @@
-import { error } from '@sveltejs/kit'
-import { getAPI } from '$lib/utils/api'
-import { mapProdexaCategoryClassification } from './prodexa-utils'
-import type { Category } from '$lib/types'
+import {error} from '@sveltejs/kit'
+import {getAPI} from '$lib/utils/api'
+import {mapProdexaCategoryClassification} from './prodexa-utils'
+import type {Category} from '$lib/types'
 
 export const fetchFooterCategories = async ({}) => {
 	console.log('fetchFooterCategories')
@@ -27,11 +27,23 @@ export const fetchCategory = async ({ children = false, id, origin }) => {
 export const fetchAllCategories = async ({ featured = false, limit = null, origin }) => {
 	try {
 		const res = await getAPI(
-			`classifications/search/findAllByParams?page=0&size=${limit || '1000'}`,
+			`classifications/search/findAllByParams?page=0&size=${limit || '1000'}&sort=orderNo`,
 			origin
 		)
 
-		const data = res.content.map((category: any) => mapProdexaCategoryClassification(category))
+    const data = res.content
+      .map((category: any) => mapProdexaCategoryClassification(category))
+      .sort((a, b) => {
+        if (a.orderNo && !b.orderNo) {
+          return -1
+        } else if (!a.orderNo && b.orderNo) {
+          return 1
+        } else if (a.orderNo && b.orderNo) {
+          return a.orderNo - b.orderNo
+        } else {
+          return a.name.localeCompare(b.name)
+        }
+      })
 
 		const currentPage = res.number
 		const pageSize = res.size
@@ -78,9 +90,19 @@ export const fetchMegamenuData = async ({ megamenu = false, origin }) => {
 			origin
 		)
 
-		const allCategories = data.content.map((category: any) => {
-			return mapProdexaCategoryClassification(category)
-		})
+    const allCategories = data.content
+      .map((category: any) => mapProdexaCategoryClassification(category))
+      .sort((a, b) => {
+        if (a.orderNo && !b.orderNo) {
+          return -1
+        } else if (!a.orderNo && b.orderNo) {
+          return 1
+        } else if (a.orderNo && b.orderNo) {
+          return a.orderNo - b.orderNo
+        } else {
+          return a.name.localeCompare(b.name)
+        }
+      })
 
 		// to navigate any megamenu item to the categories page
 		// it has to have the slug: 'categories'

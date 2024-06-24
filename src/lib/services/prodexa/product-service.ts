@@ -174,10 +174,10 @@ const enrichFromAttr = async (attr, to, origin) => {
       to.value = to.value === 'true' ? 'Yes' : 'No'
     } else if ('text-table' === attr.type || 'markdown' === attr.type) {
       try {
-        //const normalizedValue = normalizeValue(to.value)
+        const normalizedValue = normalizeValue(to.value)
         const mark = await post(
           `${markdownEndpoint}?languageId=${LANGUAGE_TAG}`,
-          to.value,
+          normalizedValue,
           origin,
           {
             Accept: 'text/html',
