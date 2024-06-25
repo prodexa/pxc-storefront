@@ -2269,6 +2269,13 @@ async function updateVariant(variant) {
 				</div>
 			{/if}
 
+      <!-- Recommended products -->
+
+      {#if data.product?.relatedProducts?.length}
+        <hr />
+        <ProductsGrid title="Related Products" products="{data.product?.relatedProducts}" />
+      {/if}
+
 			<!-- Recently viewed products -->
 
 			{#if recentlyViewed?.length > 1}
@@ -2297,13 +2304,7 @@ async function updateVariant(variant) {
 				{/if}
 			{/if}
 
-			<!-- Recommended products -->
 
-			{#if data.product?.relatedProducts?.length}
-				<hr />
-
-				<ProductsGrid title="Recommended Products" products="{data.product?.relatedProducts}" />
-			{/if}
 		</div>
 
 		<!-- Footer mobile show hide toggle -->
