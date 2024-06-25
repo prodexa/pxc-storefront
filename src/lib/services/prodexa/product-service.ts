@@ -261,6 +261,23 @@ export const fetchProduct = async ({ origin, slug }) => {
       })
     }
 
+    if(mappedProduct?.relations) {
+      let relatedProducts = []
+      await Promise.all(
+        mappedProduct?.relations?.map(r => getAPI(
+            `product-editor/products/${r.relatedCatalogId}/${r.relatedProductId}`,
+            origin
+          )
+            .then((res) => {
+                relatedProducts.push(mapProdexaProduct(res))
+              }
+            )
+            .catch(e => console.log(e))
+        )
+      )
+      mappedProduct.relatedProducts = relatedProducts
+    }
+
     return mappedProduct
 	} catch (e) {
 		error(e.status, e.data?.message || e.message)

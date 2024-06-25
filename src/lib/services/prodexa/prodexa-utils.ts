@@ -83,7 +83,7 @@ export const mapProdexaProduct = (product: any) => {
 
 			return ({
 				_id: attributeId,
-				name: attributeId, // TODO (gor) attribute.name
+				name: attributeId, // to be enriched
 				value: value?.toString(),
 				active: true
 			})
@@ -103,7 +103,7 @@ export const mapProdexaProduct = (product: any) => {
         }
         return ({
           _id: attributeId,
-          name: attributeId,  // TODO (gor) attribute.name
+          name: attributeId,  // to be enriched
           value: value?.toString(),
           active: true
         })
@@ -114,6 +114,9 @@ export const mapProdexaProduct = (product: any) => {
       variantValues,
     }
   }) || []
+
+  const relations = product.relations
+  const relatedProducts = [] // to be enriched
 
   const prod: Product = {
 		_id: slug,
@@ -130,7 +133,9 @@ export const mapProdexaProduct = (product: any) => {
 		specifications,
 		active: true,
 		hasStock: true,
-    variants
+    variants,
+    relatedProducts,
+    relations
   }
   return prod
 }
