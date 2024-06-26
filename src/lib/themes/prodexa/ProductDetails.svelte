@@ -1509,12 +1509,12 @@ async function updateVariant(variant) {
 							{#each data.product?.specifications?.filter(s=> s?.type !== 'text-table' && s?.type !== 'markdown') as s, index}
                 {#if (index === 0)}
                   <div class="flex flex-row gap-1 p-1">
-                    <div class="flex-1">
+                    <div class="flex-auto">
                       <h6 class="font-bold redText">
                         Attribute
                       </h6>
                     </div>
-                    <div class="flex-1">
+                    <div class="flex-wrap">
                       <h6 class="font-bold redText">
                         Value
                       </h6>
@@ -1523,12 +1523,12 @@ async function updateVariant(variant) {
                   <hr class="redLine"/>
                 {/if}
                 <div class="flex flex-row gap-1 p-1">
-                  <div class="flex-1">
+                  <div class="flex-auto">
                     <h6 class="font-medium">
                       {s?.name || '-'}
                     </h6>
                   </div>
-                  <div class="flex-1">
+                  <div class="flex-wrap">
                     <p>
                       {@html s?.value}
                     </p>
